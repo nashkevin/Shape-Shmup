@@ -38,6 +38,9 @@ function joinGame() {
 			// Once connection is established.
 			var username = document.getElementById("username").value;
 			webSocket.send(JSON.stringify({ 'name': username }));
+			
+			document.getElementById("pregame").classList.add("hidden");
+			document.getElementById("game").classList.remove("hidden");
 		} else {
 			alert("The connection to the server was closed before it could be established.");
 		}
