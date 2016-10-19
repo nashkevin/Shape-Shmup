@@ -65,7 +65,9 @@ function writeResponse(text) {
 
 // Key listener
 window.onkeydown = function (e) {
-	if (typeof webSocket !== "undefined" && document.getElementById("messageinput") !== document.activeElement) {
+	if (typeof webSocket !== "undefined" 
+			&& webSocket.readyState === webSocket.OPEN
+			&& document.getElementById("messageinput") !== document.activeElement) {
 		var code = e.keyCode ? e.keyCode : e.which;
 		switch (code) {
 			case 87: case 38:  // 'w' or up
