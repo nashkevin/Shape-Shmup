@@ -2,7 +2,7 @@ var webSocket;
 var messages = document.getElementById("messages");
 
 
-function openSocket() {
+function joinGame() {
 	// Ensures only one connection is open at a time
 	if(webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
 		writeResponse("WebSocket is already opened.");
@@ -11,6 +11,7 @@ function openSocket() {
 	// Create a new instance of the websocket
 	var url = "ws://" + window.location.host + "/socket";
 	webSocket = new WebSocket(url);
+	
 	 
 	// Binds functions to the listeners for the websocket.
 	webSocket.onopen = function(event) {
@@ -19,6 +20,7 @@ function openSocket() {
 
 		writeResponse(event.data);
 	};
+	
 
 	webSocket.onmessage = function(event) {
 		writeResponse(event.data);
@@ -27,12 +29,27 @@ function openSocket() {
 	webSocket.onclose = function(event) {
 		writeResponse("Connection closed");
 	};
+	
+	function completeConnection() {
+		var state = webSocket.readyState;
+		if (state === webSocket.CONNECTING) {
+			setTimeout(completeConnection, 250);
+		} else if (state === webSocket.OPEN) {
+			// Once connection is established.
+			var username = document.getElementById("username").value;
+			webSocket.send(JSON.stringify({ 'name': username }));
+		} else {
+			alert("The connection to the server was closed before it could be established.");
+		}
+	}
+	
+	completeConnection();
 }
 
 // Sends the value of the text input to the server
 function send() {
 	var text = document.getElementById("messageinput").value;
-	webSocket.send(text);
+	webSocket.send(JSON.stringify({ 'message': text }));
 }
 
 function closeSocket() {
@@ -45,20 +62,20 @@ function writeResponse(text) {
 
 // Key listener
 window.onkeydown = function (e) {
-	if (document.getElementById("messageinput") !== document.activeElement) {
+	if (typeof webSocket !== "undefined" && document.getElementById("messageinput") !== document.activeElement) {
 		var code = e.keyCode ? e.keyCode : e.which;
 		switch (code) {
 			case 87: case 38:  // 'w' or up
-				webSocket.send("Up");
+				webSocket.send(JSON.stringify({ 'direction': 'up' }));
 				break;
 			case 65: case 37: // 'a' or left 
-				webSocket.send("Left");
+				webSocket.send(JSON.stringify({ 'direction': 'left' }));
 				break;
 			case 83: case 40: // 's' or down
-				webSocket.send("Down");
+				webSocket.send(JSON.stringify({ 'direction': 'down' }));
 				break;
 			case 68: case 39: // 'd' or right
-				webSocket.send("Right");
+				webSocket.send(JSON.stringify({ 'direction': 'right' }));
 				break;
 		}
 	}

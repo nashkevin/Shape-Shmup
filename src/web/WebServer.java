@@ -10,6 +10,8 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import com.google.gson.Gson;
+
 @ServerEndpoint("/socket") 
 public class WebServer {
 	/** The sessions of all players */
@@ -31,19 +33,40 @@ public class WebServer {
 	@OnMessage
 	public void onMessage(String message, Session session) {
 		System.out.println("Message from " + session.getId() + ": " + message);
-		broadcast(message);
+		
+		Gson g = new Gson();
+		ClientInput input = g.fromJson(message, ClientInput.class);
+		if (input.getName() != null && input.getName() != "") {
+			synchronized(sessions) {
+				sessions.put(session, input.getName());
+			}
+		}
+		
+		if (input.getMessage() != null && !input.getMessage().isEmpty()) {
+			broadcast(input.getMessage(), session);
+		}
+		
+		if (input.getDirection() != null && !input.getDirection().isEmpty()) {
+			broadcast("moved " + input.getDirection(), session);
+		}
+	}
+	
+	private void broadcast(String message) {
+		broadcast(message, null);
 	}
 
 	/** Broadcast text to all connected clients. */
-	private void broadcast(String message) {
-		synchronized(sessions) {
-			for (Session s: sessions.keySet()) {
-				if (s.isOpen()) {
-					try {
-						s.getBasicRemote().sendText(message);
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}
+	private void broadcast(String message, Session sourceSession) {
+		String sourceName = sessions.get(sourceSession);
+		if (sourceName != null && !sourceName.isEmpty()) {
+			message = sourceName + ": " + message;
+		}
+		for (Session s: sessions.keySet()) {
+			if (s.isOpen()) {
+				try {
+					s.getBasicRemote().sendText(message);
+				} catch (IOException ex) {
+					ex.printStackTrace();
 				}
 			}
 		}
