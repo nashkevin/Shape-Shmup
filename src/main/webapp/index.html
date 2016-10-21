@@ -9,15 +9,18 @@
 	</head>
 	<body>
 		
-		<div id="pregame">
+		<form id="pregame" action="javascript:joinGame();">
 			<p><label>Name: <input type="text" id="username" name="username"></label></p>
-			<p><button type="button" onclick="joinGame();">Join Game</button></p>
-		</div>
+			<p><button type="submit">Join Game</button></p>
+		</form>
 		
 		<div id="game" class="hidden">
-			<p><label>Chat: <input type="text" id="messageinput"></label></p>
-			<p>
-				<button type="button" onclick="send();">Send</button>
+			<form action="javascript:send();">
+				<p><label>Chat: <input type="text" id="messageinput"></label>
+					<button type="submit">Send</button></p>
+				</p>
+			</form>
+			<p>	
 				<button type="button" onclick="closeSocket();">Leave Game</button>
 			</p>
 			
