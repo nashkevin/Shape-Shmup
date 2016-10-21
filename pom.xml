@@ -8,7 +8,7 @@
 	<version>1.0</version>
 	<properties>
 		<jetty-version>9.3.12.v20160915</jetty-version>
-	 </properties>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>javax.servlet</groupId>
