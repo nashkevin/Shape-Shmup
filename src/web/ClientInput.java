@@ -1,5 +1,8 @@
 package web;
 
+/**
+ * POJO representing information that each client can send to the server.
+ */
 public class ClientInput {
 	private String name;
 	private String message;

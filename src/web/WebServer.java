@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 
 @ServerEndpoint("/socket") 
 public class WebServer {
-	/** The sessions of all players */
+	/** The sessions of all players, mapped to each player's chosen name. */
 	private static final Map<Session, String> sessions = Collections.synchronizedMap(new HashMap<Session, String>());
 	
 	/** When a new client makes a connection to the server. */
@@ -29,7 +29,7 @@ public class WebServer {
 		}
 	}
 	 
-	/** When the client sends a message to the server. */
+	/** When a client sends a message to the server. */
 	@OnMessage
 	public void onMessage(String message, Session session) {
 		System.out.println("Message from " + session.getId() + ": " + message);
@@ -72,7 +72,7 @@ public class WebServer {
 		}
 	}
  
-	/** When the client closes their connection. */
+	/** When a client closes their connection. */
 	@OnClose
 	public void onClose(Session session) {
 		System.out.println("Session " + session.getId() + " has ended.");
