@@ -1,4 +1,4 @@
-package web;
+package main.java.web;
 
 /**
  * POJO representing information that each client can send to the server.
