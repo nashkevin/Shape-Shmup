@@ -2,31 +2,36 @@
 
 <html>
 	<head>
-		<title>Web Browser Game</title>
+		<title>Web Browser Game v1.0</title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width">
 		<link rel="stylesheet" type="text/css" media="all" href="style.css" />
+        <style>* {padding: 0; margin: 0}</style>
 	</head>
 	<body>
-		
-		<form id="pregame" action="javascript:joinGame();">
-			<p><label>Name: <input type="text" id="username" name="username"></label></p>
-			<p><button type="submit">Join Game</button></p>
-		</form>
-		
-		<div id="game" class="hidden">
-			<form action="javascript:send();">
-				<p><label>Chat: <input type="text" id="messageinput"></label>
-					<button type="submit">Send</button></p>
-				</p>
-			</form>
-			<p>	
-				<button type="button" onclick="closeSocket();">Leave Game</button>
-			</p>
-			
-			<p id="messages"></p>
-		</div>
-		
-		<script src="game.js"></script>
+        
+        <form id="pregame" action="javascript:joinGame();">
+            <p><label>Name: <input type="text" id="username" name="username"></label></p>
+            <p><button type="submit">Join Game</button></p>
+        </form>
+        
+        <div id="game" class="hidden">
+            <form action="javascript:send();">
+                <p><label>Chat: <input type="text" id="messageinput"></label>
+                    <button type="submit">Send</button></p>
+                </p>
+            </form>
+            <p> 
+                <button type="button" onclick="closeSocket();">Leave Game</button>
+            </p>
+            
+            <p id="messages"></p>
+        </div>
+        
+        <script src="pixi.min.js"></script>
+        <script>
+            //console.log(PIXI); //Test that Pixi is working
+        </script>
+        <script src="game.js"></script>
 	</body>
 </html>

@@ -1,6 +1,16 @@
 var webSocket;
 var messages = document.getElementById("messages");
 
+var renderer = PIXI.autoDetectRenderer(100, 100);
+document.body.appendChild(renderer.view);
+renderer.backgroundColor = 0x272822;
+renderer.autoResize = true;
+renderer.view.style.position = "absolute";
+renderer.view.style.display = "block";
+renderer.view.style.margin = "auto";
+
+var stage = new PIXI.Container();
+renderer.render(stage);
 
 function joinGame() {
 	// Ensures only one connection is open at a time
@@ -10,8 +20,8 @@ function joinGame() {
 	}
 	// Create a new instance of the websocket
 	var url = "ws://" + window.location.host + "/socket";
+	console.log("URL: " + url);
 	webSocket = new WebSocket(url);
-	
 	 
 	// Binds functions to the listeners for the websocket.
 	webSocket.onopen = function(event) {
@@ -20,7 +30,6 @@ function joinGame() {
 
 		writeResponse(event.data);
 	};
-	
 
 	webSocket.onmessage = function(event) {
 		writeResponse(event.data);
@@ -32,6 +41,7 @@ function joinGame() {
 	
 	function completeConnection() {
 		var state = webSocket.readyState;
+		console.log("state: " + state)
 		if (state === webSocket.CONNECTING) {
 			setTimeout(completeConnection, 250);
 		} else if (state === webSocket.OPEN) {
@@ -63,6 +73,14 @@ function writeResponse(text) {
 	messages.innerHTML += "<br/>" + text;
 }
 
+function preventDefault(e) {
+	if (e.preventDefault) e.preventDefault();
+}
+
+function onResize() {
+	renderer.resize(window.innerWidth, window.innerHeight * 0.9);
+}
+
 // Key listener
 window.onkeydown = function (e) {
 	if (typeof webSocket !== "undefined" 
@@ -85,3 +103,6 @@ window.onkeydown = function (e) {
 		}
 	}
 };
+
+window.onresize = onResize;
+this.onResize();
