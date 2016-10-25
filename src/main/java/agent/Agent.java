@@ -1,7 +1,9 @@
-package agent;
+package java.agent;
 
 import java.awt.Point;
-import java.util.Vector;
+import java.misc.Vector2D;
+import java.projectile.Projectile;
+import java.projectile.ProjectileFactory;
 
 /**
  * @ Zach Janice
@@ -17,12 +19,13 @@ public abstract class Agent {
 	private int projectileSpeed;
 	
 	private Point position;
-	private Vector velocity;
+	private Vector2D velocity;
 	
 	private int baseMovementSpeed;
 	private double movementSpeedFactor;
-	private Vector acceleration;
-	private Vector firingVector;
+	private Vector2D acceleration;
+	private Vector2D firingVector;
+	private ProjectileFactory.Type projectileType;
 	
 	public Agent(Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
 		this.level = level;
@@ -40,6 +43,7 @@ public abstract class Agent {
 		this.movementSpeedFactor = 1.0;
 		this.acceleration = null;
 		this.firingVector = null;
+		this.projectileType = ProjectileFactory.Type.NONE;
 	}
 	
 	public final int getLevel() {
@@ -70,45 +74,88 @@ public abstract class Agent {
 		return movementSpeedFactor;
 	}
 	
-	public final Vector getVelocity() {
-		return new Vector(velocity);
+	public final Vector2D getVelocity() {
+		return new Vector2D(velocity);
 	}
 	
 	public final void update() {
-		// TODO
+		preUpdateCall();
+		
+		move(acceleration);
+		// TODO: relay?
+		
+		Projectile firedProjectile = fireProjectile(firingVector);
+		if (firedProjectile != null) {
+			// TODO: relay?
+		}
 	}
 	
 	public final int adjustHealth(int amount) {
-		// TODO
+		health += amount;
+		
+		health = Math.min(health, maxHealth);
+		health = Math.max(health, 0);
+		
+		if (health == 0)
+			despawn();
+		
+		return health;
 	}
 	
 	public final void setBaseMovementSpeed(int amount) {
-		// TODO
+		baseMovementSpeed = Math.max(amount, 0);
 	}
 	
 	public final void setMovementSpeedFactor(double factor) {
-		// TODO
+		movementSpeedFactor = Math.max(factor, 0.0);
 	}
 	
 	public final void despawn() {
 		// TODO
 	}
 	
-	protected final void setMovementVector(Vector vector) {
-		// TODO
+	protected final void setAcceleration(Vector2D vector) {
+		if (vector == null)
+			acceleration = null;
+		acceleration = new Vector2D(vector);
 	}
 	
-	protected final void setFiringVector(Vector vector) {
-		// TODO
+	protected final void setFiringVector(Vector2D vector) {
+		if (vector == null)
+			firingVector = null;
+		firingVector = new Vector2D(vector);
+	}
+	
+	protected final void setProjectileType(ProjectileFactory.Type type) {
+		projectileType = type;
 	}
 	
 	protected abstract void preUpdateCall();
 	
-	private final void move() {
-		// TODO
+	private final void move(Vector2D vector) {
+		// Create a new velocity
+		// TODO: Create new velocity from given vector as acceleration
+		if (vector == null)
+			velocity = null;
+		else
+			velocity = new Vector2D(vector);
+		
+		double oldX = position.getX();
+		double oldY = position.getY();
+		
+		double newX = oldX + (velocity.getMagnitude() * Math.cos(velocity.getAngle()));
+		double newY = oldY + (velocity.getMagnitude() * Math.sin(velocity.getAngle()));
+		
+		position.setLocation(newX, newY);
 	}
 	
-	private final void fireProjectile() {
-		// 	TODO
+	private final Projectile fireProjectile(Vector2D vector) {
+		if (vector == null)
+			return null;
+		
+		Vector2D projVelocity = new Vector2D(projectileSpeed, vector.getAngle());
+		Projectile projectile = ProjectileFactory.makeProjectile(projectileType, this, position, projVelocity);
+		
+		return projectile;
 	}
 }

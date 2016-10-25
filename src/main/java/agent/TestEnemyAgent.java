@@ -1,7 +1,7 @@
-package agent;
+package java.agent;
 
 import java.awt.Point;
-import java.util.Vector;
+import java.misc.Vector2D;
 
 /**
  * @ Zach Janice
@@ -9,31 +9,34 @@ import java.util.Vector;
 
 public final class TestEnemyAgent extends NPCAgent {
 	public TestEnemyAgent(Point spawnPoint, int level) {
-		if (level < 1)
-			level = 1;
-		
-		int team = 2;
-		int health = 80 + (20 * level);
-		int damage = 10 * level;
-		int projectileSpeed = 50;
-		int baseMovementSpeed = 10;
-		
-		super(spawnPoint, level, team, health, damage, projectileSpeed, baseMovementSpeed);
+		super(
+				spawnPoint,
+				Math.min(level, 1),
+				2,
+				80 + (20 * level),
+				10 * level,
+				50,
+				10
+		);
 	}
 	
-	public final getExperienceValue() {
-		return level * 10;
+	@Override
+	public final int getExperienceValue() {
+		return getLevel() * 10;
 	}
 	
-	protected final determineTarget() {
-		// TODO
+	@Override
+	protected final void determineTarget() {
+		return;
 	}
 	
-	protected final determineMove() {
-		// TODO
+	@Override
+	protected final void determineMove() {
+		return;
 	}
 	
-	protected final determineProjectileFire() {
-		// TODO
+	@Override
+	protected final void determineProjectileFire() {
+		return;
 	}
 }

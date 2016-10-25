@@ -1,7 +1,6 @@
-package agent;
+package java.agent;
 
 import java.awt.Point;
-import java.util.Vector;
 
 /**
  * @ Zach Janice
@@ -11,7 +10,7 @@ public abstract class NPCAgent extends Agent {
 	private Point spawnPoint;
 	private Agent target;
 	
-	public MPCAgent(Point spawnPoint, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
+	public NPCAgent(Point spawnPoint, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
 		super(spawnPoint, level, team, health, damage, projectileSpeed, baseMovementSpeed);
 		
 		this.spawnPoint = new Point(spawnPoint);
@@ -26,13 +25,16 @@ public abstract class NPCAgent extends Agent {
 		return new Point(spawnPoint);
 	}
 	
-	public abstract getExperienceValue();
+	public abstract int getExperienceValue();
 	
-	protected final preUpdateCall() {
-		// TODO
-	{
+	@Override
+	protected final void preUpdateCall() {
+		determineTarget();
+		determineMove();
+		determineProjectileFire();
+	}
 	
-	protected abstract determineTarget();
-	protected abstract determineMove();
-	protected abstract determineProjectileFire();
+	protected abstract void determineTarget();
+	protected abstract void determineMove();
+	protected abstract void determineProjectileFire();
 }
