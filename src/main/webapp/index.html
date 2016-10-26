@@ -17,14 +17,11 @@
         	<canvas id="gameCanvas"></canvas>
         
             <div id="chat">
-            	<form action="javascript:send();">
-	                <p><label>Chat: <input type="text" id="messageinput"></label> <button type="submit">Send</button></p>
+            	<div id="messages"></div>
+            	<form action="javascript:send();" id="chatInput">
+	                <label>Chat: <input type="text" id="messageinput"></label> <button type="submit">Send</button>
 	            </form>
-	            <p> 
-	                <button type="button" onclick="closeSocket();">Leave Game</button>
-	            </p>
-	            
-	            <p id="messages"></p>
+	                <button type="button" onclick="closeSocket();" id="leaveButton">Leave Game</button>
             </div>
         </div>
         
