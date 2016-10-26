@@ -6,7 +6,6 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width">
 		<link rel="stylesheet" type="text/css" media="all" href="style.css" />
-        <style>* {padding: 0; margin: 0}</style>
 	</head>
 	<body>
         
@@ -16,22 +15,21 @@
         </form>
         
         <div id="game" class="hidden">
-            <form action="javascript:send();">
-                <p><label>Chat: <input type="text" id="messageinput"></label>
-                    <button type="submit">Send</button></p>
-                </p>
-            </form>
-            <p> 
-                <button type="button" onclick="closeSocket();">Leave Game</button>
-            </p>
-            
-            <p id="messages"></p>
+        	<canvas id="gameCanvas"></canvas>
+        
+            <div id="chat">
+            	<form action="javascript:send();">
+	                <p><label>Chat: <input type="text" id="messageinput"></label><button type="submit">Send</button></p>
+	            </form>
+	            <p> 
+	                <button type="button" onclick="closeSocket();">Leave Game</button>
+	            </p>
+	            
+	            <p id="messages"></p>
+            </div>
         </div>
         
         <script src="pixi.min.js"></script>
-        <script>
-            //console.log(PIXI); //Test that Pixi is working
-        </script>
         <script src="game.js"></script>
 	</body>
 </html>
