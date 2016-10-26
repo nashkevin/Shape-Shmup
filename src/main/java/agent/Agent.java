@@ -1,9 +1,10 @@
-package java.agent;
+package main.java.agent;
 
 import java.awt.Point;
-import java.misc.Vector2D;
-import java.projectile.Projectile;
-import java.projectile.ProjectileFactory;
+
+import main.java.misc.Vector2D;
+import main.java.projectile.Projectile;
+import main.java.projectile.ProjectileFactory;
 
 /**
  * @ Zach Janice

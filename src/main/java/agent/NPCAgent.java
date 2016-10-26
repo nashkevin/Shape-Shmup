@@ -1,4 +1,4 @@
-package java.agent;
+package main.java.agent;
 
 import java.awt.Point;
 

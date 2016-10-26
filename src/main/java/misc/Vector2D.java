@@ -1,6 +1,4 @@
-package java.misc;
-
-import java.awt.Point;
+package main.java.misc;
 
 /**
  * @ Zach Janice

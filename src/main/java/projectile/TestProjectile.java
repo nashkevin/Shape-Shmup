@@ -1,8 +1,8 @@
-package java.projectile;
+package main.java.projectile;
 
-import java.agent.Agent;
+import main.java.agent.Agent;
 import java.awt.Point;
-import java.misc.Vector2D;
+import main.java.misc.Vector2D;
 import java.util.List;
 
 /**

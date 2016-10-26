@@ -1,7 +1,6 @@
-package java.agent;
+package main.java.agent;
 
 import java.awt.Point;
-import java.misc.Vector2D;
 
 /**
  * @ Zach Janice
