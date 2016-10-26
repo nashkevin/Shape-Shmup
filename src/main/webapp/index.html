@@ -10,8 +10,7 @@
 	<body>
         
         <form id="pregame" action="javascript:joinGame();">
-            <p><label>Name: <input type="text" id="username" name="username"></label></p>
-            <p><button type="submit">Join Game</button></p>
+            <p><label>Name: <input type="text" id="username" name="username"></label> <button type="submit">Join Game</button></p>
         </form>
         
         <div id="game" class="hidden">
@@ -19,7 +18,7 @@
         
             <div id="chat">
             	<form action="javascript:send();">
-	                <p><label>Chat: <input type="text" id="messageinput"></label><button type="submit">Send</button></p>
+	                <p><label>Chat: <input type="text" id="messageinput"></label> <button type="submit">Send</button></p>
 	            </form>
 	            <p> 
 	                <button type="button" onclick="closeSocket();">Leave Game</button>
