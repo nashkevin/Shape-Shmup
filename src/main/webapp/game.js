@@ -58,6 +58,7 @@ function joinGame() {
 // Sends the value of the text input to the server
 function send() {
 	var text = document.getElementById("messageinput").value;
+	document.getElementById("messageinput").value = "";
 	webSocket.send(JSON.stringify({ 'message': text }));
 }
 
