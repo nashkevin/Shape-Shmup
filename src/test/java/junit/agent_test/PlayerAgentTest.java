@@ -2,11 +2,14 @@ package test.java;
 import main.java.agent.PlayerAgent;
 import main.java.environment.Environment;
 import main.java.web.ClientInput;
+import main.java.misc.Vector2D;
+
 import junit.framework.Assert;
 import org.junit.Test;
 import java.awt.Point;
 import java.util.UUID;
 import java.util.Queue;
+
 public class PlayerAgentTest {
 	@Test
 	public void testConstructor() {
@@ -37,8 +40,28 @@ public class PlayerAgentTest {
 
 		ClientInput result = queue.poll();
 		Assert.assertEquals(event, result);
+		Assert.assertTrue(queue.isEmpty());
 	}
 
+	@Test
+	public void testUpdate() {
+		Environment environment = new Environment(20);
+		PlayerAgent player = new PlayerAgent(UUID.randomUUID(), environment, new Point(10, 10), 1, 1, 100, 10, 1, 1);
+		ClientInput eventRight = new ClientInput();
+		eventRight.setDirection("right");
+		ClientInput eventUp = new ClientInput();
+		eventUp.setDirection("up");
+		player.addPlayerEvent(eventRight);
+		player.addPlayerEvent(eventUp);
+
+		player.update();
+		Vector2D firingVector = player.getFiringVector();
+		Vector2D accelerationVector = player.getAcceleration();
+	
+
+
+
+	}
 
 
 }

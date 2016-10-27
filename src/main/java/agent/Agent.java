@@ -78,7 +78,12 @@ public abstract class Agent {
 	}
 	
 	public final Point getPosition() {
-		return new Point(position);
+		if (position == null) {
+			return null;
+		}
+		else {
+			return new Point(position);
+		}
 	}
 	
 	public final int getBaseMovementSpeed() {
@@ -90,9 +95,31 @@ public abstract class Agent {
 	}
 	
 	public final Vector2D getVelocity() {
-		return new Vector2D(velocity);
+		if (velocity == null) {
+			return null;
+		}
+		else {
+			return new Vector2D(velocity);
+		}
 	}
-	
+
+	public final Vector2D getAcceleration() {
+		if (acceleration == null) {
+			return null;
+		}
+		else {
+			return new Vector2D(acceleration);
+		}
+	}
+
+	public final Vector2D getFiringVector() {
+		if (firingVector == null) {
+			return null;
+		}
+		else {
+			return new Vector2D(firingVector);
+		}
+	}
 	public final void update() {
 		preUpdateCall();
 		
@@ -134,9 +161,12 @@ public abstract class Agent {
 	}
 	
 	protected final void setFiringVector(Vector2D vector) {
-		if (vector == null)
+		if (vector == null) {
 			firingVector = null;
-		firingVector = new Vector2D(vector);
+		}
+		else {
+			firingVector = new Vector2D(vector);
+		}
 	}
 	
 	protected final void setProjectileType(ProjectileFactory.Type type) {
