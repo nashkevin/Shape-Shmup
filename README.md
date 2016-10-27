@@ -12,10 +12,10 @@ EECS 393 (Fall 2016) -- Software Engineering, Case Western Reserve University
 ## Description
 Our currently-untitled web browser game is a 2D multiplayer game in which you navigate as a simple geometric character and shoot down simple geometric enemies because, let's face it, none of us are artists.
 
-### Features
+### Controls
 * Use arrow keys or WASD to move
 * Aim with the cursor and click to shoot
-* Send chat messages
+* Send chat messages in the bottom chatbox
 
 ### Concept
 When we finish the graphics, the game might look something like this. ![concept_art](http://i.imgur.com/CpOaOha.jpg)
