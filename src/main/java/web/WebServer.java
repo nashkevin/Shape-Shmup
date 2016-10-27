@@ -52,7 +52,8 @@ public class WebServer {
 		}
 		
 		if (input.isClicked()) {
-			broadcast("clicked on " + input.getPoint(), session);
+			broadcast("clicked on " + input.getPoint() + " at " +
+				input.getClickAngle() + "\u00b0", session);
 		}
 	}
 	
