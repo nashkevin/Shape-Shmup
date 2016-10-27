@@ -92,6 +92,12 @@ function getGameWidth() {
 
 function onResize() {
 	renderer.resize(getGameWidth(), getGameHeight());
+	render();
+}
+
+function render() {
+	renderer.render(stage);
+	requestAnimationFrame(render);
 }
 
 function inGameState() {
