@@ -20,14 +20,24 @@ Our currently-untitled web browser game is a 2D multiplayer game in which you na
 ### Concept
 When we finish the graphics, the game might look something like this. ![concept_art](http://i.imgur.com/CpOaOha.jpg)
 
+## Instructions
+First, be sure to have the latest versions of Java and Maven installed. Then, clone or download this repository. Finally, `make run` or `mvn jetty:run`. This will start the game server. In your browser, navigate to `0.0.0.0:8080` or, if running in Windows, `127.0.0.1:8080`. Clients who are connected to the same local network as you can also connect to your private IP address at port 8080 to access your server.
+
 ## Credits
 Here is a comprehensive list of the pre-existing APIs, libraries, and other technologies that make our game possible.
 
 * **Java SE 8**, Oracle Corporation, [license](http://www.oracle.com/technetwork/java/javase/terms/license/index.html)
+ * object-oriented programming language
  * server-side game objects and environment are written in Java
 
 * **Jetty 9**, The Eclipse Foundation, [license](https://www.eclipse.org/jetty/licenses.html)
-  * clients communicate with the game server using Web Sockets provided by the Jetty WebSocket Server API
+ * WebSocket server API
+ * clients communicate with the game server using  the Jetty WebSocketServlet
+
+* **Maven 3**, The Apache Software Foundation, [license](asd.com)
+ * build manager for Java projects
+ * our source is built and tested automatically using Maven
 
 * **PixiJS**, Goodboy Digital Ltd., [license](https://github.com/pixijs/pixi.js/blob/master/LICENSE)
-  * (*not fully implemented*) graphics are displayed in the player's browser using the 2D WebGL renderer PixiJS
+ * 2D WebGL renderer
+ * (*not fully implemented*) graphics are drawn on an HTML5 canvas in the player's browser using PixiJS
