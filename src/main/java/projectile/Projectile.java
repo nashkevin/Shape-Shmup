@@ -10,25 +10,31 @@ import java.util.List;
  */
 
 public abstract class Projectile {
+	private Environment env
 	private Agent owner;
 	private Point position;
 	private Vector2D velocity;
 	
-	public Projectile(Agent owner, Point position, Vector2D velocity) {
+	public Projectile(Environment env, Agent owner, Point position, Vector2D velocity) {
+		this.env = env;
 		this.owner = owner;
 		this.position = position;
 		this.velocity = velocity;
 	}
 	
-	public Agent getOwner() {
+	protected final Environment getEnvironment() {
+		return env;
+	}
+	
+	public final Agent getOwner() {
 		return owner;
 	}
 	
-	public Point getPosition() {
+	public final Point getPosition() {
 		return new Point(position);
 	}
 	
-	public Vector2D getVelocity() {
+	public final Vector2D getVelocity() {
 		return new Vector2D(velocity);
 	}
 	
@@ -41,11 +47,11 @@ public abstract class Projectile {
 		
 		position.setLocation(newX, newY);
 		
-		// TODO: Ask environment about collisions
+		onCollision(env.checkCollision(this));
 	}
 	
 	public final void despawn() {
-		// TODO
+		env.despawnProjectile(this);
 	}
 	
 	protected abstract void onCollision(List<Agent> agents);
