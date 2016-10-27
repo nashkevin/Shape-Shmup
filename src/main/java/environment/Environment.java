@@ -1,10 +1,8 @@
-package main.java.environment;
-
 import java.awt.Point;
 import java.util.*;
 
-import main.java.agent.Agent;
-import main.java.agent.PlayerAgent;
+import main.java.agent;
+import main.java.misc.*;
 import main.java.projectile.*;
 
 
@@ -22,7 +20,7 @@ public class Environment {
   }
   
   
-  public void setTimer(long time, String msg, Agent a){
+  public void setTimer(long time, String msg, agent a){
     Timer timer = new Timer();
     timer.schedule(new TimerTask() {
       @Override
@@ -38,21 +36,21 @@ public class Environment {
   }
   
   public void spawn(){
-    double r1 = Math.random() * 360;
-    double r2 = Math.random() * radius;
-    polarToCartesian(r1, r2);
-    double level = r2 % 5.0;
+    double angle = Math.random() * 360;
+    double distance = Math.random() * radius;
+    polarToCartesian(angle, distance);
     //TODO NPCAgent spawn method
     
     
     
   }
   
-  private static Point polarToCartesian(double degrees, double distance){
+  private static Point polarToCartesian(double angle, double distance){
     Point p = new Point();
-    double x = Math.cos(degrees) * distance;
-    double y = Math.sin(degrees) * distance;
-    p.setLocation(x, y);
+    double x = Math.cos(angle) * distance;
+    double y = Math.sin(angle) * distance;
+    p.setX((int)x);
+    p.setY((int)y);
     return p;
   }
   
