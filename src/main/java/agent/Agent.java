@@ -117,9 +117,7 @@ public abstract class Agent {
 		movementSpeedFactor = Math.max(factor, 0.0);
 	}
 	
-	public final void despawn() {
-		// TODO
-	}
+	public abstract void despawn();
 	
 	protected final void setAcceleration(Vector2D vector) {
 		if (vector == null)
