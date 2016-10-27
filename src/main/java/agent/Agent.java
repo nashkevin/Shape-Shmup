@@ -166,7 +166,7 @@ public abstract class Agent {
 			return null;
 		
 		Vector2D projVelocity = new Vector2D(projectileSpeed, vector.getAngle());
-		Projectile projectile = ProjectileFactory.makeProjectile(projectileType, this, position, projVelocity);
+		Projectile projectile = ProjectileFactory.makeProjectile(projectileType, env, this, position, projVelocity);
 		
 		return projectile;
 	}
