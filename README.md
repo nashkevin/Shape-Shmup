@@ -21,7 +21,9 @@ Our currently-untitled web browser game is a 2D multiplayer game in which you na
 When we finish the graphics, the game might look something like this. ![concept_art](http://i.imgur.com/CpOaOha.jpg)
 
 ## Instructions
-First, be sure to have the latest versions of Java and Maven installed. Then, clone or download this repository. Finally, `make run` or `mvn jetty:run`. This will start the game server. In your browser, navigate to `0.0.0.0:8080` or, if running in Windows, `127.0.0.1:8080`. Clients who are connected to the same local network as you can also connect to your private IP address at port 8080 to access your server.
+First, be sure to have the latest versions of Java and Maven installed. Then, clone or download this repository. Finally, `make run` or `mvn jetty:run`. This will start the game server. In your browser, navigate to `127.0.0.1:8080`. Clients who are connected to the same local network as you can also connect to your local IP address at port 8080 to access your server.
+
+YOu can also run the unit tests with the command `mvn test`.
 
 ## Credits
 Here is a comprehensive list of the pre-existing APIs, libraries, and other technologies that make our game possible.
