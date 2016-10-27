@@ -16,12 +16,12 @@ public class ProjectileFactory {
 		put(Type.TEST, (owner, position, velocity) -> { return new TestProjectile(owner, position, velocity); });
 	}};
 	
-	public static Projectile makeProjectile(Type type, Agent owner, Point position, Vector2D velocity) {
+	public static Projectile makeProjectile(Type type, Environment env, Agent owner, Point position, Vector2D velocity) {
 		FIProjectileCreator creator = factory.get(type);
 		
 		if (creator == null)
 			return null;
 		
-		return creator.createProjectile(owner, position, velocity);
+		return creator.createProjectile(env, owner, position, velocity);
 	}
 }
