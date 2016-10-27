@@ -50,6 +50,10 @@ public class WebServer {
 		if (input.getDirection() != null && !input.getDirection().isEmpty()) {
 			broadcast("moved " + input.getDirection(), session);
 		}
+		
+		if (input.isClicked()) {
+			broadcast("clicked on " + input.getPoint(), session);
+		}
 	}
 	
 	private void broadcast(String message) {
