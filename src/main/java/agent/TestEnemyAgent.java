@@ -1,14 +1,15 @@
 package main.java.agent;
 
 import java.awt.Point;
-
+import java.util.UUID;
 /**
  * @ Zach Janice
  */
 
 public final class TestEnemyAgent extends NPCAgent {
-	public TestEnemyAgent(Point spawnPoint, int level) {
+	public TestEnemyAgent(UUID id, Point spawnPoint, int level) {
 		super(
+				id,
 				spawnPoint,
 				Math.min(level, 1),
 				2,

@@ -1,6 +1,7 @@
 package main.java.agent;
 
 import java.awt.Point;
+import java.util.UUID;
 
 /**
  * @ Zach Janice
@@ -10,8 +11,8 @@ public abstract class NPCAgent extends Agent {
 	private Point spawnPoint;
 	private Agent target;
 	
-	public NPCAgent(Point spawnPoint, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
-		super(spawnPoint, level, team, health, damage, projectileSpeed, baseMovementSpeed);
+	public NPCAgent(UUID id, Point spawnPoint, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
+		super(id, spawnPoint, level, team, health, damage, projectileSpeed, baseMovementSpeed);
 		
 		this.spawnPoint = new Point(spawnPoint);
 		this.target = null;

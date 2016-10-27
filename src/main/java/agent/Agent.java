@@ -1,6 +1,7 @@
 package main.java.agent;
 
 import java.awt.Point;
+import java.util.UUID;
 
 import main.java.misc.Vector2D;
 import main.java.projectile.Projectile;
@@ -11,6 +12,7 @@ import main.java.projectile.ProjectileFactory;
  */
 
 public abstract class Agent {
+	private UUID id;
 	private int level;
 	private int team;
 	
@@ -28,7 +30,8 @@ public abstract class Agent {
 	private Vector2D firingVector;
 	private ProjectileFactory.Type projectileType;
 	
-	public Agent(Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
+	public Agent(UUID id, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
+		this.id = id;
 		this.level = level;
 		this.team = team;
 		
