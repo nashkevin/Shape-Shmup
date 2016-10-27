@@ -1,8 +1,10 @@
+package main.java.environment;
+
 import java.awt.Point;
 import java.util.*;
 
-import main.java.agent;
-import main.java.misc.*;
+import main.java.agent.Agent;
+import main.java.agent.PlayerAgent;
 import main.java.projectile.*;
 
 
@@ -20,7 +22,7 @@ public class Environment {
   }
   
   
-  public void setTimer(long time, String msg, agent a){
+  public void setTimer(long time, String msg, Agent a){
     Timer timer = new Timer();
     timer.schedule(new TimerTask() {
       @Override
@@ -50,8 +52,7 @@ public class Environment {
     Point p = new Point();
     double x = Math.cos(degrees) * distance;
     double y = Math.sin(degrees) * distance;
-    p.setX((int)x);
-    p.setY((int)y);
+    p.setLocation(x, y);
     return p;
   }
   
@@ -60,12 +61,12 @@ public class Environment {
   }
   
   public void spawnPlayer(PlayerAgent player){
-    player
+    //TODO
   }
   
   private Point randomPlayerSpawn(){
     double r = Math.random() * 360;
-    return convertPolar(radius, r);
+    return polarToCartesian(radius, r);
   }
   
   //TODO - Integration: Send agent hash to server?
