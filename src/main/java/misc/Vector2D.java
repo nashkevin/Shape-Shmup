@@ -24,4 +24,9 @@ public final class Vector2D {
 	public double getAngle() {
 		return angle;
 	}
+
+	public static Vector2D normalize(Vector2D input) {
+		//TODO, return a vector of the same angle as input but of unit length
+		return null;
+	}
 }
