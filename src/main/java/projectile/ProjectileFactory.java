@@ -13,7 +13,7 @@ public class ProjectileFactory {
 	
 	@SuppressWarnings("serial")
 	public static HashMap<Type, FIProjectileCreator> factory = new HashMap<Type, FIProjectileCreator>() {{
-		put(Type.TEST, (owner, position, velocity) -> { return new TestProjectile(owner, position, velocity); });
+		put(Type.TEST, (env, owner, position, velocity) -> { return new TestProjectile(env, owner, position, velocity); });
 	}};
 	
 	public static Projectile makeProjectile(Type type, Environment env, Agent owner, Point position, Vector2D velocity) {
