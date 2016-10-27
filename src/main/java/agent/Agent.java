@@ -50,6 +50,9 @@ public abstract class Agent {
 		this.projectileType = ProjectileFactory.Type.NONE;
 	}
 	
+	public final UUID getID() {
+		return this.id;
+	}
 	public final int getLevel() {
 		return level;
 	}
