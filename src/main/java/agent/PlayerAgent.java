@@ -19,6 +19,10 @@ public class PlayerAgent extends Agent {
         this.eventInbox = new LinkedList<ClientInput>();
 	}
 
+	public final void despawn() {
+		getEnvironment().despawnPlayerAgent(this);
+	}
+	
 	protected void preUpdateCall() {
 		//TODO
 	}
