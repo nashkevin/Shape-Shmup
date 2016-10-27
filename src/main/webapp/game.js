@@ -59,7 +59,9 @@ function joinGame() {
 function send() {
 	var text = document.getElementById("messageinput").value;
 	document.getElementById("messageinput").value = "";
-	webSocket.send(JSON.stringify({ 'message': text }));
+	if (text != "") {
+		webSocket.send(JSON.stringify({ 'message': text }));
+	}
 }
 
 function closeSocket() {
