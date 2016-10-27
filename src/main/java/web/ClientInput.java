@@ -5,7 +5,10 @@ import java.awt.Point;
 /**
  * POJO representing information that each client can send to the server.
  */
+
+
 public class ClientInput {
+	
 	private String name;
 	private String message;
 	private String direction;
