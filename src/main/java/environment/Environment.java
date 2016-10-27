@@ -51,14 +51,14 @@ public class Environment {
   }
 
   public void spawnPlayer(String name, UUID id) {
-    PlayerAgent player = new PlayerAgent(id, randomPlayerSpawn(), 0, 0, 0, 0, 0, 0/*TODO insert appropriate constructor variables*/);
+    PlayerAgent player = new PlayerAgent(id, this, randomPlayerSpawn(), 0, 0, 0, 0, 0, 0/*TODO insert appropriate constructor variables*/);
     activePlayerAgents.add(player);
 
     //TODO send update message to server
   }
 
   public void spawnNPC(){
-    NPCAgent agent = new TestEnemyAgent(UUID.randomUUID(), randomNPCSpawn(), 0/*this level won't be necessary eventually*/);
+    NPCAgent agent = new TestEnemyAgent(UUID.randomUUID(), this, randomNPCSpawn(), 0/*this level won't be necessary eventually*/);
     activeNPCAgents.add(agent);
     
     //TODO send update message to server
