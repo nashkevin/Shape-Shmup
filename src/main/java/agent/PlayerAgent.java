@@ -2,7 +2,7 @@ package main.java.agent;
 
 import java.awt.Point;
 import main.java.misc.Vector2D;
-import main.java.misc.PlayerEvent;
+import main.java.web.ClientInput;
 import java.util.Queue;
 import java.util.LinkedList;
 
@@ -12,18 +12,18 @@ public class PlayerAgent extends Agent {
 	Vector2D acceleration;
 	private Vector2D firingVector;
 
-	Queue<PlayerEvent> eventInbox; 
+	Queue<ClientInput> eventInbox; 
 
 	public PlayerAgent(Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
 		super(position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
-        this.eventInbox = new LinkedList<PlayerEvent>();
+        this.eventInbox = new LinkedList<ClientInput>();
 	}
 
 	protected void preUpdateCall() {
 		//TODO
 	}
 	
-	public void addPlayerEvent(PlayerEvent event) {
+	public void addPlayerEvent(ClientInput event) {
         eventInbox.add(event);
 	}
 
