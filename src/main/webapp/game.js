@@ -136,7 +136,11 @@ function clickPosition(e) {
 	}
 }
 
-/* Returns angle in degrees with conventions N: -90, E: 0, S: 90, W: 180 */
+/* Returns angle in degrees with the following conventions
+ *     N: -90
+ *     E:   0
+ *     S:  90
+ *     W: 180     */
 function convertClickToAngle(clickX, clickY) {
     var originX = renderer.width / 2;
     var originY = renderer.height / 2;
