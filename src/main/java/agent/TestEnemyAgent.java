@@ -7,9 +7,10 @@ import java.util.UUID;
  */
 
 public final class TestEnemyAgent extends NPCAgent {
-	public TestEnemyAgent(UUID id, Point spawnPoint, int level) {
+	public TestEnemyAgent(UUID id, Environment env, Point spawnPoint, int level) {
 		super(
 				id,
+				env,
 				spawnPoint,
 				Math.min(level, 1),
 				2,
