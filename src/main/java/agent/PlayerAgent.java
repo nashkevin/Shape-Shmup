@@ -14,8 +14,8 @@ public class PlayerAgent extends Agent {
 
 	Queue<ClientInput> eventInbox; 
 
-	public PlayerAgent(UUID id, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
-		super(id, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
+	public PlayerAgent(UUID id, Environment env, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
+		super(id, env, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
         this.eventInbox = new LinkedList<ClientInput>();
 	}
 
