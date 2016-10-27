@@ -13,6 +13,7 @@ import main.java.projectile.ProjectileFactory;
 
 public abstract class Agent {
 	private UUID id;
+	private Environment env;
 	private int level;
 	private int team;
 	
@@ -30,8 +31,9 @@ public abstract class Agent {
 	private Vector2D firingVector;
 	private ProjectileFactory.Type projectileType;
 	
-	public Agent(UUID id, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
+	public Agent(UUID id, Environment env, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
 		this.id = id;
+		this.env = env;
 		this.level = level;
 		this.team = team;
 		
@@ -53,6 +55,11 @@ public abstract class Agent {
 	public final UUID getID() {
 		return this.id;
 	}
+	
+	protected final Environment getEnvironment() {
+		return env;
+	}
+	
 	public final int getLevel() {
 		return level;
 	}
