@@ -67,7 +67,10 @@ public class PlayerAgent extends Agent {
 		//calculate firing vector
 		Vector2D fireVector = null;
 		if (clickX != null && clickY != null) {
-			fireVector = new Vector2D(clickX, clickY);
+			double horizontalFiring = clickX - getPosition().getX();
+			double verticalFiring = clickY - getPosition().getY();
+			//TODO: Change clickX and clickY in the Javascript code such that it doesn't take the distance from the corner
+			fireVector = new Vector2D(horizontalFiring, verticalFiring);
 		}
 
 		//set vectors
