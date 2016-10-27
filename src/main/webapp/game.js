@@ -2,6 +2,9 @@ var webSocket;
 var messages = document.getElementById("messages");
 
 var canvas = document.getElementById("gameCanvas");
+
+canvas.addEventListener("click", clickPosition);
+
 var renderer = PIXI.autoDetectRenderer(getGameWidth(), getGameHeight(), {view: canvas});
 renderer.backgroundColor = 0x272822;
 renderer.autoResize = true;
@@ -70,6 +73,7 @@ function closeSocket() {
 
 function writeResponse(text) {
 	messages.innerHTML += "<br/>" + text;
+	messages.scrollTop = messages.scrollHeight;
 }
 
 function preventDefault(e) {
@@ -88,11 +92,14 @@ function onResize() {
 	renderer.resize(getGameWidth(), getGameHeight());
 }
 
+function inGameState() {
+	return (typeof webSocket !== "undefined" 
+			&& webSocket.readyState === webSocket.OPEN
+			&& document.getElementById("messageinput") !== document.activeElement);
+}
 // Key listener
 window.onkeydown = function (e) {
-	if (typeof webSocket !== "undefined" 
-			&& webSocket.readyState === webSocket.OPEN
-			&& document.getElementById("messageinput") !== document.activeElement) {
+	if (inGameState()) {
 		var code = e.keyCode ? e.keyCode : e.which;
 		switch (code) {
 			case 87: case 38:  // 'w' or up
@@ -114,6 +121,17 @@ window.onkeydown = function (e) {
 		}
 	}
 };
+
+//Mouse click listener function
+function clickPosition(e) {
+	if (inGameState()) {
+		var clickX = e.clientX;
+		var clickY = e.clientY;
+
+		webSocket.send(JSON.stringify({'clickX': clickX, 'clickY': clickY}));
+		//TODO: Fix this so it gets distance from center, not the DOM distance (from corner)
+	}
+}
 
 window.onresize = onResize;
 this.onResize();
