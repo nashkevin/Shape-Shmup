@@ -94,5 +94,9 @@ public class PlayerAgent extends Agent {
         eventInbox.add(event);
 	}
 
+	public Queue<ClientInput> getPlayerEvents() {
+		return new LinkedList<ClientInput>(eventInbox);
+	}
+
 
 }
