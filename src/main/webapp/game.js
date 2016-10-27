@@ -70,6 +70,7 @@ function closeSocket() {
 
 function writeResponse(text) {
 	messages.innerHTML += "<br/>" + text;
+	messages.scrollTop = messages.scrollHeight;
 }
 
 function preventDefault(e) {
