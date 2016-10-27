@@ -23,7 +23,7 @@ When we finish the graphics, the game might look something like this. ![concept_
 ## Instructions
 First, be sure to have the latest versions of Java and Maven installed. Then, clone or download this repository. Finally, `make run` or `mvn jetty:run`. This will start the game server. In your browser, navigate to `127.0.0.1:8080`. Clients who are connected to the same local network as you can also connect to your local IP address at port 8080 to access your server.
 
-YOu can also run the unit tests with the command `mvn test`.
+You can also run the unit tests with the command `mvn test`.
 
 ## Credits
 Here is a comprehensive list of the pre-existing APIs, libraries, and other technologies that make our game possible.
