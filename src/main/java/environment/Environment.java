@@ -63,31 +63,28 @@ public class Environment {
     
     //TODO send update message to server
   }
-
-  private Point randomPlayerSpawn(){
-    double angle = Math.random() * 360;
-    return polarToCartesian(angle, getRadius());
-  }
-
-  private Point randomNPCSpawn(){
-    double angle = Math.random() * 360;
-    double distance = Math.random() * radius;
-    return polarToCartesian(angle, distance);
-  }
   
-  private static Point polarToCartesian(double angle, double distance){
+  public static Point polarToCartesian(double angle, double radius){
     Point p = new Point();
-    double x = Math.cos(angle) * distance;
-    double y = Math.sin(angle) * distance;
+    double x = Math.cos(angle) * radius;
+    double y = Math.sin(angle) * radius;
     p.setLocation(x, y);
     return p;
   }
+
+  //Returns an array where the first value is the angle and the second is the radius
+  public static double[] cartesianToPolar(Point p){
+    double[] polar = new double[2];
+    polar[0] = Math.atan2(p.getY(), p.getX());
+    polar[1] = checkRadius(p);
+    return polar;
+  }
   
-  private double checkRadius(Point p){
+  public static double checkRadius(Point p){
     return Math.sqrt(Math.abs(p.getX()) * Math.abs(p.getX()) + Math.abs(p.getY()) * Math.abs(p.getY()));
   }
   
-  private ArrayList<Agent> checkCollision(Projectile p){
+  public ArrayList<Agent> checkCollision(Projectile p){
     ArrayList<Agent> collisions = new ArrayList();
     for (Agent a : getActivePlayerAgents()){
       if (p.getPosition() == a.getPosition() && a.getTeam() != p.getOwner().getTeam())
@@ -98,6 +95,17 @@ public class Environment {
         collisions.add(a);
     }
     return collisions;
+  }
+
+  private Point randomPlayerSpawn(){
+    double angle = Math.random() * 360;
+    return polarToCartesian(angle, getRadius());
+  }
+
+  private Point randomNPCSpawn(){
+    double angle = Math.random() * 360;
+    double distance = Math.random() * getRadius();
+    return polarToCartesian(angle, distance);
   }
     
 }
