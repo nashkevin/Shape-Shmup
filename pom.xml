@@ -8,6 +8,7 @@
 	<version>1.0</version>
 	<properties>
 		<jetty-version>9.3.12.v20160915</jetty-version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
 		<dependency>
