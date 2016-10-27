@@ -12,10 +12,10 @@ EECS 393 (Fall 2016) -- Software Engineering, Case Western Reserve University
 ## Description
 Our currently-untitled web browser game is a 2D multiplayer game in which you navigate as a simple geometric character and shoot down simple geometric enemies because, let's face it, none of us are artists.
 
-### Controls
+### Features
 * Use arrow keys or WASD to move
 * Aim with the cursor and click to shoot
-* Send chat messages in the bottom chatbox
+* Send chat messages
 
 ### Concept
 When we finish the graphics, the game might look something like this. ![concept_art](http://i.imgur.com/CpOaOha.jpg)
@@ -34,7 +34,7 @@ Here is a comprehensive list of the pre-existing APIs, libraries, and other tech
  * WebSocket server API
  * clients communicate with the game server using  the Jetty WebSocketServlet
 
-* **Maven 3**, The Apache Software Foundation, [license](asd.com)
+* **Maven 3**, The Apache Software Foundation, [license](http://maven.apache.org/ref/3.0/license.html)
  * build manager for Java projects
  * our source is built and tested automatically using Maven
 
