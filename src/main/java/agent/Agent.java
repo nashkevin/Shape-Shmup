@@ -1,4 +1,5 @@
 package main.java.agent;
+import main.java.environment.Environment;
 
 import java.awt.Point;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import main.java.projectile.ProjectileFactory;
 
 public abstract class Agent {
 	private UUID id;
+	private Environment env;
 	private int level;
 	private int team;
 	
@@ -30,8 +32,9 @@ public abstract class Agent {
 	private Vector2D firingVector;
 	private ProjectileFactory.Type projectileType;
 	
-	public Agent(UUID id, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
+	public Agent(UUID id, Environment env, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
 		this.id = id;
+		this.env = env;
 		this.level = level;
 		this.team = team;
 		
@@ -53,6 +56,11 @@ public abstract class Agent {
 	public final UUID getID() {
 		return this.id;
 	}
+	
+	protected final Environment getEnvironment() {
+		return env;
+	}
+	
 	public final int getLevel() {
 		return level;
 	}
@@ -117,9 +125,7 @@ public abstract class Agent {
 		movementSpeedFactor = Math.max(factor, 0.0);
 	}
 	
-	public final void despawn() {
-		// TODO
-	}
+	public abstract void despawn();
 	
 	protected final void setAcceleration(Vector2D vector) {
 		if (vector == null)
@@ -161,7 +167,7 @@ public abstract class Agent {
 			return null;
 		
 		Vector2D projVelocity = new Vector2D(projectileSpeed, vector.getAngle());
-		Projectile projectile = ProjectileFactory.makeProjectile(projectileType, this, position, projVelocity);
+		Projectile projectile = ProjectileFactory.makeProjectile(projectileType, env, this, position, projVelocity);
 		
 		return projectile;
 	}

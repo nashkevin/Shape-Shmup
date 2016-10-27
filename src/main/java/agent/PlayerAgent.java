@@ -1,4 +1,5 @@
 package main.java.agent;
+import main.java.environment.Environment;
 
 import java.awt.Point;
 import main.java.misc.Vector2D;
@@ -14,11 +15,15 @@ public class PlayerAgent extends Agent {
 
 	Queue<ClientInput> eventInbox; 
 
-	public PlayerAgent(UUID id, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
-		super(id, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
+	public PlayerAgent(UUID id, Environment env, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
+		super(id, env, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
         this.eventInbox = new LinkedList<ClientInput>();
 	}
 
+	public final void despawn() {
+		getEnvironment().despawnPlayerAgent(this);
+	}
+	
 	protected void preUpdateCall() {
 		final Point ORIGIN = new Point(); // (0, 0), used for reference in calculating vectors
 		int countLeft = 0;

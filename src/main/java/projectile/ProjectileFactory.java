@@ -1,4 +1,5 @@
 package main.java.projectile;
+import main.java.environment.Environment;
 
 import main.java.agent.Agent;
 import java.awt.Point;
@@ -13,15 +14,15 @@ public class ProjectileFactory {
 	
 	@SuppressWarnings("serial")
 	public static HashMap<Type, FIProjectileCreator> factory = new HashMap<Type, FIProjectileCreator>() {{
-		put(Type.TEST, (owner, position, velocity) -> { return new TestProjectile(owner, position, velocity); });
+		put(Type.TEST, (env, owner, position, velocity) -> { return new TestProjectile(env, owner, position, velocity); });
 	}};
 	
-	public static Projectile makeProjectile(Type type, Agent owner, Point position, Vector2D velocity) {
+	public static Projectile makeProjectile(Type type, Environment env, Agent owner, Point position, Vector2D velocity) {
 		FIProjectileCreator creator = factory.get(type);
 		
 		if (creator == null)
 			return null;
 		
-		return creator.createProjectile(owner, position, velocity);
+		return creator.createProjectile(env, owner, position, velocity);
 	}
 }

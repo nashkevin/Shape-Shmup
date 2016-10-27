@@ -1,4 +1,5 @@
 package main.java.projectile;
+import main.java.environment.Environment;
 
 import main.java.agent.Agent;
 import java.awt.Point;
@@ -10,8 +11,8 @@ import java.util.List;
  */
 
 public final class TestProjectile extends Projectile {
-	public TestProjectile(Agent owner, Point position, Vector2D velocity) {
-		super(owner, position, velocity);
+	public TestProjectile(Environment env, Agent owner, Point position, Vector2D velocity) {
+		super(env, owner, position, velocity);
 	}
 	
 	protected final void onCollision(List<Agent> agents) {
