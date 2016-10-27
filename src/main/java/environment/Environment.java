@@ -15,7 +15,7 @@ public class Environment {
   private HashSet<NPCAgent> activeNPCAgents;
   private HashSet<Projectile> activeProjectiles;
   
-  public Environment(double radius, Point origin) {
+  public Environment(double radius) {
     this.radius = radius;
   }
 
@@ -87,12 +87,17 @@ public class Environment {
     return Math.sqrt(Math.abs(p.getX()) * Math.abs(p.getX()) + Math.abs(p.getY()) * Math.abs(p.getY()));
   }
   
-  private boolean checkCollision(Agent agent, Projectile p){
-    boolean collision = false;
-    //TODO - Collision is not necessarily defined by same position
-    if (p.getPosition() == agent.getPosition() && agent.getTeam() != p.getOwner().getTeam())
-      collision = true;
-    return collision;
+  private ArrayList<Agent> checkCollision(Projectile p){
+    ArrayList<Agent> collisions = new ArrayList();
+    for (Agent a : getActivePlayerAgents()){
+      if (p.getPosition() == a.getPosition() && a.getTeam() != p.getOwner().getTeam())
+        collisions.add(a);
+    }
+    for (Agent a : getActiveNPCAgents()){
+      if (p.getPosition() == a.getPosition() && a.getTeam() != p.getOwner().getTeam())
+        collisions.add(a);
+    }
+    return collisions;
   }
     
 }
