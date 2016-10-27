@@ -55,8 +55,13 @@ public class PlayerAgentTest {
 		player.addPlayerEvent(eventUp);
 
 		player.update();
-		Vector2D firingVector = player.getFiringVector();
-		Vector2D accelerationVector = player.getAcceleration();
+		
+		Assert.assertEquals(null, player.getFiringVector());
+
+		Vector2D expectedAcceleration = new Vector2D(Math.sqrt(2), Math.PI/4);
+		Vector2D playerAcceleration = player.getAcceleration();
+		Assert.assertEquals(expectedAcceleration.getMagnitude(), player.getAcceleration().getMagnitude(), 0.001);
+		Assert.assertEquals(expectedAcceleration.getAngle(), player.getAcceleration().getAngle(), 0.001);
 	
 
 

@@ -62,7 +62,7 @@ public class PlayerAgent extends Agent {
 		double accelerationAngle = calculateAngle(ORIGIN, accelerationPoint);
 		double accelerationMagnitude = calculateMagnitude(ORIGIN, accelerationPoint);
 
-		Vector2D accelVector = new Vector2D(accelerationAngle, accelerationMagnitude);
+		Vector2D accelVector = new Vector2D(accelerationMagnitude, accelerationAngle);
 		
 		//calculate firing vector
 		Vector2D fireVector = null;
@@ -81,7 +81,7 @@ public class PlayerAgent extends Agent {
 	private static double calculateAngle(Point p1, Point p2) {
 		double verticalDistance = p2.y - p1.y;
 		double horizontalDistance = p2.x - p1.x;
-		return Math.tan(verticalDistance/horizontalDistance);
+		return Math.atan2(verticalDistance, horizontalDistance);
 	}
 
 	private static double calculateMagnitude(Point p1, Point p2) {
