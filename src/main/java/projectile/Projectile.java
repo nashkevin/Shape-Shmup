@@ -1,4 +1,5 @@
 package main.java.projectile;
+import main.java.environment.Environment;
 
 import main.java.agent.Agent;
 import java.awt.Point;
@@ -10,7 +11,7 @@ import java.util.List;
  */
 
 public abstract class Projectile {
-	private Environment env
+	private Environment env;
 	private Agent owner;
 	private Point position;
 	private Vector2D velocity;

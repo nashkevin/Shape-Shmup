@@ -1,4 +1,5 @@
 package main.java.agent;
+import main.java.environment.Environment;
 
 import java.awt.Point;
 import main.java.misc.Vector2D;
