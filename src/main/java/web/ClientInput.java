@@ -14,6 +14,7 @@ public class ClientInput {
 	private String direction;
 	private int clickX = -1;
 	private int clickY = -1;
+	private double clickAngle = 0;
 	
 	public ClientInput() {
 		
@@ -65,5 +66,9 @@ public class ClientInput {
 	
 	public Point getPoint() {
 		return new Point(this.clickX, this.clickY);
+	}
+
+	public double getClickAngle() {
+		return clickAngle;
 	}
 }

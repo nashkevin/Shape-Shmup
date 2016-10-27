@@ -66,8 +66,8 @@ public class Environment {
   
   public static Point polarToCartesian(double angle, double radius){
     Point p = new Point();
-    double x = Math.cos(angle) * radius;
-    double y = Math.sin(angle) * radius;
+    double x = Math.cos(angle * Math.PI / 180) * radius;
+    double y = Math.sin(angle * Math.PI / 180) * radius;
     p.setLocation(x, y);
     return p;
   }
@@ -75,7 +75,7 @@ public class Environment {
   //Returns an array where the first value is the angle and the second is the radius
   public static double[] cartesianToPolar(Point p){
     double[] polar = new double[2];
-    polar[0] = Math.atan2(p.getY(), p.getX());
+    polar[0] = Math.atan2(p.getY(), p.getX()) * 180 / Math.PI;
     polar[1] = checkRadius(p);
     return polar;
   }

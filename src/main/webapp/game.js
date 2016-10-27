@@ -12,6 +12,8 @@ renderer.autoResize = true;
 var stage = new PIXI.Container();
 renderer.render(stage);
 
+//console.log(renderer instanceof PIXI.WebGLRenderer); // Successfully using WebGL?
+
 function joinGame() {
 	// Ensures only one connection is open at a time
 	if(webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
@@ -127,10 +129,19 @@ function clickPosition(e) {
 	if (inGameState()) {
 		var clickX = e.clientX;
 		var clickY = e.clientY;
+        var clickAngle = convertClickToAngle(clickX, clickY);
 
-		webSocket.send(JSON.stringify({'clickX': clickX, 'clickY': clickY}));
-		//TODO: Fix this so it gets distance from center, not the DOM distance (from corner)
+		webSocket.send(JSON.stringify({'clickX': clickX, 'clickY': clickY,
+                                       'clickAngle': clickAngle}));
 	}
+}
+
+/* Returns angle in degrees with conventions N: -90, E: 0, S: 90, W: 180 */
+function convertClickToAngle(clickX, clickY) {
+    var originX = renderer.width / 2;
+    var originY = renderer.height / 2;
+    
+    return Math.atan2(clickY - originY, clickX - originX) * 180 / Math.PI;
 }
 
 window.onresize = onResize;
