@@ -22,8 +22,8 @@ html,body {
     -webkit-user-select: none;
     -o-user-select: none;
 }
-.playarea:hover {
-    cursor: crosshair;
+.playarea {
+    cursor: crosshair !important;
 }
 
 input[type="text"] {
