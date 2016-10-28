@@ -9,7 +9,7 @@
 	</head>
 	<body>
         
-        <div id="pregame">
+        <div id="pregame" class="noselect">
 			<form action="javascript:joinGame();">
 				<h1>Web Browser Game<br>v1.0</h1>
 	            <h2><label>Enter a username<br><input type="text" id="username" name="username"></label></h2>
@@ -22,14 +22,14 @@
 				</li>
 				
 				<li>
-					<p class="action"><span class="circle"><img src="images/mouse.png" height="35" width="22"></span></p>
+					<p class="action"><span class="circle"><img src="images/mouse.png" height="19" width="12"></span></p>
 					<p class="result">Aim &amp; Shoot</p>
 				</li>
 			</ul>
 		</div>
         
         <div id="game" class="hidden">
-        	<canvas id="gameCanvas" tabindex="0"></canvas>
+        	<canvas id="gameCanvas" class="playarea" tabindex="0"></canvas>
         
             <div id="chat">
             	<div id="messages"></div>
