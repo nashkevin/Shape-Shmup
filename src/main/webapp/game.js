@@ -155,4 +155,7 @@ function convertClickToAngle(clickX, clickY) {
 }
 
 window.onresize = onResize;
-this.onResize();
+
+window.onload = function() {
+	document.getElementById("username").select();
+}
