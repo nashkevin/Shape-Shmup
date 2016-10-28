@@ -3,9 +3,40 @@ html,body {
     padding: 0;
     overflow: hidden;
     background: #1C1B19;
-    color:#FFF;
+    color: #F8F8F2;
     font: 1em/1.5 Helvetica Neue,Helvetica,Arial,sans-serif
 }
+
+::selection {
+    background: #406E1D;
+}
+::-moz-selection {
+    background: #406E1D;
+}
+
+/* Cooler scrollbars, if your browser supports webkit */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #BBBFA4;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #CAD8B1;
+}
+::-webkit-scrollbar-thumb:active {
+    background: #F8F8F2;
+}
+::-webkit-scrollbar-track {
+    background: #737564;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-track:hover {
+    background: #525448;
+}
+
 .hidden {
     display: none
 }
@@ -14,7 +45,7 @@ html,body {
     top: -9999px !important;
     left: -9999px !important
 }
-.noselect { /* Best attempt at multiplatform unselectable text */
+.noselect { /* Best attempt at universal unselectable text */
     cursor: default;
     user-select: none;
     -moz-user-select: none;
@@ -34,8 +65,8 @@ input[type="text"] {
 }
 input[type="submit"],button {
     color: #FFF;
-    background: #406e1d;
-    border: .125em outset #406e1d;
+    background: #406E1D;
+    border: .125em outset #406E1D;
     cursor: pointer;
     border-radius: .25em;
     padding: .125em .5em;
@@ -119,8 +150,10 @@ ul#instructions li {
 
 #messages {
     height: 130px;
-    overflow: scroll;
-    background: #131211;
+    word-break: break-all;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    background: #131411;
     padding: 0 1em
 }
 #chatInput {

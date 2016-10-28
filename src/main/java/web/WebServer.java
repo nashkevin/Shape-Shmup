@@ -66,7 +66,7 @@ public class WebServer {
 	private void broadcast(String message, Session sourceSession) {
 		String sourceName = sessions.get(sourceSession);
 		if (sourceName != null && !sourceName.isEmpty()) {
-			message = sourceName + ": " + message;
+			message = "<strong>" + sourceName + ":</strong> " + message;
 		}
 		for (Session s: sessions.keySet()) {
 			if (s.isOpen()) {
