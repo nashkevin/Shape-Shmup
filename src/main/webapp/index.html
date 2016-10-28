@@ -9,11 +9,24 @@
 	</head>
 	<body>
         
-        <form id="pregame" action="javascript:joinGame();">
-			<h1>Web Browser Game<br>v1.0</h1>
-            <h2><label>Enter a username<br><input type="text" id="username" name="username"></label></h2>
-			<p class="hidden-accessible"><button type="submit">Join Game</button></p>
-        </form>
+        <div id="pregame">
+			<form action="javascript:joinGame();">
+				<h1>Web Browser Game<br>v1.0</h1>
+	            <h2><label>Enter a username<br><input type="text" id="username" name="username"></label></h2>
+				<p class="hidden-accessible"><button type="submit">Join Game</button></p>
+	        </form>
+			<ul id="instructions">
+				<li>
+					<p class="action"><kbd>W</kbd><br><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></p>
+					<p class="result">Move</p>
+				</li>
+				
+				<li>
+					<p class="action"><span class="circle"><img src="images/mouse.png" height="35" width="22"></span></p>
+					<p class="result">Aim &amp; Shoot</p>
+				</li>
+			</ul>
+		</div>
         
         <div id="game" class="hidden">
         	<canvas id="gameCanvas"></canvas>

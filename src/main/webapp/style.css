@@ -3,12 +3,19 @@ html,body{margin:0;padding:0;overflow:hidden;background:#1C1B19;color:#FFF;font:
 .hidden-accessible{position:absolute !important;top:-9999px !important;left:-9999px!important}
 
 input[type="text"]{border:.125em solid #FFF;padding:.25em;background:transparent;color:#FFF}
+kbd{background:#F5F5F5;color:#000;border:.25em outset #D6D6D6;margin:.25em;padding:.125em .25em;line-height:2}
 
 #pregame{position:absolute;top:40%;left:50%;transform:translate(-50%, -50%);text-align:center}
 #pregame h1{color:#9CD96D;text-align:center;font-size:2.5em;margin-left:-25%;line-height:1;
 	-ms-transform:rotate(-9deg);-webkit-transform:rotate(-9deg);transform:rotate(-9deg)}
-#pregame h2{font-weight:500}
+#pregame h2{font-weight:500;font-size:1.5em}
 #pregame input[type="text"]{width:9em;font-size:1em}
+
+ul#instructions{list-style-type:none;padding:0;margin:0 auto;max-width:15em}
+ul#instructions li{margin:0 1%;padding:0;float:left;width:48%}
+#instructions .action{height:3em}
+#instructions .circle{border:2px solid #FFF;border-radius:50px;height:50px;width:50px;display:block;margin:0 auto}
+#instructions .circle img{margin:6px 0 0 3px}
 
 #chat{position:fixed;bottom:0;left:0;right:0;height:150px;background:#272822}
 
