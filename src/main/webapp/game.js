@@ -101,12 +101,16 @@ function render() {
 }
 
 function inGameState() {
-	return (typeof webSocket !== "undefined" 
-			&& webSocket.readyState === webSocket.OPEN
-			&& document.getElementById("messageinput") !== document.activeElement);
+	return (typeof webSocket !== "undefined" && webSocket.readyState === webSocket.OPEN);
 }
 // Key listener
 window.onkeydown = function (e) {
+	// Ignore key events within text input
+	var currentTag = e.target.tagName.toLowerCase();
+	if (currentTag == "input" || currentTag == "textarea") {
+		return;
+	}
+	
 	if (inGameState()) {
 		var code = e.keyCode ? e.keyCode : e.which;
 		switch (code) {
@@ -132,6 +136,7 @@ window.onkeydown = function (e) {
 
 //Mouse click listener function
 function clickPosition(e) {
+	this.focus(); // Move focus to the game canvas
 	if (inGameState()) {
 		var clickX = e.clientX;
 		var clickY = e.clientY;
