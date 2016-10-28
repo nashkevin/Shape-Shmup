@@ -3,6 +3,8 @@ html,body{margin:0;padding:0;overflow:hidden;background:#1C1B19;color:#FFF;font:
 .hidden-accessible{position:absolute !important;top:-9999px !important;left:-9999px!important}
 
 input[type="text"]{border:.125em solid #FFF;padding:.25em;background:transparent;color:#FFF}
+input[type="submit"],button{color:#FFF;background:#406e1d;border:.125em outset #406e1d;cursor:pointer;border-radius:.25em;padding:.125em .5em;font-size:.9em;vertical-align:middle}
+input[type="submit"]:hover,button:hover{background:#487C20;border-color:#487C20}
 kbd{background:#F5F5F5;color:#000;border:.25em outset #D6D6D6;margin:.25em;padding:.125em .25em;line-height:2}
 
 #pregame{position:absolute;top:40%;left:50%;transform:translate(-50%, -50%);text-align:center}
@@ -17,8 +19,8 @@ ul#instructions li{margin:0 1%;padding:0;float:left;width:48%}
 #instructions .circle{border:2px solid #FFF;border-radius:50px;height:50px;width:50px;display:block;margin:0 auto}
 #instructions .circle img{margin:6px 0 0 3px}
 
-#chat{position:fixed;bottom:0;left:0;right:0;height:150px;background:#272822}
+#chat{position:fixed;bottom:0;left:0;right:0;height:175px;background:#272822}
 
-#messages{height:115px;overflow:scroll;background:#131211;padding:0 1em}
+#messages{height:130px;overflow:scroll;background:#131211;padding:0 1em}
 #chatInput{position:fixed;bottom:10px;left:1em}
 #leaveButton{position:fixed;bottom:10px;right:1em}
