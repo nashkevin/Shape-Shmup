@@ -1,10 +1,17 @@
-
-html,body{margin:0;padding:0;overflow:hidden}
+html,body{margin:0;padding:0;overflow:hidden;background:#1C1B19;color:#FFF;font:1em/1.5 Helvetica Neue,Helvetica,Arial,sans-serif}
 .hidden{display:none}
+.hidden-accessible{position:absolute !important;top:-9999px !important;left:-9999px!important}
 
-#pregame{position:absolute;top:50%;left:50%;transform:translate(-50%, -50%)}
-#chat{position:fixed;bottom:0;left:0;right:0;height:150px}
+input[type="text"]{border:.125em solid #FFF;padding:.25em;background:transparent;color:#FFF}
 
-#messages{height:115px;overflow:scroll;background:#CCC;padding:0 1em}
+#pregame{position:absolute;top:40%;left:50%;transform:translate(-50%, -50%);text-align:center}
+#pregame h1{color:#9CD96D;text-align:center;font-size:2.5em;margin-left:-25%;line-height:1;
+	-ms-transform:rotate(-9deg);-webkit-transform:rotate(-9deg);transform:rotate(-9deg)}
+#pregame h2{font-weight:500}
+#pregame input[type="text"]{width:9em;font-size:1em}
+
+#chat{position:fixed;bottom:0;left:0;right:0;height:150px;background:#272822}
+
+#messages{height:115px;overflow:scroll;background:#131211;padding:0 1em}
 #chatInput{position:fixed;bottom:10px;left:1em}
 #leaveButton{position:fixed;bottom:10px;right:1em}
