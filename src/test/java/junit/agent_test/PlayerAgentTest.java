@@ -1,4 +1,4 @@
-package test.java;
+package test.java.junit.agent_test;
 import main.java.agent.PlayerAgent;
 import main.java.environment.Environment;
 import main.java.web.ClientInput;

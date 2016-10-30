@@ -1,4 +1,4 @@
-package test.java;
+package test.java.junit.environment_test;
 import main.java.environment.Environment;
 
 import java.awt.Point;
