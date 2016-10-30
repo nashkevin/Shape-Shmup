@@ -13,10 +13,15 @@ import javax.websocket.server.ServerEndpoint;
 
 import com.google.gson.Gson;
 
+import main.java.environment.Environment;
+
 @ServerEndpoint("/socket") 
 public class WebServer {
+	private static final int RADIUS = 200;
+	
 	/** The sessions of all players, mapped to each player's chosen name. */
 	private static final Map<Session, String> sessions = Collections.synchronizedMap(new HashMap<Session, String>());
+	private Environment environment = new Environment(RADIUS);
 	
 	/** When a new client makes a connection to the server. */
 	@OnOpen
