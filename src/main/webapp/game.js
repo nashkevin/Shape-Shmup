@@ -147,16 +147,16 @@ function clickPosition(e) {
 	}
 }
 
-/* Returns angle in degrees with the following conventions
- *     N: -90
- *     E:   0
- *     S:  90
- *     W: 180     */
+/* Returns angle in radians with the following conventions
+ *     N: -pi/2		*
+ *     E: 	  0		*
+ *     S:  pi/2		*
+ *     W:    pi     */
 function convertClickToAngle(clickX, clickY) {
     var originX = renderer.width / 2;
     var originY = renderer.height / 2;
     
-    return Math.atan2(clickY - originY, clickX - originX) * 180 / Math.PI;
+    return Math.atan2(clickY - originY, clickX - originX);
 }
 
 window.onresize = onResize;

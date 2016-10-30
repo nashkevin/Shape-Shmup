@@ -68,8 +68,8 @@ public class Environment {
   
   public static Point polarToCartesian(double angle, double radius){
     Point p = new Point();
-    double x = Math.cos(angle * Math.PI / 180) * radius;
-    double y = Math.sin(angle * Math.PI / 180) * radius;
+    double x = Math.cos(angle) * radius;
+    double y = Math.sin(angle) * radius;
     p.setLocation(x, y);
     return p;
   }
@@ -77,7 +77,7 @@ public class Environment {
   //Returns an array where the first value is the angle and the second is the radius
   public static double[] cartesianToPolar(Point p){
     double[] polar = new double[2];
-    polar[0] = Math.atan2(p.getY(), p.getX()) * 180 / Math.PI;
+    polar[0] = Math.atan2(p.getY(), p.getX());
     polar[1] = checkRadius(p);
     return polar;
   }
@@ -100,12 +100,12 @@ public class Environment {
   }
 
   private Point randomPlayerSpawn(){
-    double angle = Math.random() * 360;
+    double angle = Math.random() * 2 * Math.PI;
     return polarToCartesian(angle, getRadius());
   }
 
   private Point randomNPCSpawn(){
-    double angle = Math.random() * 360;
+    double angle = Math.random() * 2 * Math.PI;
     double distance = Math.random() * getRadius();
     return polarToCartesian(angle, distance);
   }
