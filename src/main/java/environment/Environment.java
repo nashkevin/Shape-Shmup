@@ -10,9 +10,9 @@ import main.java.projectile.*;
 public class Environment {
   
   private double radius;
-  private HashSet<PlayerAgent> activePlayerAgents;
-  private HashSet<NPCAgent> activeNPCAgents;
-  private HashSet<Projectile> activeProjectiles;
+  private HashSet<PlayerAgent> activePlayerAgents = new HashSet<PlayerAgent>();
+  private HashSet<NPCAgent> activeNPCAgents = new HashSet<NPCAgent>();
+  private HashSet<Projectile> activeProjectiles = new HashSet<Projectile>();
   
   public Environment(double radius) {
     this.radius = radius;
