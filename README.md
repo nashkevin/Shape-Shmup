@@ -7,7 +7,7 @@ EECS 393 (Fall 2016) -- Software Engineering, Case Western Reserve University
 * [Drew Mitchell](https://github.com/nerdydrew) ([atm62](mailto:atm62@case.edu?Subject=Cool%20EECS%20393%20project))
 * [Kevin Nash](https://github.com/nashkevin) ([kjn33](mailto:kjn33@case.edu?Subject=Cool%20EECS%20393%20project))
 * [Pete Thompson](https://github.com/bigpetenasty) ([pjt37](mailto:pjt37@case.edu?Subject=Cool%20EECS%20393%20project))
-* [Kevin Wang](https://github.com/kevinwang95) ([kxw325](mailto:kxw325@case.edu?Subject=Cool%20EECS%20393%20project))
+* [Kevin Wang](https://github.com/kevinwang95) ([kxw233](mailto:kxw233@case.edu?Subject=Cool%20EECS%20393%20project))
 
 ## Description
 Our currently-untitled web browser game is a 2D multiplayer game in which you navigate as a simple geometric character and shoot down simple geometric enemies because, let's face it, none of us are artists.
