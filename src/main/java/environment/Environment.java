@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.util.*;
 
 import main.java.agent.*;
-import main.java.misc.*;
 import main.java.projectile.*;
 
 
@@ -85,7 +84,7 @@ public class Environment {
   }
   
   public ArrayList<Agent> checkCollision(Projectile p){
-    ArrayList<Agent> collisions = new ArrayList();
+    ArrayList<Agent> collisions = new ArrayList<Agent>();
     for (Agent a : getActivePlayerAgents()){
       if (p.getPosition() == a.getPosition() && a.getTeam() != p.getOwner().getTeam())
         collisions.add(a);

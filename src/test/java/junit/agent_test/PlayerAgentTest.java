@@ -4,7 +4,7 @@ import main.java.environment.Environment;
 import main.java.web.ClientInput;
 import main.java.misc.Vector2D;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import java.awt.Point;
 import java.util.UUID;
@@ -59,7 +59,6 @@ public class PlayerAgentTest {
 		Assert.assertEquals(null, player.getFiringVector());
 
 		Vector2D expectedAcceleration = new Vector2D(Math.sqrt(2), Math.PI/4);
-		Vector2D playerAcceleration = player.getAcceleration();
 		Assert.assertEquals(expectedAcceleration.getMagnitude(), player.getAcceleration().getMagnitude(), 0.001);
 		Assert.assertEquals(expectedAcceleration.getAngle(), player.getAcceleration().getAngle(), 0.001);
 	
