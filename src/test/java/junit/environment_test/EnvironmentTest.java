@@ -23,8 +23,7 @@ public class EnvironmentTest {
 		Assert.assertEquals(new Point(0, 0), Environment.polarToCartesian(0, 0));
 		Assert.assertEquals(new Point(0, 1), Environment.polarToCartesian(Math.PI / 2, 1));
 		Assert.assertEquals(new Point(-2, 0), Environment.polarToCartesian(Math.PI, 2));
-		// TODO: fix the below line
-		Assert.assertEquals(new Point(4, 3), Environment.polarToCartesian(36.87, 5));
+		Assert.assertEquals(new Point(4, 3), Environment.polarToCartesian(Math.asin(0.6), 5));
 	}
 
 	@Test
@@ -32,7 +31,6 @@ public class EnvironmentTest {
 		Assert.assertArrayEquals(new double[] {0, 0}, Environment.cartesianToPolar(new Point(0, 0)), ERROR_MARGIN);
 		Assert.assertArrayEquals(new double[] {Math.PI / 2, 1}, Environment.cartesianToPolar(new Point(0, 1)), ERROR_MARGIN);
 		Assert.assertArrayEquals(new double[] {Math.PI, 2}, Environment.cartesianToPolar(new Point(-2, 0)), ERROR_MARGIN);
-		// TODO: fix the below line
-		Assert.assertArrayEquals(new double[] {36.87, 5}, Environment.cartesianToPolar(new Point(4, 3)), ERROR_MARGIN);
+		Assert.assertArrayEquals(new double[] {Math.asin(0.6), 5}, Environment.cartesianToPolar(new Point(4, 3)), ERROR_MARGIN);
 	}
 }
