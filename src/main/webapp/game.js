@@ -6,7 +6,7 @@ var messages = document.getElementById("messages");
 var canvas = document.getElementById("gameCanvas");
 
 canvas.addEventListener("mousedown", startFiring);
-canvas.addEventListener("mouseup", stopFiring);
+document.addEventListener("mouseup", stopFiring);
 canvas.addEventListener("mousemove", trackAngle);
 
 var renderer = PIXI.autoDetectRenderer(getGameWidth(), getGameHeight(), {view: canvas});
@@ -77,7 +77,9 @@ function sendFrameInput() {
 			webSocket.send(json);
 		}
 
-		delete clientInput.angle;
+		if (!clientInput.isFiring) {
+			delete clientInput.angle;
+		}
 	}
 }
 
@@ -185,12 +187,15 @@ window.onkeyup = function(e) {
 // Action when the user fires a projectile by clicking with the mouse
 function startFiring(e) {
 	this.focus(); // Move focus to the game canvas
-	if (e.button == 0 && connectedToGame())
+	if (e.button == 0 && connectedToGame()) {
 		clientInput.isFiring = true;
+		trackAngle(e);
+	}
 }
 
 function stopFiring(e) {
 	delete clientInput.isFiring;
+	delete clientInput.angle;
 }
 
 function trackAngle(e) {

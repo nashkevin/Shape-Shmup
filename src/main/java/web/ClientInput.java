@@ -1,7 +1,5 @@
 package main.java.web;
 
-import java.awt.Point;
-
 /**
  * POJO representing information that each client can send to the server.
  */
@@ -83,7 +81,7 @@ public class ClientInput {
 		return left || right || up || down;
 	}
 
-	public void setAngle(double clickAngle) {
+	public void setAngle(double angle) {
 		this.angle = angle;
 	}
 
