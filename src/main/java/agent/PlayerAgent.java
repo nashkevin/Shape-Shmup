@@ -35,16 +35,16 @@ public class PlayerAgent extends Agent {
 		//get all events
 		while (!eventInbox.isEmpty()) {
 			ClientInput event = eventInbox.poll();
-			if (event.getDirection().equals("left")) {
+			if (event.isLeft()) {
 				countLeft++;
 			}
-			if (event.getDirection().equals("right")) {
+			if (event.isRight()) {
 				countRight++;
 			}
-			if (event.getDirection().equals("up")) {
+			if (event.isUp()) {
 				countUp++;
 			}
-			if (event.getDirection().equals("down")) {
+			if (event.isDown()) {
 				countDown++;
 			}
 			if (event.isClicked()) {

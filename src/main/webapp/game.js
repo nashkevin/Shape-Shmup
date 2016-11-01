@@ -1,9 +1,10 @@
 var webSocket;
+var clientInput = {};  // represents the current input of the player
 var messages = document.getElementById("messages");
 
 var canvas = document.getElementById("gameCanvas");
 
-canvas.addEventListener("click", clickPosition);
+canvas.addEventListener("click", fire);
 
 var renderer = PIXI.autoDetectRenderer(getGameWidth(), getGameHeight(), {view: canvas});
 renderer.backgroundColor = 0x272822;
@@ -23,10 +24,10 @@ function joinGame() {
 	// Create a new instance of the websocket
 	var url = "ws://" + window.location.host + "/socket";
 	webSocket = new WebSocket(url);
-	 
+
 	// Binds functions to the listeners for the websocket.
 	webSocket.onopen = function(event) {
-		if(event.data === undefined) 
+		if(event.data === undefined)
 			return;
 
 		writeResponse(event.data);
@@ -39,7 +40,7 @@ function joinGame() {
 	webSocket.onclose = function(event) {
 		writeResponse("Connection closed");
 	};
-	
+
 	function completeConnection() {
 		var state = webSocket.readyState;
 		if (state === webSocket.CONNECTING) {
@@ -48,7 +49,7 @@ function joinGame() {
 			// Once connection is established.
 			var username = document.getElementById("username").value;
 			webSocket.send(JSON.stringify({ 'name': username }));
-			
+
 			document.getElementById("pregame").classList.add("hidden");
 			document.getElementById("game").classList.remove("hidden");
 			onResize();
@@ -56,7 +57,7 @@ function joinGame() {
 			alert("The connection to the server was closed before it could be established.");
 		}
 	}
-	
+
 	completeConnection();
 }
 
@@ -103,47 +104,89 @@ function render() {
 function inGameState() {
 	return (typeof webSocket !== "undefined" && webSocket.readyState === webSocket.OPEN);
 }
-// Key listener
+// Key down listener
 window.onkeydown = function (e) {
 	// Ignore key events within text input
 	var currentTag = e.target.tagName.toLowerCase();
 	if (currentTag == "input" || currentTag == "textarea") {
 		return;
 	}
-	
+
 	if (inGameState()) {
 		var code = e.keyCode ? e.keyCode : e.which;
 		switch (code) {
 			case 87: case 38:  // 'w' or up
 				e.preventDefault();
-				webSocket.send(JSON.stringify({ 'direction': 'up' }));
+				clientInput.up = true;
+				clientInput.down = false;
+				webSocket.send(JSON.stringify(clientInput));
 				break;
-			case 65: case 37: // 'a' or left 
+			case 65: case 37: // 'a' or left
 				e.preventDefault();
-				webSocket.send(JSON.stringify({ 'direction': 'left' }));
+				clientInput.left = true;
+				clientInput.right = false;
+				webSocket.send(JSON.stringify(clientInput));
 				break;
 			case 83: case 40: // 's' or down
 				e.preventDefault();
-				webSocket.send(JSON.stringify({ 'direction': 'down' }));
+				clientInput.down = true;
+				clientInput.up = false;
+				webSocket.send(JSON.stringify(clientInput));
 				break;
 			case 68: case 39: // 'd' or right
 				e.preventDefault();
-				webSocket.send(JSON.stringify({ 'direction': 'right' }));
+				clientInput.right = true;
+				clientInput.left = false;
+				webSocket.send(JSON.stringify(clientInput));
 				break;
 		}
 	}
 };
 
-//Mouse click listener function
-function clickPosition(e) {
+// Key up listener
+window.onkeyup = function (e) {
+	// Ignore key events within text input
+	var currentTag = e.target.tagName.toLowerCase();
+	if (currentTag == "input" || currentTag == "textarea") {
+		return;
+	}
+
+	if (inGameState()) {
+		var code = e.keyCode ? e.keyCode : e.which;
+		switch (code) {
+			case 87: case 38:  // 'w' or up
+				e.preventDefault();
+				clientInput.up = false;
+				break;
+			case 65: case 37: // 'a' or left
+				e.preventDefault();
+				clientInput.left = false;
+				break;
+			case 83: case 40: // 's' or down
+				e.preventDefault();
+				clientInput.down = false;
+				break;
+			case 68: case 39: // 'd' or right
+				e.preventDefault();
+				clientInput.right = false;
+				break;
+		}
+	}
+};
+
+// Action when the user fires a projectile by clicking with the mouse
+function fire(e) {
 	this.focus(); // Move focus to the game canvas
 	if (inGameState()) {
-		var clickX = e.clientX;
-		var clickY = e.clientY;
-        var clickAngle = convertClickToAngle(clickX, clickY);
+		clientInput.clickX = e.clientX;
+		clientInput.clickY = e.clientY;
+        clientInput.clickAngle = convertClickToAngle(clientInput.clickX, clientInput.clickY);
 
-		webSocket.send(JSON.stringify({'clickX': clickX, 'clickY': clickY,
-                                       'clickAngle': clickAngle}));
+		webSocket.send(JSON.stringify(clientInput));
+		// Remove click info after it is sent.
+		delete clientInput.clickX;
+		delete clientInput.clickY;
+		delete clientInput.clickAngle;
 	}
 }
 
@@ -155,7 +198,7 @@ function clickPosition(e) {
 function convertClickToAngle(clickX, clickY) {
     var originX = renderer.width / 2;
     var originY = renderer.height / 2;
-    
+
     return Math.atan2(clickY - originY, clickX - originX);
 }
 

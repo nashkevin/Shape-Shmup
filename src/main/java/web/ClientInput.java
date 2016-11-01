@@ -11,7 +11,10 @@ public class ClientInput {
 	
 	private String name;
 	private String message;
-	private String direction;
+	private boolean up = false;
+	private boolean down = false;
+	private boolean left = false;
+	private boolean right = false;
 	private int clickX = -1;
 	private int clickY = -1;
 	private double clickAngle = 0;
@@ -36,12 +39,40 @@ public class ClientInput {
 		this.message = message;
 	}
 
-	public String getDirection() {
-		return direction;
+	public boolean isUp() {
+		return up;
 	}
 
-	public void setDirection(String direction) {
-		this.direction = direction;
+	public void setUp(boolean up) {
+		this.up = up;
+	}
+
+	public boolean isDown() {
+		return down;
+	}
+
+	public void setDown(boolean down) {
+		this.down = down;
+	}
+
+	public boolean isLeft() {
+		return left;
+	}
+
+	public void setLeft(boolean left) {
+		this.left = left;
+	}
+
+	public boolean isRight() {
+		return right;
+	}
+
+	public void setRight(boolean right) {
+		this.right = right;
+	}
+
+	public boolean isMoving() {
+		return left || right || up || down;
 	}
 
 	public boolean isClicked() {
@@ -66,6 +97,10 @@ public class ClientInput {
 	
 	public Point getPoint() {
 		return new Point(this.clickX, this.clickY);
+	}
+
+	public void setClickAngle(double clickAngle) {
+		this.clickAngle = clickAngle;
 	}
 
 	public double getClickAngle() {

@@ -58,8 +58,22 @@ public class WebServer {
 		}
 		
 		// Broadcast movement (for testing purposes).
-		if (input.getDirection() != null && !input.getDirection().isEmpty()) {
-			broadcast("moved " + input.getDirection(), session);
+		if (input.isMoving()) {
+			String direction = "";
+			if (input.isUp()) {
+				direction += "up ";
+			}
+			if (input.isDown()) {
+				direction += "down ";
+			}
+			if (input.isLeft()) {
+				direction += "left ";
+			}
+			if (input.isRight()) {
+				direction += "right";
+			}
+			
+			broadcast("moved " + direction, session);
 		}
 		
 		// Broadcast click info (for testing purposes).
