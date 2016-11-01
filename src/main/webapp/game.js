@@ -5,7 +5,9 @@ var messages = document.getElementById("messages");
 
 var canvas = document.getElementById("gameCanvas");
 
-canvas.addEventListener("click", fire);
+canvas.addEventListener("mousedown", startFiring);
+canvas.addEventListener("mouseup", stopFiring);
+canvas.addEventListener("mousemove", trackAngle);
 
 var renderer = PIXI.autoDetectRenderer(getGameWidth(), getGameHeight(), {view: canvas});
 renderer.backgroundColor = 0x272822;
@@ -75,10 +77,7 @@ function sendFrameInput() {
 			webSocket.send(json);
 		}
 
-		// Remove click info after sending to prevent rapid-fire.
-		delete clientInput.clickX;
-		delete clientInput.clickY;
-		delete clientInput.clickAngle;
+		delete clientInput.angle;
 	}
 }
 
@@ -184,13 +183,19 @@ window.onkeyup = function(e) {
 };
 
 // Action when the user fires a projectile by clicking with the mouse
-function fire(e) {
+function startFiring(e) {
 	this.focus(); // Move focus to the game canvas
-	if (connectedToGame()) {
-		clientInput.clickX = e.clientX;
-		clientInput.clickY = e.clientY;
-        clientInput.clickAngle = convertClickToAngle(clientInput.clickX, clientInput.clickY);
-	}
+	if (e.button == 0 && connectedToGame())
+		clientInput.firing = true;
+}
+
+function stopFiring(e) {
+	delete clientInput.firing;
+}
+
+function trackAngle(e) {
+	if (connectedToGame())
+		clientInput.angle = coordinateToAngle(e.clientX, e.clientY);
 }
 
 /* Returns angle in radians with the following conventions
@@ -199,18 +204,22 @@ function fire(e) {
  *     S:  pi/2		*
  *     W:    pi     */
 function coordinateToAngle(x, y) {
-    var x_origin = renderer.width / 2;
-    var y_origin = renderer.height / 2;
+	var x_origin = renderer.width / 2;
+	var y_origin = renderer.height / 2;
 
-    return Math.atan2(y - y_origin, x - x_origin);
+	return Math.atan2(y - y_origin, x - x_origin);
 }
 
-function animationLoop(){
-    requestAnimationFrame(animationLoop);
-    renderer.render(stage);
+function animationLoop() {
+	requestAnimationFrame(animationLoop);
+	renderer.render(stage);
 }
 animationLoop();
 
 window.onload = function() {
 	document.getElementById("username").select();
+}
+
+document.oncontextmenu = function() {
+	return false;
 }
