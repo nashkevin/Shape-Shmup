@@ -186,11 +186,11 @@ window.onkeyup = function(e) {
 function startFiring(e) {
 	this.focus(); // Move focus to the game canvas
 	if (e.button == 0 && connectedToGame())
-		clientInput.firing = true;
+		clientInput.isFiring = true;
 }
 
 function stopFiring(e) {
-	delete clientInput.firing;
+	delete clientInput.isFiring;
 }
 
 function trackAngle(e) {

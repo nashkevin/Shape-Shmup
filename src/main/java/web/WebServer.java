@@ -75,12 +75,10 @@ public class WebServer {
 			
 			broadcast("moved " + direction, session);
 		}
-		
-		// Broadcast click info (for testing purposes).
-		if (input.isClicked()) {
-			broadcast("clicked on " + input.getPoint() + " at " +
-					String.format("%.2f", input.getClickAngle()) +
-					" radians.", session);
+
+		// Broadcast firing info (for testing purposes)
+		if (input.isFiring()) {
+			broadcast("is firing at " + input.getAngle() + " radians.", session);
 		}
 		
 		// Send client's update to the relevant agent entity.

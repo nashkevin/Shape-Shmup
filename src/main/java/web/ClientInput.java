@@ -15,9 +15,9 @@ public class ClientInput {
 	private boolean down = false;
 	private boolean left = false;
 	private boolean right = false;
-	private int clickX = -1;
-	private int clickY = -1;
-	private double clickAngle = 0;
+	private boolean isFiring = false;	
+	private double angle = 0;
+
 	
 	public ClientInput() {
 		
@@ -71,39 +71,23 @@ public class ClientInput {
 		this.right = right;
 	}
 
+	public boolean isFiring() {
+		return isFiring;
+	}
+
+	public void setIsFiring(boolean isFiring) {
+		this.isFiring = isFiring;
+	}
+
 	public boolean isMoving() {
 		return left || right || up || down;
 	}
 
-	public boolean isClicked() {
-		return clickX >= 0 && clickY >= 0;
+	public void setAngle(double clickAngle) {
+		this.angle = angle;
 	}
 
-	public int getClickX() {
-		return clickX;
-	}
-
-	public void setClickX(int clickX) {
-		this.clickX = clickX;
-	}
-
-	public int getClickY() {
-		return clickY;
-	}
-
-	public void setClickY(int clickY) {
-		this.clickY = clickY;
-	}
-	
-	public Point getPoint() {
-		return new Point(this.clickX, this.clickY);
-	}
-
-	public void setClickAngle(double clickAngle) {
-		this.clickAngle = clickAngle;
-	}
-
-	public double getClickAngle() {
-		return clickAngle;
+	public double getAngle() {
+		return angle;
 	}
 }

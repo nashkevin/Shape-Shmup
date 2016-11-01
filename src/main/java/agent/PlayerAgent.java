@@ -23,15 +23,17 @@ public class PlayerAgent extends Agent {
 	public final void despawn() {
 		getEnvironment().despawnPlayerAgent(this);
 	}
-	
+	/***************************************************************
+	 * TODO: make preparations given angle rather than coordinates *
+	 ***************************************************************/
 	protected void preUpdateCall() {
 		final Point ORIGIN = new Point(); // (0, 0), used for reference in calculating vectors
 		int countLeft = 0;
 		int countRight = 0;
 		int countUp = 0;
 		int countDown = 0;
-		Integer clickX = null;
-		Integer clickY = null;
+		// Integer clickX = null;
+		// Integer clickY = null;
 		//get all events
 		while (!eventInbox.isEmpty()) {
 			ClientInput event = eventInbox.poll();
@@ -47,10 +49,10 @@ public class PlayerAgent extends Agent {
 			if (event.isDown()) {
 				countDown++;
 			}
-			if (event.isClicked()) {
-				clickX = event.getClickX();
-				clickY = event.getClickY();
-			}
+			// if (event.isClicked()) {
+			// 	clickX = event.getClickX();
+			// 	clickY = event.getClickY();
+			// }
 		}
 
 		//calculate acceleration vector
@@ -66,12 +68,12 @@ public class PlayerAgent extends Agent {
 		
 		//calculate firing vector
 		Vector2D fireVector = null;
-		if (clickX != null && clickY != null) {
-			double horizontalFiring = clickX - getPosition().getX();
-			double verticalFiring = clickY - getPosition().getY();
-			//TODO: Change clickX and clickY in the Javascript code such that it doesn't take the distance from the corner
-			fireVector = new Vector2D(horizontalFiring, verticalFiring);
-		}
+		// if (clickX != null && clickY != null) {
+		// 	double horizontalFiring = clickX - getPosition().getX();
+		// 	double verticalFiring = clickY - getPosition().getY();
+		// 	//TODO: Change clickX and clickY in the Javascript code such that it doesn't take the distance from the corner
+		// 	fireVector = new Vector2D(horizontalFiring, verticalFiring);
+		// }
 
 		//set vectors
 		setAcceleration(accelVector);
