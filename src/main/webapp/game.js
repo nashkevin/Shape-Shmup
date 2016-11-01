@@ -1,3 +1,4 @@
+var inputFramesPerSecond = 20;
 var webSocket;
 var clientInput = {};  // represents the current input of the player
 var messages = document.getElementById("messages");
@@ -53,12 +54,32 @@ function joinGame() {
 			document.getElementById("pregame").classList.add("hidden");
 			document.getElementById("game").classList.remove("hidden");
 			onResize();
+			sendFrameInput();
 		} else {
 			alert("The connection to the server was closed before it could be established.");
 		}
 	}
 
 	completeConnection();
+}
+
+// Sends the client's input to the server. Runs each frame.
+function sendFrameInput() {
+	if (connectedToGame()) {
+		// Schedule the next frame.
+		setTimeout(sendFrameInput, 1000 / inputFramesPerSecond);
+
+		// Send any input to the server.
+		json = JSON.stringify(clientInput);
+		if (json !== "{}") {
+			webSocket.send(json);
+		}
+
+		// Remove click info after sending to prevent rapid-fire.
+		delete clientInput.clickX;
+		delete clientInput.clickY;
+		delete clientInput.clickAngle;
+	}
 }
 
 // Sends the value of the text input to the server
@@ -100,6 +121,7 @@ function render() {
 function connectedToGame() {
 	return (typeof webSocket !== "undefined" && webSocket.readyState === webSocket.OPEN);
 }
+
 // Key down listener
 window.onkeydown = function (e) {
 	// Ignore key events within text input
@@ -114,26 +136,22 @@ window.onkeydown = function (e) {
 			case 87: case 38:  // 'w' or up
 				e.preventDefault();
 				clientInput.up = true;
-				clientInput.down = false;
-				webSocket.send(JSON.stringify(clientInput));
+				delete clientInput.down;
 				break;
 			case 65: case 37: // 'a' or left
 				e.preventDefault();
 				clientInput.left = true;
-				clientInput.right = false;
-				webSocket.send(JSON.stringify(clientInput));
+				delete clientInput.right;
 				break;
 			case 83: case 40: // 's' or down
 				e.preventDefault();
 				clientInput.down = true;
-				clientInput.up = false;
-				webSocket.send(JSON.stringify(clientInput));
+				delete clientInput.up;
 				break;
 			case 68: case 39: // 'd' or right
 				e.preventDefault();
 				clientInput.right = true;
-				clientInput.left = false;
-				webSocket.send(JSON.stringify(clientInput));
+				delete clientInput.left;
 				break;
 		}
 	}
@@ -152,19 +170,19 @@ window.onkeyup = function (e) {
 		switch (code) {
 			case 87: case 38:  // 'w' or up
 				e.preventDefault();
-				clientInput.up = false;
+				delete clientInput.up;
 				break;
 			case 65: case 37: // 'a' or left
 				e.preventDefault();
-				clientInput.left = false;
+				delete clientInput.left;
 				break;
 			case 83: case 40: // 's' or down
 				e.preventDefault();
-				clientInput.down = false;
+				delete clientInput.down;
 				break;
 			case 68: case 39: // 'd' or right
 				e.preventDefault();
-				clientInput.right = false;
+				delete clientInput.right;
 				break;
 		}
 	}
@@ -177,12 +195,6 @@ function fire(e) {
 		clientInput.clickX = e.clientX;
 		clientInput.clickY = e.clientY;
         clientInput.clickAngle = convertClickToAngle(clientInput.clickX, clientInput.clickY);
-
-		webSocket.send(JSON.stringify(clientInput));
-		// Remove click info after it is sent.
-		delete clientInput.clickX;
-		delete clientInput.clickY;
-		delete clientInput.clickAngle;
 	}
 }
 
