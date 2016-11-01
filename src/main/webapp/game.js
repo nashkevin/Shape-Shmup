@@ -18,7 +18,7 @@ renderer.render(stage);
 function joinGame() {
 	// Ensures only one connection is open at a time
 	if(webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
-		writeResponse("WebSocket is already opened.");
+		addMessageToChat("WebSocket is already opened.");
 		return;
 	}
 	// Create a new instance of the websocket
@@ -30,15 +30,15 @@ function joinGame() {
 		if(event.data === undefined)
 			return;
 
-		writeResponse(event.data);
+		addMessageToChat(event.data);
 	};
 
 	webSocket.onmessage = function(event) {
-		writeResponse(event.data);
+		addMessageToChat(event.data);
 	};
 
 	webSocket.onclose = function(event) {
-		writeResponse("Connection closed");
+		addMessageToChat("Connection closed");
 	};
 
 	function completeConnection() {
@@ -62,7 +62,7 @@ function joinGame() {
 }
 
 // Sends the value of the text input to the server
-function send() {
+function sendChatMessage() {
 	var text = document.getElementById("messageinput").value;
 	document.getElementById("messageinput").value = "";
 	if (text != "") {
@@ -74,13 +74,9 @@ function closeSocket() {
 	webSocket.close();
 }
 
-function writeResponse(text) {
+function addMessageToChat(text) {
 	messages.innerHTML += "<br/>" + text;
 	messages.scrollTop = messages.scrollHeight;
-}
-
-function preventDefault(e) {
-	if (e.preventDefault) e.preventDefault();
 }
 
 function getGameHeight() {
