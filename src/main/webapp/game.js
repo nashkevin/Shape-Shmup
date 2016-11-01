@@ -1,4 +1,4 @@
-var inputFramesPerSecond = 20;
+const INPUT_RATE = 20; // maximum number of inputs per second
 var webSocket;
 var clientInput = {};  // represents the current input of the player
 var messages = document.getElementById("messages");
@@ -27,18 +27,18 @@ function joinGame() {
 	webSocket = new WebSocket(url);
 
 	// Binds functions to the listeners for the websocket.
-	webSocket.onopen = function(event) {
-		if(event.data === undefined)
+	webSocket.onopen = function(e) {
+		if(e.data === undefined)
 			return;
 
-		addMessageToChat(event.data);
+		addMessageToChat(e.data);
 	};
 
-	webSocket.onmessage = function(event) {
-		addMessageToChat(event.data);
+	webSocket.onmessage = function(e) {
+		addMessageToChat(e.data);
 	};
 
-	webSocket.onclose = function(event) {
+	webSocket.onclose = function(e) {
 		addMessageToChat("Connection closed");
 	};
 
@@ -53,7 +53,7 @@ function joinGame() {
 
 			document.getElementById("pregame").classList.add("hidden");
 			document.getElementById("game").classList.remove("hidden");
-			onResize();
+			resize();
 			sendFrameInput();
 		} else {
 			alert("The connection to the server was closed before it could be established.");
@@ -67,7 +67,7 @@ function joinGame() {
 function sendFrameInput() {
 	if (connectedToGame()) {
 		// Schedule the next frame.
-		setTimeout(sendFrameInput, 1000 / inputFramesPerSecond);
+		setTimeout(sendFrameInput, 1000 / INPUT_RATE);
 
 		// Send any input to the server.
 		json = JSON.stringify(clientInput);
@@ -108,22 +108,17 @@ function getGameWidth() {
 	return window.innerWidth;
 }
 
-function onResize() {
+function resize() {
 	renderer.resize(getGameWidth(), getGameHeight());
-	render();
 }
-
-function render() {
-	renderer.render(stage);
-	requestAnimationFrame(render);
-}
+window.onresize = resize();
 
 function connectedToGame() {
 	return (typeof webSocket !== "undefined" && webSocket.readyState === webSocket.OPEN);
 }
 
 // Key down listener
-window.onkeydown = function (e) {
+window.onkeydown = function(e) {
 	// Ignore key events within text input
 	var currentTag = e.target.tagName.toLowerCase();
 	if (currentTag == "input" || currentTag == "textarea") {
@@ -158,7 +153,7 @@ window.onkeydown = function (e) {
 };
 
 // Key up listener
-window.onkeyup = function (e) {
+window.onkeyup = function(e) {
 	// Ignore key events within text input
 	var currentTag = e.target.tagName.toLowerCase();
 	if (currentTag == "input" || currentTag == "textarea") {
@@ -203,14 +198,18 @@ function fire(e) {
  *     E: 	  0		*
  *     S:  pi/2		*
  *     W:    pi     */
-function convertClickToAngle(clickX, clickY) {
-    var originX = renderer.width / 2;
-    var originY = renderer.height / 2;
+function coordinateToAngle(x, y) {
+    var x_origin = renderer.width / 2;
+    var y_origin = renderer.height / 2;
 
-    return Math.atan2(clickY - originY, clickX - originX);
+    return Math.atan2(y - y_origin, x - x_origin);
 }
 
-window.onresize = onResize;
+function animationLoop(){
+    requestAnimationFrame(animationLoop);
+    renderer.render(stage);
+}
+animationLoop();
 
 window.onload = function() {
 	document.getElementById("username").select();
