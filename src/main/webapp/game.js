@@ -101,7 +101,7 @@ function render() {
 	requestAnimationFrame(render);
 }
 
-function inGameState() {
+function connectedToGame() {
 	return (typeof webSocket !== "undefined" && webSocket.readyState === webSocket.OPEN);
 }
 // Key down listener
@@ -112,7 +112,7 @@ window.onkeydown = function (e) {
 		return;
 	}
 
-	if (inGameState()) {
+	if (connectedToGame()) {
 		var code = e.keyCode ? e.keyCode : e.which;
 		switch (code) {
 			case 87: case 38:  // 'w' or up
@@ -151,7 +151,7 @@ window.onkeyup = function (e) {
 		return;
 	}
 
-	if (inGameState()) {
+	if (connectedToGame()) {
 		var code = e.keyCode ? e.keyCode : e.which;
 		switch (code) {
 			case 87: case 38:  // 'w' or up
@@ -177,7 +177,7 @@ window.onkeyup = function (e) {
 // Action when the user fires a projectile by clicking with the mouse
 function fire(e) {
 	this.focus(); // Move focus to the game canvas
-	if (inGameState()) {
+	if (connectedToGame()) {
 		clientInput.clickX = e.clientX;
 		clientInput.clickY = e.clientY;
         clientInput.clickAngle = convertClickToAngle(clientInput.clickX, clientInput.clickY);
