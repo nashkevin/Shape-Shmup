@@ -12,6 +12,10 @@ public final class Vector2D {
 		this(original.magnitude, original.angle);
 	}
 	
+	public Vector2D(double angle) {
+		this(1.0, angle);
+	}
+
 	public Vector2D(double magnitude, double angle) {
 		this.magnitude = magnitude;
 		this.angle = angle;

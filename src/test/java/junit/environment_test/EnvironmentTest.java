@@ -2,6 +2,7 @@ package test.java.junit.environment_test;
 import main.java.environment.Environment;
 
 import java.awt.Point;
+import java.lang.Math;
 import org.junit.Test;
 import org.junit.Assert;
 
@@ -20,16 +21,16 @@ public class EnvironmentTest {
 	@Test
 	public void testPolarToCartesian() {
 		Assert.assertEquals(new Point(0, 0), Environment.polarToCartesian(0, 0));
-		Assert.assertEquals(new Point(0, 1), Environment.polarToCartesian(90, 1));
-		Assert.assertEquals(new Point(-2, 0), Environment.polarToCartesian(180, 2));
-		Assert.assertEquals(new Point(4, 3), Environment.polarToCartesian(36.87, 5));
+		Assert.assertEquals(new Point(0, 1), Environment.polarToCartesian(Math.PI / 2, 1));
+		Assert.assertEquals(new Point(-2, 0), Environment.polarToCartesian(Math.PI, 2));
+		Assert.assertEquals(new Point(4, 3), Environment.polarToCartesian(Math.asin(0.6), 5));
 	}
 
 	@Test
 	public void testCartesianToPolar() {
 		Assert.assertArrayEquals(new double[] {0, 0}, Environment.cartesianToPolar(new Point(0, 0)), ERROR_MARGIN);
-		Assert.assertArrayEquals(new double[] {90, 1}, Environment.cartesianToPolar(new Point(0, 1)), ERROR_MARGIN);
-		Assert.assertArrayEquals(new double[] {180, 2}, Environment.cartesianToPolar(new Point(-2, 0)), ERROR_MARGIN);
-		Assert.assertArrayEquals(new double[] {36.87, 5}, Environment.cartesianToPolar(new Point(4, 3)), ERROR_MARGIN);
+		Assert.assertArrayEquals(new double[] {Math.PI / 2, 1}, Environment.cartesianToPolar(new Point(0, 1)), ERROR_MARGIN);
+		Assert.assertArrayEquals(new double[] {Math.PI, 2}, Environment.cartesianToPolar(new Point(-2, 0)), ERROR_MARGIN);
+		Assert.assertArrayEquals(new double[] {Math.asin(0.6), 5}, Environment.cartesianToPolar(new Point(4, 3)), ERROR_MARGIN);
 	}
 }

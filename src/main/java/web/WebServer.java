@@ -58,15 +58,27 @@ public class WebServer {
 		}
 		
 		// Broadcast movement (for testing purposes).
-		if (input.getDirection() != null && !input.getDirection().isEmpty()) {
-			broadcast("moved " + input.getDirection(), session);
+		if (input.isMoving()) {
+			String direction = "";
+			if (input.isUp()) {
+				direction += "up ";
+			}
+			if (input.isDown()) {
+				direction += "down ";
+			}
+			if (input.isLeft()) {
+				direction += "left ";
+			}
+			if (input.isRight()) {
+				direction += "right";
+			}
+			
+			broadcast("moved " + direction, session);
 		}
-		
-		// Broadcast click info (for testing purposes).
-		if (input.isClicked()) {
-			broadcast("clicked on " + input.getPoint() + " at " +
-					String.format("%.2f", input.getClickAngle()) +
-					"\u00b0", session);
+
+		// Broadcast firing info (for testing purposes)
+		if (input.isFiring()) {
+			broadcast("is firing at " + input.getAngle() + " radians.", session);
 		}
 		
 		// Send client's update to the relevant agent entity.

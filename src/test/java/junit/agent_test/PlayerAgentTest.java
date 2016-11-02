@@ -30,7 +30,7 @@ public class PlayerAgentTest {
 		PlayerAgent player = new PlayerAgent(UUID.randomUUID(), environment, new Point(10, 10), 1, 1, 100, 10, 1, 1);
 
 		ClientInput event = new ClientInput();
-		event.setDirection("left");
+		event.setLeft(true);
 
 		player.addPlayerEvent(event);
 
@@ -48,9 +48,9 @@ public class PlayerAgentTest {
 		Environment environment = new Environment(20);
 		PlayerAgent player = new PlayerAgent(UUID.randomUUID(), environment, new Point(10, 10), 1, 1, 100, 10, 1, 1);
 		ClientInput eventRight = new ClientInput();
-		eventRight.setDirection("right");
+		eventRight.setRight(true);
 		ClientInput eventUp = new ClientInput();
-		eventUp.setDirection("up");
+		eventUp.setUp(true);
 		player.addPlayerEvent(eventRight);
 		player.addPlayerEvent(eventUp);
 
