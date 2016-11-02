@@ -112,7 +112,7 @@ function getGameWidth() {
 function resize() {
 	renderer.resize(getGameWidth(), getGameHeight());
 }
-window.onresize = resize();
+window.onresize = resize;
 
 function connectedToGame() {
 	return (typeof webSocket !== "undefined" && webSocket.readyState === webSocket.OPEN);
