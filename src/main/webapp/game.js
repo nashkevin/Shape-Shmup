@@ -30,7 +30,6 @@ function joinGame() {
     webSocket.onopen = function(e) {
         if(e.data === undefined)
             return;
-
         addMessageToChat(e.data);
     };
 

@@ -84,7 +84,7 @@ public class WebServer {
 		if (sourceName != null && !sourceName.isEmpty()) {
 			message = "<strong>" + sourceName + ":</strong> " + message;
 		}
-		for (Session s: sessions.keySet()) {
+		for (Session s : sessions.keySet()) {
 			if (s.isOpen()) {
 				try {
 					s.getBasicRemote().sendText(message);
@@ -104,25 +104,49 @@ public class WebServer {
 		}
 	}
 
+	/** iterates over sessions and returns the session if usernames match */
+	private Session findUser(String username) {
+		for (Map.Entry<Session, String> entry : sessions.entrySet()) {
+			if (entry.getValue().replaceAll("\\s+","").equalsIgnoreCase(username))
+				return entry.getKey();
+		}
+		return null;
+	}
+
 	/** call the appropriate method for the given command */
 	private void parseCommand(String[] args, Session session) {
 		switch (args[0]) {
 			case "help":
 				if (args.length == 1)		// /help
 					commandHelp(session);
-				else if (args.length == 2)	// /help <some command>
+				else if (args.length == 2)	// /help [command name]
 					commandHelp(args[1], session);
 				else						// command used incorrectly
-					commandHelp("help", session);
+					commandHelp(args[0], session);
 				break;
 			case "commands":
-				commandListCommands(session);
+				if (args.length == 1)
+					commandListCommands(session);
+				else
+					commandHelp(args[0], session);
 				break;
 			case "exit":
-				commandClose(session);
+				if (args.length == 1)
+					commandClose(session);
+				else
+					commandHelp(args[0], session);
 				break;
 			case "quit":
-				commandClose(session);
+				if (args.length == 1)
+					commandClose(session);
+				else
+					commandHelp(args[0], session);
+				break;
+			case "kick":
+				if (args.length != 2)
+					commandHelp(args[0], session);
+				else
+					commandKick(args[1], session);
 				break;
 			default:
 				unicast("Unrecognized command.", session);
@@ -154,6 +178,10 @@ public class WebServer {
 				msg = "Disconnects you from the server.<br>Syntax: /quit";
 				msg += "<br>Aliases: /exit";
 				break;
+			case "kick":
+				msg = "Disconnects another user from the server.";
+				msg += "<br>Syntax: /kick (username)";
+				break;
 			default:
 				msg = "No documentation found for that command.";
 		}
@@ -162,13 +190,31 @@ public class WebServer {
 
 	/** method for the command to list all available commands */
 	private void commandListCommands(Session session) {
-		String commands = "/help, /exit";
+		String commands = "/exit, /help, /kick";
 		unicast(commands, session);
 	}	
 
+	/** method for the command to close another user's session */
+	private void commandKick(String username, Session sourceSession) {
+		Session session = findUser(username);
+		if (session != null) {
+			String reasonPhrase = "User '" + username + "' was kicked";
+			System.out.println(reasonPhrase);
+			CloseReason.CloseCode code = CloseReason.CloseCodes.NORMAL_CLOSURE;
+			try {
+				session.close(new CloseReason(code, reasonPhrase));
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+			broadcast(reasonPhrase, sourceSession);
+		}
+		else
+			unicast("User '" + username + "' not found.", sourceSession);
+	}
+
 	/** method for the command to close the session */
 	private void commandClose(Session session) {
-		String reasonPhrase = "user closed session via command";
+		String reasonPhrase = "User closed session via command";
 		System.out.println(reasonPhrase);
 		CloseReason.CloseCode code = CloseReason.CloseCodes.NORMAL_CLOSURE;
 		try {
