@@ -158,6 +158,12 @@ public class WebServer {
 				else
 					commandKick(args[1], session);
 				break;
+			case "players":
+				if (args.length == 1)
+					commandListPlayers(session);
+				else
+					commandHelp(args[0], session);
+				break;
 			default:
 				unicast("Unrecognized command.", session);
 		}
@@ -192,6 +198,10 @@ public class WebServer {
 				msg = "Disconnects another user from the server.";
 				msg += "<br>Syntax: /kick (username)";
 				break;
+			case "players":
+				msg = "Lists the usernames of everyone playing.";
+				msg += "<br>Syntax: /players";
+				break;
 			default:
 				msg = "No documentation found for that command.";
 		}
@@ -200,14 +210,29 @@ public class WebServer {
 
 	/** method for the command to list all available commands */
 	private void commandListCommands(Session session) {
-		String commands = "/exit, /help, /kick";
+		String commands = "/exit, /help, /kick, /players";
 		unicast(commands, session);
+	}
+
+	/** method for the command to list all players */
+	private void commandListPlayers(Session session) {
+		String players = "";
+		System.out.println("sessions.size() = " + sessions.size());
+		if (sessions.size() > 1) {
+			for (Map.Entry<Session, String> entry : sessions.entrySet())
+				players += entry.getValue() + ", ";
+		} else {
+			players = "You're the only one in here. How lonely!";
+		}
+		unicast(players, session);
 	}	
 
 	/** method for the command to close another user's session */
 	private void commandKick(String username, Session sourceSession) {
 		Session session = findUser(username);
-		if (session != null) {
+		if (sessions.get(sourceSession).replaceAll("\\s+","").equalsIgnoreCase(username))
+			unicast("You can't kick yourself. Use /exit instead.", sourceSession);
+		else if (findUser(username) != null) {
 			String reasonPhrase = "User '" + username + "' was kicked";
 			System.out.println(reasonPhrase);
 			CloseReason.CloseCode code = CloseReason.CloseCodes.NORMAL_CLOSURE;
