@@ -1,4 +1,6 @@
 package main.java.agent;
+import main.java.agent.test.AgentTestImp;
+import main.java.agent.test.EnvironmentMock;
 import main.java.environment.Environment;
 
 import java.awt.Point;
@@ -8,8 +10,6 @@ import java.util.UUID;
 import main.java.misc.Vector2D;
 import main.java.projectile.Projectile;
 import main.java.projectile.ProjectileFactory;
-import test.java.junit.mocks_and_imps.AgentTestImp;
-import test.java.junit.mocks_and_imps.EnvironmentMock;
 
 /**
  * @ Zach Janice

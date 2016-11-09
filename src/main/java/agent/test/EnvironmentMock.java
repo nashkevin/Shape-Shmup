@@ -1,4 +1,4 @@
-package test.java.junit.mocks_and_imps;
+package main.java.agent.test;
 
 import main.java.environment.Environment;
 

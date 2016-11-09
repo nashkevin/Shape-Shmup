@@ -12,11 +12,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import main.java.agent.Agent;
+import main.java.agent.test.AgentTestImp;
+import main.java.agent.test.EnvironmentMock;
 import main.java.environment.Environment;
 import main.java.misc.Vector2D;
 import main.java.projectile.ProjectileFactory;
-import test.java.junit.mocks_and_imps.AgentTestImp;
-import test.java.junit.mocks_and_imps.EnvironmentMock;
 
 public class AgentTest {
 	@BeforeClass
