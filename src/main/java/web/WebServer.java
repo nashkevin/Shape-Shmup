@@ -22,7 +22,9 @@ public class WebServer {
 	private static final int RADIUS = 200;
 	
 	/** The sessions of all players, mapped to each player's chosen name. */
-	private static final Map<Session, String> sessions = Collections.synchronizedMap(new HashMap<Session, String>());
+	private static final Map<Session, String> sessions = Collections.synchronizedMap(new HashMap<>());
+	/** The sessions of all players, mapped to each player agent. */
+	private static Map<Session, PlayerAgent> connectedPlayers = new HashMap<>();
 	private static Environment environment = new Environment(RADIUS);
 	private static GameThread gameThread;
 	
@@ -55,7 +57,9 @@ public class WebServer {
 		if (input.getName() != null && input.getName() != "") {
 			synchronized(sessions) {
 				sessions.put(session, input.getName());
-				environment.spawnPlayer(input.getName(), session.getId());
+				PlayerAgent agent = environment.spawnPlayer();
+				connectedPlayers.put(session, agent);
+				
 			}
 		}
 		
@@ -80,7 +84,7 @@ public class WebServer {
 		}
 		
 		// Send client's update to the relevant agent entity.
-		PlayerAgent agent = environment.getActivePlayerAgents().get(session.getId());
+		PlayerAgent agent = connectedPlayers.get(session);
 		agent.addPlayerEvent(input);
 	}
 
@@ -192,6 +196,7 @@ public class WebServer {
 	@OnClose
 	public void onClose(Session session) {
 		System.out.println("Session " + session.getId() + " has ended.");
+		connectedPlayers.remove(session);
 		sessions.remove(session);
 		
 		if (sessions.size() == 0) {
