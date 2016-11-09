@@ -34,7 +34,13 @@ function joinGame() {
     };
 
     webSocket.onmessage = function(e) {
-        addMessageToChat(e.data);
+        try {
+            var json = JSON.parse(e.data);
+            //TODO redraw the canvas using the new data
+        } catch(error) {
+            // If the message isn't JSON, display it to the chat area.
+            addMessageToChat(e.data);
+        }
     };
 
     webSocket.onclose = function(e) {

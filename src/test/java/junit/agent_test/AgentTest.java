@@ -1,7 +1,5 @@
 package test.java.junit.agent_test;
 
-import static org.junit.Assert.*;
-
 import java.awt.Point;
 import java.util.Random;
 import java.util.UUID;
