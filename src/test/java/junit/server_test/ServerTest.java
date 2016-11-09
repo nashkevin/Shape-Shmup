@@ -59,12 +59,21 @@ public class ServerTest {
 		server.onMessage(message, session1);
 
 		// Verify that both clients receive the chat message.
-		String receivedMessage = "<strong>Test1:</strong> Message.";
-		Assert.assertTrue(output1.contains(receivedMessage));
-		Assert.assertTrue(output2.contains(receivedMessage));
+		String receivedMessage = "Message.";
+		Assert.assertTrue(listContainsSubstring(output1, receivedMessage));
+		Assert.assertTrue(listContainsSubstring(output2, receivedMessage));
 		
 		server.onClose(session1);
 		server.onClose(session2);
+	}
+	
+	private static boolean listContainsSubstring(List<String> list, String string) {
+		for (String listItem : list) {
+			if (listItem.contains(string)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private Session getMockSession(List<String> output) {
