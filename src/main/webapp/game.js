@@ -250,7 +250,7 @@ function drawPlayer() {
 function animationLoop() {
     requestAnimationFrame(animationLoop);
     if (clientInput.angle)
-        player.rotation = clientInput.angle;
+        player.rotation = clientInput.angle + Math.PI;
     renderer.render(stage);
 }
 animationLoop();
