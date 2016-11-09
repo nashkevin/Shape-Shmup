@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -52,9 +53,19 @@ public class WebServer {
 			}
 		}
 		
-		// Broadcast chat message.
+		// Send chat message
 		if (input.getMessage() != null && !input.getMessage().isEmpty()) {
-			broadcast(input.getMessage(), session);
+			if (input.getMessage().charAt(0) == '/') {
+				String[] args =
+					input.getMessage().substring(1).toLowerCase().trim().split("\\s++");
+				String sourceName = sessions.get(session);
+				String selfText = "<strong>" + sourceName + ":</strong> ";
+				selfText += input.getMessage();
+				unicast(selfText, session);
+				parseCommand(args, session);
+			}
+			else
+				broadcast(input.getMessage(), session);
 		}
 		
 		// Broadcast movement (for testing purposes).
@@ -104,6 +115,83 @@ public class WebServer {
 					ex.printStackTrace();
 				}
 			}
+		}
+	}
+
+	/** Send text to a single client */
+	private void unicast(String message, Session session) {
+		try {
+			session.getBasicRemote().sendText(message);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private void parseCommand(String[] args, Session session) {
+		switch (args[0]) {
+			case "help":
+				if (args.length == 1)
+					commandHelp(session);
+				else if (args.length == 2)
+					commandHelp(args[1], session);
+				else
+					commandHelp("help", session);
+				break;
+			case "commands":
+				commandListCommands(session);
+				break;
+			case "exit":
+				commandClose(session);
+				break;
+			case "quit":
+				commandClose(session);
+				break;
+			default:
+				unicast("Unrecognized command.", session);
+		}
+	}
+
+	private void commandHelp(Session session) {
+		String help = "/commands for a list of commands";
+		help += "<br>/help (command) for description and syntax";
+		unicast(help, session);
+	}
+
+	private void commandHelp(String command, Session session) {
+		String msg = new String();
+		switch (command) {
+			case "help":
+				msg = "Syntax: /help [command]";
+				break;
+			case "commands":
+				msg = "Lists all available commands.<br>Syntax: /commands";
+				break;
+			case "exit":
+				msg = "Disconnects you from the server.<br>Syntax: /exit";
+				msg += "<br>Aliases: /quit";
+				break;
+			case "quit":
+				msg = "Disconnects you from the server.<br>Syntax: /quit";
+				msg += "<br>Aliases: /exit";
+				break;
+			default:
+				msg = "Unrecognized command.";
+		}
+		unicast(msg, session);
+	}
+
+	private void commandListCommands(Session session) {
+		String commands = "/help, /exit";
+		unicast(commands, session);
+	}	
+
+	private void commandClose(Session session) {
+		String reasonPhrase = "user closed session via command";
+		CloseReason.CloseCode code = CloseReason.CloseCodes.NORMAL_CLOSURE;
+		try {
+			session.close(new CloseReason(code, reasonPhrase));
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 	}
  
