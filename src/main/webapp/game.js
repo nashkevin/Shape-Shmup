@@ -215,31 +215,18 @@ function coordinateToAngle(x, y) {
 }
 
 function drawPlayer() {
-    var shape = new PIXI.Container();
-
-    var outerShape = new PIXI.Graphics();
-    outerShape.beginFill(0x87B56C);
-    outerShape.drawPolygon([
-        0, 25,
+    var playerShape = new PIXI.Graphics();
+    playerShape.lineStyle(4, 0x87B56C, 1)
+    playerShape.beginFill(0xD6EAD5);
+    playerShape.drawPolygon([
+        0,  25,
         50, 50,
-        50, 0
+        50, 0,
+        0,  25
     ]);
-    outerShape.endFill();
+    playerShape.endFill();
 
-    var innerShape = new PIXI.Graphics();
-    innerShape.beginFill(0xD6EAD5);
-    innerShape.drawPolygon([
-        0, 25,
-        50, 50,
-        50, 0
-    ]);
-    innerShape.endFill();
-    innerShape.scale.set(0.9);
-
-    shape.addChild(outerShape);
-    shape.addChild(innerShape);
-
-    player = new PIXI.Sprite(renderer.generateTexture(shape));
+    player = new PIXI.Sprite(renderer.generateTexture(playerShape));
     player.anchor.set(0.5, 0.5);
     player.pivot.set(0.5, 0.5);
     player.position.set(getGameWidth() / 2, getGameHeight() / 2);
