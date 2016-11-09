@@ -11,7 +11,7 @@ public class Environment {
   
   private double radius;
   /** Maps from session ID (of WebSocket connection) to agent for each client. */
-  private HashMap<String, PlayerAgent> activePlayerAgents = new HashMap<String, PlayerAgent>();
+  private HashSet<PlayerAgent> activePlayerAgents = new HashSet<PlayerAgent>();
   private HashSet<NPCAgent> activeNPCAgents = new HashSet<NPCAgent>();
   private HashSet<Projectile> activeProjectiles = new HashSet<Projectile>();
   
@@ -23,7 +23,7 @@ public class Environment {
     return this.radius;
   }
 
-  public HashMap<String, PlayerAgent> getActivePlayerAgents(){
+  public HashSet<PlayerAgent> getActivePlayerAgents(){
     return this.activePlayerAgents;
   }
 
@@ -50,11 +50,12 @@ public class Environment {
     projectile.despawn();
   }
 
-  /** Spawns a playable character entity with the given display name and WebSocket session ID. */
-  public void spawnPlayer(String name, String sessionId) {
+  /** Spawns a playable character entity. */
+  public PlayerAgent spawnPlayer() {
 	UUID id = UUID.randomUUID();
 	PlayerAgent player = new PlayerAgent(id, this, randomPlayerSpawn(), 0, 0, 0, 0, 0, 0/*TODO insert appropriate constructor variables*/);
-	activePlayerAgents.put(sessionId, player);
+	activePlayerAgents.add(player);
+	return player;
 	
 	//TODO send update message to server
   }
@@ -88,7 +89,7 @@ public class Environment {
   
   public ArrayList<Agent> checkCollision(Projectile p){
     ArrayList<Agent> collisions = new ArrayList<Agent>();
-    for (Agent a : getActivePlayerAgents().values()){
+    for (Agent a : getActivePlayerAgents()){
       if (p.getPosition() == a.getPosition() && a.getTeam() != p.getOwner().getTeam())
         collisions.add(a);
     }

@@ -41,7 +41,7 @@ public class GameThread extends Thread {
 	@Override
 	public void run() {
 		while (gameplayOccurring) {
-			Collection<PlayerAgent> playerAgents = environment.getActivePlayerAgents().values();
+			Collection<PlayerAgent> playerAgents = environment.getActivePlayerAgents();
 			Collection<NPCAgent> npcAgents = environment.getActiveNPCAgents();
 			Collection<Projectile> projectiles = environment.getActiveProjectiles();
 			
