@@ -1,7 +1,10 @@
 package main.java.agent;
+import main.java.agent.test.AgentTestImp;
+import main.java.agent.test.EnvironmentMock;
 import main.java.environment.Environment;
 
 import java.awt.Point;
+import java.util.Random;
 import java.util.UUID;
 
 import main.java.misc.Vector2D;
@@ -33,6 +36,15 @@ public abstract class Agent {
 	private ProjectileFactory.Type projectileType;
 	
 	public Agent(UUID id, Environment env, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
+		//if (id == null)
+		//	throw new Exception("Cannot have null ID parameter.");
+		//if (env == null)
+		//	throw new Exception("Cannot have null environment parameter.");
+		//if (position == null)
+		//	throw new Exception("Cannot have null position parameter.");
+		//if (health <= 0)
+		//	throw new Exception("Cannot have zero or negative health parameter.");
+		
 		this.id = id;
 		this.env = env;
 		this.level = level;
@@ -73,8 +85,16 @@ public abstract class Agent {
 		return health;
 	}
 	
+	public final int getMaxHealth() {
+		return maxHealth;
+	}
+	
 	public final int getDamage() {
 		return damage;
+	}
+	
+	public final int getProjectileSpeed() {
+		return projectileSpeed;
 	}
 	
 	public final Point getPosition() {
@@ -84,14 +104,6 @@ public abstract class Agent {
 		else {
 			return new Point(position);
 		}
-	}
-	
-	public final int getBaseMovementSpeed() {
-		return baseMovementSpeed;
-	}
-	
-	public final double getMovementSpeedFactor() {
-		return movementSpeedFactor;
 	}
 	
 	public final Vector2D getVelocity() {
@@ -120,6 +132,19 @@ public abstract class Agent {
 			return new Vector2D(firingVector);
 		}
 	}
+	
+	public final ProjectileFactory.Type getProjectileType() {
+		return projectileType;
+	}
+	
+	public final int getBaseMovementSpeed() {
+		return baseMovementSpeed;
+	}
+	
+	public final double getMovementSpeedFactor() {
+		return movementSpeedFactor;
+	}
+	
 	public final void update() {
 		preUpdateCall();
 		
@@ -155,9 +180,12 @@ public abstract class Agent {
 	public abstract void despawn();
 	
 	protected final void setAcceleration(Vector2D vector) {
-		if (vector == null)
+		if (vector == null) {
 			acceleration = null;
-		acceleration = new Vector2D(vector);
+		}
+		else {
+			acceleration = new Vector2D(vector);
+		}
 	}
 	
 	protected final void setFiringVector(Vector2D vector) {
@@ -170,7 +198,7 @@ public abstract class Agent {
 	}
 	
 	protected final void setProjectileType(ProjectileFactory.Type type) {
-		projectileType = type;
+		projectileType = type == null ? ProjectileFactory.Type.NONE : type;
 	}
 	
 	protected abstract void preUpdateCall();
@@ -200,5 +228,50 @@ public abstract class Agent {
 		Projectile projectile = ProjectileFactory.makeProjectile(projectileType, env, this, position, projVelocity);
 		
 		return projectile;
+	}
+	
+	public static final class AgentTester {
+		private static Agent testInstance;
+		
+		public static void generateTestInstance() {
+			Random random = new Random();
+			
+			UUID id = UUID.randomUUID();
+			Environment env = new EnvironmentMock(random.nextDouble() * 100);
+			Point position = new Point();
+			position.setLocation(random.nextDouble(), random.nextDouble());
+			int level = random.nextInt(10);
+			int team = random.nextInt(5);
+			int health = random.nextInt(490) + 10;
+			int damage = random.nextInt(500) + 1;
+			int projectileSpeed = random.nextInt(100) + 1;
+			int baseMovementSpeed = random.nextInt(100) + 1;
+			
+			testInstance = new AgentTestImp(id, env, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
+		}
+		
+		public static Agent getTestInstance() {
+			return testInstance;
+		}
+		
+		public static void call_setAcceleration(Vector2D vector) {
+			testInstance.setAcceleration(vector);
+		}
+		
+		public static void call_setFiringVector(Vector2D vector) {
+			testInstance.setFiringVector(vector);
+		}
+		
+		public static void call_setProjectileType(ProjectileFactory.Type type) {
+			testInstance.setProjectileType(type);
+		}
+		
+		public static void call_move(Vector2D vector) {
+			testInstance.move(vector);
+		}
+		
+		public static void call_fireProjectile(Vector2D vector) {
+			testInstance.fireProjectile(vector);
+		}
 	}
 }

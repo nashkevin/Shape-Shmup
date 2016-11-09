@@ -32,11 +32,11 @@ public class PlayerAgent extends Agent {
 		int countRight = 0;
 		int countUp = 0;
 		int countDown = 0;
-		// Integer clickX = null;
-		// Integer clickY = null;
-		//get all events
+		Vector2D firingVector = null;
+		
 		while (!eventInbox.isEmpty()) {
 			ClientInput event = eventInbox.poll();
+			
 			if (event.isLeft()) {
 				countLeft++;
 			}
@@ -49,10 +49,11 @@ public class PlayerAgent extends Agent {
 			if (event.isDown()) {
 				countDown++;
 			}
-			// if (event.isClicked()) {
-			// 	clickX = event.getClickX();
-			// 	clickY = event.getClickY();
-			// }
+			
+			if (event.isFiring()) {
+				double angle = event.getAngle();
+				firingVector = new Vector2D(1, angle);
+			}
 		}
 
 		//calculate acceleration vector
@@ -66,18 +67,9 @@ public class PlayerAgent extends Agent {
 
 		Vector2D accelVector = new Vector2D(accelerationMagnitude, accelerationAngle);
 		
-		//calculate firing vector
-		Vector2D fireVector = null;
-		// if (clickX != null && clickY != null) {
-		// 	double horizontalFiring = clickX - getPosition().getX();
-		// 	double verticalFiring = clickY - getPosition().getY();
-		// 	//TODO: Change clickX and clickY in the Javascript code such that it doesn't take the distance from the corner
-		// 	fireVector = new Vector2D(horizontalFiring, verticalFiring);
-		// }
-
 		//set vectors
 		setAcceleration(accelVector);
-		setFiringVector(fireVector);
+		setFiringVector(firingVector);
 	}
 
 	private static double calculateAngle(Point p1, Point p2) {

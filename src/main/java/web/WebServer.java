@@ -68,37 +68,9 @@ public class WebServer {
 				broadcast(input.getMessage(), session);
 		}
 		
-		// Broadcast movement (for testing purposes).
-		if (input.isMoving()) {
-			String direction = "";
-			if (input.isUp()) {
-				direction += "up ";
-			}
-			if (input.isDown()) {
-				direction += "down ";
-			}
-			if (input.isLeft()) {
-				direction += "left ";
-			}
-			if (input.isRight()) {
-				direction += "right";
-			}
-			
-			broadcast("moved " + direction, session);
-		}
-
-		// Broadcast firing info (for testing purposes)
-		if (input.isFiring()) {
-			broadcast("is firing at " + input.getAngle() + " radians.", session);
-		}
-		
 		// Send client's update to the relevant agent entity.
 		PlayerAgent agent = environment.getActivePlayerAgents().get(session.getId());
 		agent.addPlayerEvent(input);
-	}
-	
-	private void broadcast(String message) {
-		broadcast(message, null);
 	}
 
 	/** Broadcast text to all connected clients. */
