@@ -13,7 +13,7 @@
         <div id="pregame" class="noselect">
 			<form action="javascript:joinGame();">
 				<h1>Web Browser Game<br>v1.0</h1>
-	            <h2><label>Enter a username<br><input type="text" id="username" name="username" maxlength="16"></label></h2>
+	            <h2><label>Enter a username<br><input type="text" id="username" name="username" maxlength="16" pattern="^[^-\s][\S\s-]+$" autofocus required></label></h2>
 				<p class="hidden-accessible"><button type="submit">Join Game</button></p>
 	        </form>
 			<ul id="instructions">

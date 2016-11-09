@@ -57,7 +57,7 @@ function joinGame() {
             setTimeout(completeConnection, 250);
         } else if (state === webSocket.OPEN) {
             // Once connection is established.
-            var username = document.getElementById("username").value;
+            var username = document.getElementById("username").value.trim();
             webSocket.send(JSON.stringify({ 'name': username }));
 
             document.getElementById("pregame").classList.add("hidden");
