@@ -164,6 +164,12 @@ public class WebServer {
 				else
 					commandHelp(args[0], session);
 				break;
+			case "ping":
+				if (args.length == 1)
+					commandPing(session);
+				else
+					commandHelp(args[0], session);
+				break;
 			default:
 				unicast("Unrecognized command.", session);
 		}
@@ -202,6 +208,10 @@ public class WebServer {
 				msg = "Lists the usernames of everyone playing.";
 				msg += "<br>Syntax: /players";
 				break;
+			case "ping":
+				msg = "Asks for a response from the server for timing.";
+				msg += "<br>Syntax: /ping";
+				break;
 			default:
 				msg = "No documentation found for that command.";
 		}
@@ -210,21 +220,16 @@ public class WebServer {
 
 	/** method for the command to list all available commands */
 	private void commandListCommands(Session session) {
-		String commands = "/exit, /help, /kick, /players";
+		String commands = "/exit, /help, /kick, /ping, /players";
 		unicast(commands, session);
 	}
 
 	/** method for the command to list all players */
 	private void commandListPlayers(Session session) {
 		String players = "";
-		System.out.println("sessions.size() = " + sessions.size());
-		if (sessions.size() > 1) {
-			for (Map.Entry<Session, String> entry : sessions.entrySet())
-				players += entry.getValue() + ", ";
-		} else {
-			players = "You're the only one in here. How lonely!";
-		}
-		unicast(players, session);
+		for (Map.Entry<Session, String> entry : sessions.entrySet())
+			players += entry.getValue() + ", ";
+		unicast(players.substring(0, players.length() - 2), session);
 	}	
 
 	/** method for the command to close another user's session */
@@ -257,6 +262,11 @@ public class WebServer {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	/** method for the command to ping the server */
+	private void commandPing(Session session) {
+		unicast("PONG", session);
 	}
  
 	/** When a client closes their connection. */

@@ -15,6 +15,7 @@ renderer.autoResize = true;
 
 var stage = new PIXI.Container();
 var player;
+var timestamp;
 
 function joinGame() {
     // Ensures only one connection is open at a time
@@ -37,9 +38,12 @@ function joinGame() {
         try {
             var json = JSON.parse(e.data);
             //TODO redraw the canvas using the new data
-        } catch(error) {
-            // If the message isn't JSON, display it to the chat area.
-            addMessageToChat(e.data);
+        } catch (error) { // Display non-JSON messages to the chat area
+            // if the server is responding to a ping request
+            if (e.data === "PONG")
+                addMessageToChat(Date.now() - timestamp + " ms");
+            else
+                addMessageToChat(e.data);
         }
     };
 
@@ -92,6 +96,7 @@ function sendChatMessage() {
     var text = document.getElementById("messageinput").value;
     document.getElementById("messageinput").value = "";
     if (text != "") {
+        timestamp = Date.now();
         webSocket.send(JSON.stringify({ 'message': text }));
     }
 }
