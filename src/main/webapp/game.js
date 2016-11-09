@@ -227,8 +227,8 @@ function drawPlayer() {
     playerShape.endFill();
 
     player = new PIXI.Sprite(renderer.generateTexture(playerShape));
-    player.anchor.set(0.5, 0.5);
-    player.pivot.set(0.5, 0.5);
+    player.anchor.set(2/3, 0.5);
+    player.pivot.set(2/3, 0.5);
     player.position.set(getGameWidth() / 2, getGameHeight() / 2);
 
     stage.addChild(player);
