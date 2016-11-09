@@ -23,7 +23,13 @@ public class WebServer {
 	
 	/** The sessions of all players, mapped to each player's chosen name. */
 	private static final Map<Session, String> sessions = Collections.synchronizedMap(new HashMap<Session, String>());
-	private Environment environment = new Environment(RADIUS);
+	private static Environment environment = new Environment(RADIUS);
+	private static GameThread gameThread;
+	
+	public WebServer() {
+		gameThread = new GameThread(this, environment);
+		gameThread.start();
+	}
 	
 	/** When a new client makes a connection to the server. */
 	@OnOpen
@@ -93,6 +99,10 @@ public class WebServer {
 				}
 			}
 		}
+	}
+	
+	public void broadcast(String message) {
+		broadcast(message, null);
 	}
 
 	/** Send text to a single client */
@@ -183,5 +193,9 @@ public class WebServer {
 	public void onClose(Session session) {
 		System.out.println("Session " + session.getId() + " has ended.");
 		sessions.remove(session);
+		
+		if (sessions.size() == 0) {
+			gameThread.setGameplayOccurring(false);
+		}
 	}
 }
