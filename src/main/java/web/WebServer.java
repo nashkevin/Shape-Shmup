@@ -76,8 +76,9 @@ public class WebServer {
 				
 				// echo the command to the client's chatbox
 				String sourceName = sessions.get(session);
-				String selfText = "<strong>" + sourceName + ":</strong> ";
-				selfText += input.getMessage();
+				String selfText = "<font color=\"#87B56C\"><strong>" +
+									sourceName + "</strong></font>: " +
+									input.getMessage();
 				unicast(selfText, session);
 
 				parseCommand(args, session);
@@ -98,9 +99,10 @@ public class WebServer {
 			sourceName = sessions.get(sourceSession);
 		}
 		if (sourceName != null && !sourceName.isEmpty()) {
-			message = "<strong>" + sourceName + ":</strong> " + message;
+			message = "<font color=\"#87B56C\"><strong>" + sourceName +
+						"</strong></font>: " + message;
 		}
-		for (Session s: sessions.keySet()) {
+		for (Session s : sessions.keySet()) {
 			if (s.isOpen()) {
 				try {
 					s.getBasicRemote().sendText(message);
@@ -124,25 +126,75 @@ public class WebServer {
 		}
 	}
 
+	/** iterates over sessions and returns the session if usernames match */
+	private Session findUser(String username) {
+		for (Map.Entry<Session, String> entry : sessions.entrySet()) {
+			if (entry.getValue().replaceAll("\\s+","").equalsIgnoreCase(username))
+				return entry.getKey();
+		}
+		return null;
+	}
+
 	/** call the appropriate method for the given command */
 	private void parseCommand(String[] args, Session session) {
 		switch (args[0]) {
 			case "help":
 				if (args.length == 1)		// /help
 					commandHelp(session);
-				else if (args.length == 2)	// /help <some command>
+				else if (args.length == 2)	// /help [command name]
 					commandHelp(args[1], session);
 				else						// command used incorrectly
-					commandHelp("help", session);
+					commandHelp(args[0], session);
 				break;
 			case "commands":
-				commandListCommands(session);
+				if (args.length == 1)
+					commandListCommands(session);
+				else
+					commandHelp(args[0], session);
 				break;
 			case "exit":
-				commandClose(session);
+				if (args.length == 1)
+					commandClose(session);
+				else
+					commandHelp(args[0], session);
 				break;
 			case "quit":
-				commandClose(session);
+				if (args.length == 1)
+					commandClose(session);
+				else
+					commandHelp(args[0], session);
+				break;
+			case "kick":
+				if (args.length == 2)
+					commandKick(args[1], session);
+				else
+					commandHelp(args[0], session);
+				break;
+			case "players":
+				if (args.length == 1)
+					commandListPlayers(session);
+				else
+					commandHelp(args[0], session);
+				break;
+			case "ping":
+				if (args.length == 1)
+					commandPing(session);
+				else
+					commandHelp(args[0], session);
+				break;
+			case "tell":
+				if (args.length > 2) {
+					commandPrivateMessage(args, session);
+				}
+				else
+					commandHelp(args[0], session);
+				break;
+			case "pm":
+				if (args.length > 2) {
+					commandPrivateMessage(args, session);
+				}
+				else
+					commandHelp(args[0], session);
 				break;
 			default:
 				unicast("Unrecognized command.", session);
@@ -174,6 +226,28 @@ public class WebServer {
 				msg = "Disconnects you from the server.<br>Syntax: /quit";
 				msg += "<br>Aliases: /exit";
 				break;
+			case "kick":
+				msg = "Disconnects another user from the server.";
+				msg += "<br>Syntax: /kick (username)";
+				break;
+			case "players":
+				msg = "Lists the usernames of everyone playing.";
+				msg += "<br>Syntax: /players";
+				break;
+			case "ping":
+				msg = "Asks for a response from the server for timing.";
+				msg += "<br>Syntax: /ping";
+				break;
+			case "tell":
+				msg = "Sends a private message to a player.";
+				msg += "<br>Syntax: /tell (username) (message)";
+				msg += "<br>Aliases: /pm";
+				break;
+			case "pm":
+				msg = "Sends a private message to a player.";
+				msg += "<br>Syntax: /pm (username) (message)";
+				msg += "<br>Aliases: /tell";
+				break;
 			default:
 				msg = "No documentation found for that command.";
 		}
@@ -182,13 +256,58 @@ public class WebServer {
 
 	/** method for the command to list all available commands */
 	private void commandListCommands(Session session) {
-		String commands = "/help, /exit";
+		String commands = "/exit, /help, /kick, /ping, /players, /tell";
 		unicast(commands, session);
+	}
+
+	/** method for the command to list all players */
+	private void commandListPlayers(Session session) {
+		String players = "";
+		for (Map.Entry<Session, String> entry : sessions.entrySet())
+			players += entry.getValue() + ", ";
+		unicast(players.substring(0, players.length() - 2), session);
+	}
+
+	/** method for the command to send another user a private message */
+	private void commandPrivateMessage(String[] args, Session sourceSession) {
+		Session session = findUser(args[1]);
+		if (sessions.get(sourceSession).replaceAll("\\s+","").equalsIgnoreCase(args[1]))
+			unicast("You can't private message yourself.", sourceSession);
+		else if (session != null) {
+			StringBuilder msg = new StringBuilder();
+			msg.append("From " + sessions.get(sourceSession) + ":");
+			for (int i = 2; i < args.length; i++)
+				msg.append(" " + args[i]);
+			unicast(msg.toString(), session);
+		}
+		else
+			unicast("User '" + args[1] + "' not found.", sourceSession);
 	}	
+
+	/** method for the command to close another user's session */
+	private void commandKick(String username, Session sourceSession) {
+		Session session = findUser(username);
+		if (sessions.get(sourceSession).replaceAll("\\s+","").equalsIgnoreCase(username))
+			unicast("You can't kick yourself. Use /exit instead.", sourceSession);
+		else if (session != null) {
+			String reasonPhrase = "User '" + username + "' was kicked.";
+			System.out.println(reasonPhrase);
+			CloseReason.CloseCode code = CloseReason.CloseCodes.NORMAL_CLOSURE;
+			try {
+				session.close(new CloseReason(code, reasonPhrase));
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+			broadcast(reasonPhrase, sourceSession);
+		}
+		else
+			unicast("User '" + username + "' not found.", sourceSession);
+	}
 
 	/** method for the command to close the session */
 	private void commandClose(Session session) {
-		String reasonPhrase = "user closed session via command";
+		String reasonPhrase = "User '" + sessions.get(session) +
+								"' closed session via command.";
 		System.out.println(reasonPhrase);
 		CloseReason.CloseCode code = CloseReason.CloseCodes.NORMAL_CLOSURE;
 		try {
@@ -196,6 +315,11 @@ public class WebServer {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	/** method for the command to ping the server */
+	private void commandPing(Session session) {
+		unicast("PONG", session);
 	}
  
 	/** When a client closes their connection. */
