@@ -53,15 +53,20 @@ public class WebServer {
 			}
 		}
 		
-		// Send chat message
+		// handle client chat input
 		if (input.getMessage() != null && !input.getMessage().isEmpty()) {
+			// chat input is a command
 			if (input.getMessage().charAt(0) == '/') {
+				// split commands into arguments
 				String[] args =
 					input.getMessage().substring(1).toLowerCase().trim().split("\\s++");
+				
+				// echo the command to the client's chatbox
 				String sourceName = sessions.get(session);
 				String selfText = "<strong>" + sourceName + ":</strong> ";
 				selfText += input.getMessage();
 				unicast(selfText, session);
+
 				parseCommand(args, session);
 			}
 			else
@@ -99,14 +104,15 @@ public class WebServer {
 		}
 	}
 
+	/** call the appropriate method for the given command */
 	private void parseCommand(String[] args, Session session) {
 		switch (args[0]) {
 			case "help":
-				if (args.length == 1)
+				if (args.length == 1)		// /help
 					commandHelp(session);
-				else if (args.length == 2)
+				else if (args.length == 2)	// /help <some command>
 					commandHelp(args[1], session);
-				else
+				else						// command used incorrectly
 					commandHelp("help", session);
 				break;
 			case "commands":
@@ -123,12 +129,14 @@ public class WebServer {
 		}
 	}
 
+	/** method for the command to display generic help message */
 	private void commandHelp(Session session) {
 		String help = "/commands for a list of commands";
-		help += "<br>/help (command) for description and syntax";
+		help += "<br>/help [command] for description and syntax";
 		unicast(help, session);
 	}
 
+	/** method for the command to display information about a command */
 	private void commandHelp(String command, Session session) {
 		String msg = new String();
 		switch (command) {
@@ -147,18 +155,21 @@ public class WebServer {
 				msg += "<br>Aliases: /exit";
 				break;
 			default:
-				msg = "Unrecognized command.";
+				msg = "No documentation found for that command.";
 		}
 		unicast(msg, session);
 	}
 
+	/** method for the command to list all available commands */
 	private void commandListCommands(Session session) {
 		String commands = "/help, /exit";
 		unicast(commands, session);
 	}	
 
+	/** method for the command to close the session */
 	private void commandClose(Session session) {
 		String reasonPhrase = "user closed session via command";
+		System.out.println(reasonPhrase);
 		CloseReason.CloseCode code = CloseReason.CloseCodes.NORMAL_CLOSURE;
 		try {
 			session.close(new CloseReason(code, reasonPhrase));
