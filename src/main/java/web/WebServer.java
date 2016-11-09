@@ -24,7 +24,7 @@ public class WebServer {
 	/** The sessions of all players, mapped to each player's chosen name. */
 	private static final Map<Session, String> sessions = Collections.synchronizedMap(new HashMap<>());
 	/** The sessions of all players, mapped to each player agent. */
-	private static Map<Session, PlayerAgent> connectedPlayers = new HashMap<>();
+	private static final Map<Session, PlayerAgent> connectedPlayers = Collections.synchronizedMap(new HashMap<>());
 	private static Environment environment = new Environment(RADIUS);
 	private static GameThread gameThread;
 	
@@ -39,7 +39,9 @@ public class WebServer {
 		System.out.println(session.getId() + " has opened a connection.");
 		try {
 			session.getBasicRemote().sendText("Connection established.");
-			sessions.put(session, null);
+			synchronized(sessions) {
+				sessions.put(session, null);
+			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -57,9 +59,10 @@ public class WebServer {
 		if (input.getName() != null && input.getName() != "") {
 			synchronized(sessions) {
 				sessions.put(session, input.getName());
-				PlayerAgent agent = environment.spawnPlayer();
+			}
+			PlayerAgent agent = environment.spawnPlayer();
+			synchronized(connectedPlayers) {
 				connectedPlayers.put(session, agent);
-				
 			}
 		}
 		
@@ -90,7 +93,10 @@ public class WebServer {
 
 	/** Broadcast text to all connected clients. */
 	private void broadcast(String message, Session sourceSession) {
-		String sourceName = sessions.get(sourceSession);
+		String sourceName = null;
+		synchronized(sessions) {
+			sourceName = sessions.get(sourceSession);
+		}
 		if (sourceName != null && !sourceName.isEmpty()) {
 			message = "<strong>" + sourceName + ":</strong> " + message;
 		}
@@ -199,8 +205,10 @@ public class WebServer {
 		connectedPlayers.remove(session);
 		sessions.remove(session);
 		
-		if (sessions.size() == 0) {
-			gameThread.setGameplayOccurring(false);
+		synchronized(sessions) {
+			if (sessions.size() == 0) {
+				gameThread.setGameplayOccurring(false);
+			}
 		}
 	}
 }
