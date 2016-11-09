@@ -69,7 +69,6 @@ function joinGame() {
             alert("The connection to the server was closed before it could be established.");
         }
     }
-
     completeConnection();
 }
 
