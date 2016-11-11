@@ -85,15 +85,38 @@ public class ServerTest {
 		
 		Mockito.when(session.getBasicRemote()).thenAnswer(new Answer<RemoteEndpoint.Basic>() {
 			public RemoteEndpoint.Basic answer(InvocationOnMock invocation) throws Throwable {
-				return getMockEndpoint(output);
+				return getMockBasicEndpoint(output);
+			}
+		});
+		
+		Mockito.when(session.getAsyncRemote()).thenAnswer(new Answer<RemoteEndpoint.Async>() {
+			public RemoteEndpoint.Async answer(InvocationOnMock invocation) throws Throwable {
+				return getMockAsyncEndpoint(output);
 			}
 		});
 
 		return session;
 	}
 	
-	private RemoteEndpoint.Basic getMockEndpoint(List<String> output) throws IOException {
+	private RemoteEndpoint.Basic getMockBasicEndpoint(List<String> output) throws IOException {
 		RemoteEndpoint.Basic endpoint = Mockito.mock(RemoteEndpoint.Basic.class);
+		
+		Mockito.doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				for (Object arg : invocation.getArguments()) {
+					output.add(arg.toString());
+				}
+				return null;
+			}
+		}).when(endpoint).sendText(Mockito.anyString());
+		
+		return endpoint;
+	}
+	
+	// RemoteEndpoint doesn't specify sendText(), so I need separate methods for basic and async...
+	private RemoteEndpoint.Async getMockAsyncEndpoint(List<String> output) throws IOException {
+		RemoteEndpoint.Async endpoint = Mockito.mock(RemoteEndpoint.Async.class);
 		
 		Mockito.doAnswer(new Answer<Void>() {
 			@Override
