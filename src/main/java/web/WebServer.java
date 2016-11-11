@@ -70,7 +70,7 @@ public class WebServer {
 		if (input.getMessage() != null && !input.getMessage().isEmpty()) {
 			if (input.getMessage().charAt(0) == '/') {
 				// chat input is a command
-				Commands.handleInput(input.getMessage(), session, this);
+				Command.handleInput(input.getMessage(), session, this);
 			} else {
 				broadcast(input.getMessage(), session);
 			}
