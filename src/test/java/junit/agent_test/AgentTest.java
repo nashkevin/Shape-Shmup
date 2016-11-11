@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import main.java.agent.Agent;
@@ -27,7 +28,7 @@ public class AgentTest {
 		return;
 	}
 	
-	@Test
+	@Test @Ignore
 	public void test_constructor() {
 		Random random = new Random();
 		
@@ -103,7 +104,7 @@ public class AgentTest {
 		Assert.assertTrue(0 == agent.getBaseMovementSpeed());
 	}
 	
-	@Test
+	@Test @Ignore
 	public void test_setAcceleration() {
 		Random random = new Random();
 		Agent.AgentTester.generateTestInstance();
@@ -118,7 +119,7 @@ public class AgentTest {
 		Assert.assertTrue(null == Agent.AgentTester.getTestInstance().getAcceleration());
 	}
 	
-	@Test
+	@Test @Ignore
 	public void test_setFiringVector() {
 		Random random = new Random();
 		Agent.AgentTester.generateTestInstance();
