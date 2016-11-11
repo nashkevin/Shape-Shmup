@@ -1,14 +1,10 @@
 package test.java.junit.server_test;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.websocket.Session;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import main.java.web.Command;
 import main.java.web.WebServer;
 
 /** Test commands that a player can perform through the chat window. */
@@ -24,18 +20,45 @@ public class CommandsTest {
 	/** Tests running "/help" without any arguments. */
 	public void testHelp() {
 		// Create a mock session and connect it to the server.
-		List<String> output = new LinkedList<String>();
-		Session session = ServerTest.getMockSession(output);
-		server.onOpen(session);
-		String name = " {\"name\":\"Test\"}";
-		server.onMessage(name, session);
+		MockConnection user = new MockConnection(server, "Test");
 		
 		String message = " {\"message\":\"/help\"}";
-		server.onMessage(message, session);
+		server.onMessage(message, user.getSession());
 
 		String expectedSubstring = "/help [command]";
-		Assert.assertTrue(ServerTest.listContainsSubstring(output, expectedSubstring));
+		Assert.assertTrue(user.receivedMessage(expectedSubstring));
 		
-		server.onClose(session);
+		server.onClose(user.getSession());
+	}
+	
+	@Test
+	/** Tests running "/help commands". */
+	public void testSpecificHelpInfo() {
+		// Create a mock session and connect it to the server.
+		MockConnection user = new MockConnection(server, "Test");
+		
+		String message = " {\"message\":\"/help commands\"}";
+		server.onMessage(message, user.getSession());
+
+		String expectedResult = Command.COMMANDS.getHelpText();
+		Assert.assertTrue(user.receivedMessage(expectedResult));
+		
+		server.onClose(user.getSession());
+	}
+	
+	@Test
+	/** Tests running "/commands". */
+	public void testCommands() {
+		// Create a mock session and connect it to the server.
+				MockConnection user = new MockConnection(server, "Test");
+				
+				String message = " {\"message\":\"/commands\"}";
+				server.onMessage(message, user.getSession());
+
+				for (Command command : Command.values()) {
+					Assert.assertTrue(user.receivedMessage(command.getCommand()));
+				}
+				
+				server.onClose(user.getSession());
 	}
 }

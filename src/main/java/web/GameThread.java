@@ -2,6 +2,7 @@ package main.java.web;
 
 import java.awt.Point;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import com.google.gson.Gson;
@@ -41,9 +42,10 @@ public class GameThread extends Thread {
 	@Override
 	public void run() {
 		while (gameplayOccurring) {
-			Collection<PlayerAgent> playerAgents = environment.getActivePlayerAgents();
-			Collection<NPCAgent> npcAgents = environment.getActiveNPCAgents();
-			Collection<Projectile> projectiles = environment.getActiveProjectiles();
+			// Clone all collections to avoid concurrent modification woes.
+			Collection<PlayerAgent> playerAgents = new ArrayList<>(environment.getActivePlayerAgents());
+			Collection<NPCAgent> npcAgents = new ArrayList<>(environment.getActiveNPCAgents());
+			Collection<Projectile> projectiles = new ArrayList<>(environment.getActiveProjectiles());
 			
 			GameState state = new GameState(playerAgents, npcAgents, projectiles);
 			server.broadcast(gson.toJson(state));
