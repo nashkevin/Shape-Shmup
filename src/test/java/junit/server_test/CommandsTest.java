@@ -1,10 +1,5 @@
 package test.java.junit.server_test;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.websocket.Session;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,18 +19,14 @@ public class CommandsTest {
 	/** Tests running "/help" without any arguments. */
 	public void testHelp() {
 		// Create a mock session and connect it to the server.
-		List<String> output = new LinkedList<String>();
-		Session session = ServerTest.getMockSession(output);
-		server.onOpen(session);
-		String name = " {\"name\":\"Test\"}";
-		server.onMessage(name, session);
+		MockConnection user = new MockConnection(server, "Test");
 		
 		String message = " {\"message\":\"/help\"}";
-		server.onMessage(message, session);
+		server.onMessage(message, user.getSession());
 
 		String expectedSubstring = "/help [command]";
-		Assert.assertTrue(ServerTest.listContainsSubstring(output, expectedSubstring));
+		Assert.assertTrue(user.receivedMessage(expectedSubstring));
 		
-		server.onClose(session);
+		server.onClose(user.getSession());
 	}
 }
