@@ -67,7 +67,7 @@ public class ServerTest {
 		server.onClose(session2);
 	}
 	
-	private static boolean listContainsSubstring(List<String> list, String string) {
+	public static boolean listContainsSubstring(List<String> list, String string) {
 		for (String listItem : list) {
 			if (listItem.contains(string)) {
 				return true;
@@ -76,7 +76,7 @@ public class ServerTest {
 		return false;
 	}
 	
-	private Session getMockSession(List<String> output) {
+	public static Session getMockSession(List<String> output) {
 		Session session = Mockito.mock(Session.class);
 		String uuid = UUID.randomUUID().toString();
 		Mockito.when(session.getId()).thenReturn(uuid);
@@ -98,7 +98,7 @@ public class ServerTest {
 		return session;
 	}
 	
-	private RemoteEndpoint.Basic getMockBasicEndpoint(List<String> output) throws IOException {
+	private static RemoteEndpoint.Basic getMockBasicEndpoint(List<String> output) throws IOException {
 		RemoteEndpoint.Basic endpoint = Mockito.mock(RemoteEndpoint.Basic.class);
 		
 		Mockito.doAnswer(new Answer<Void>() {
@@ -115,7 +115,7 @@ public class ServerTest {
 	}
 	
 	// RemoteEndpoint doesn't specify sendText(), so I need separate methods for basic and async...
-	private RemoteEndpoint.Async getMockAsyncEndpoint(List<String> output) throws IOException {
+	private static RemoteEndpoint.Async getMockAsyncEndpoint(List<String> output) throws IOException {
 		RemoteEndpoint.Async endpoint = Mockito.mock(RemoteEndpoint.Async.class);
 		
 		Mockito.doAnswer(new Answer<Void>() {
