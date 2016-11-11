@@ -148,6 +148,10 @@ ul#instructions li {
     background: #272822
 }
 
+#chat strong {
+	color: #87B56C;
+}
+
 #messages {
     height: 130px;
     word-break: break-all;

@@ -76,8 +76,7 @@ public class WebServer {
 				
 				// echo the command to the client's chatbox
 				String sourceName = sessions.get(session);
-				String selfText = "<font color=\"#87B56C\"><strong>" +
-									sourceName + "</strong></font>: " +
+				String selfText = "<strong>" + sourceName + "</strong>: " +
 									input.getMessage();
 				unicast(selfText, session);
 
