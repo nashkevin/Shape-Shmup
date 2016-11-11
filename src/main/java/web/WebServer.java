@@ -1,6 +1,5 @@
 package main.java.web;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
