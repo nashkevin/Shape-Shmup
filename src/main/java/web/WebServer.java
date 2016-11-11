@@ -38,7 +38,7 @@ public class WebServer {
 	@OnOpen
 	public void onOpen(Session session) {
 		System.out.println(session.getId() + " has opened a connection.");
-		session.getAsyncRemote().sendText("Connection established.");
+		session.getAsyncRemote().sendText("Connection established");
 		synchronized(sessionToName) {
 			sessionToName.put(session, null);
 		}

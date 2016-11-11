@@ -1,4 +1,5 @@
 const INPUT_RATE = 20; // maximum number of inputs per second
+var SPEED_CAP = 100;   // maximum speed a player can travel
 var webSocket;
 var clientInput = {};  // represents the current input of the player
 var messages = document.getElementById("messages");
@@ -15,7 +16,17 @@ renderer.autoResize = true;
 
 var stage = new PIXI.Container();
 var player;
-var timestamp;
+var velocityVector = { angle: 0, magnitude: 0 };
+var velocityArrow;
+var driveVector = { angle: 0, magnitude: 0 };
+var driveArrow;
+
+var pingStartTime;
+
+var isSpeedDecaying = false;
+var decaySpeedID;
+var isAccelerating = false;
+var accelerateID;
 
 function joinGame() {
     // Ensures only one connection is open at a time
@@ -41,7 +52,7 @@ function joinGame() {
         } catch (error) { // Display non-JSON messages to the chat area
             // if the server is responding to a ping request
             if (e.data === "PONG")
-                addMessageToChat(Date.now() - timestamp + " ms");
+                addMessageToChat(Date.now() - pingStartTime + " ms");
             else
                 addMessageToChat(e.data);
         }
@@ -56,7 +67,7 @@ function joinGame() {
         if (state === webSocket.CONNECTING) {
             setTimeout(completeConnection, 250);
         } else if (state === webSocket.OPEN) {
-            // Once connection is established.
+            // Once connection is established
             var username = document.getElementById("username").value.trim();
             webSocket.send(JSON.stringify({ 'name': username }));
 
@@ -64,6 +75,8 @@ function joinGame() {
             document.getElementById("game").classList.remove("hidden");
             resize();
             drawPlayer();
+            drawDriveArrow();
+            drawVelocityArrow();
             sendFrameInput();
         } else {
             alert("The connection to the server was closed before it could be established.");
@@ -95,7 +108,7 @@ function sendChatMessage() {
     var text = document.getElementById("messageinput").value;
     document.getElementById("messageinput").value = "";
     if (text != "") {
-        timestamp = Date.now();
+        pingStartTime = Date.now();
         webSocket.send(JSON.stringify({ 'message': text }));
     }
 }
@@ -158,6 +171,7 @@ window.onkeydown = function(e) {
                 delete clientInput.left;
                 break;
         }
+        drive();
     }
 };
 
@@ -189,6 +203,7 @@ window.onkeyup = function(e) {
                 delete clientInput.right;
                 break;
         }
+        drive();
     }
 };
 
@@ -223,6 +238,92 @@ function coordinateToAngle(x, y) {
     return Math.atan2(y - y_origin, x - x_origin);
 }
 
+function drive() {
+    // directional client input as boolean array (binary number)
+    var movement = [
+        !!clientInput.up,
+        !!clientInput.down,
+        !!clientInput.left,
+        !!clientInput.right 
+    ];
+
+    var movementCode = 0; // decimal representation of movement
+    
+    for (var i = 0; i < movement.length; i++) {
+        // convert binary to decimal
+        movementCode += movement[i] * (1 << (movement.length - 1 - i));
+    }
+    
+    switch (movementCode) {
+        case 1:  // right
+            driveVector.angle = 0;
+            break;
+        case 2:  // left
+            driveVector.angle = Math.PI;
+            break;
+        case 4:  // down
+            driveVector.angle = Math.PI / 2;
+            break;
+        case 5:  // down right
+            driveVector.angle = Math.PI / 4;
+            break;
+        case 6:  // down left
+            driveVector.angle = 3 * Math.PI / 4;
+            break;
+        case 8:  // up
+            driveVector.angle = -Math.PI / 2;
+            break;
+        case 9:  // up right
+            driveVector.angle = -Math.PI / 4;
+            break;
+        case 10: // up left
+            driveVector.angle = -3 * Math.PI / 4;
+            break;
+    }
+
+    // no movement keys are held
+    if (movement.indexOf(true) === -1) {
+        clearInterval(accelerateID);
+        if (!isSpeedDecaying)
+            decaySpeedID = setInterval(decaySpeed, 20);
+        isAccelerating = false;
+        isSpeedDecaying = true;
+        driveVector.magnitude = 0;
+    }
+    else {
+        clearInterval(decaySpeedID);
+        if (!isAccelerating)
+            accelerateID = setInterval(accelerate, 15);
+        isSpeedDecaying = false;
+        isAccelerating = true;
+        driveVector.magnitude = 1;
+    }
+}
+
+function decaySpeed() {
+    if (velocityVector.magnitude > 0) {
+        velocityVector.magnitude--;
+    } else {
+        velocityVector.magnitude = 0;
+        clearInterval(decaySpeedID);
+        isSpeedDecaying = false;
+    }
+}
+
+function accelerate() {
+    var x = velocityVector.magnitude * Math.cos(velocityVector.angle);
+    var y = velocityVector.magnitude * Math.sin(velocityVector.angle);
+
+    x += driveVector.magnitude * Math.cos(driveVector.angle);
+    y += driveVector.magnitude * Math.sin(driveVector.angle);
+    
+    velocityVector.angle = Math.atan2(y, x);
+
+    velocityVector.magnitude = Math.sqrt(x * x + y * y);
+    if (velocityVector.magnitude >= SPEED_CAP)
+        velocityVector.magnitude = SPEED_CAP;
+}
+
 function drawPlayer() {
     var playerShape = new PIXI.Graphics();
     playerShape.lineStyle(4, 0x87B56C, 1)
@@ -243,10 +344,49 @@ function drawPlayer() {
     stage.addChild(player);
 }
 
+function drawDriveArrow() {
+    var arrowShape = new PIXI.Graphics();
+    arrowShape.lineStyle(3, 0xFFFFFF, 1);
+    arrowShape.moveTo(0, 0);
+    arrowShape.lineTo(100, 0);
+
+    driveArrow = new PIXI.Sprite(renderer.generateTexture(arrowShape));
+    driveArrow.anchor.set(0, 0);
+    driveArrow.pivot.set(0, 0);
+    driveArrow.position.set(getGameWidth() / 2, getGameHeight() / 2);
+
+    stage.addChild(driveArrow);
+}
+function drawVelocityArrow() {
+    var arrowShape = new PIXI.Graphics();
+    arrowShape.lineStyle(3, 0xFFFF00, 1);
+    arrowShape.moveTo(0, 0);
+    arrowShape.lineTo(150, 0);
+
+    velocityArrow = new PIXI.Sprite(renderer.generateTexture(arrowShape));
+    velocityArrow.anchor.set(0, 0);
+    velocityArrow.pivot.set(0, 0);
+    velocityArrow.position.set(getGameWidth() / 2, getGameHeight() / 2);
+
+    stage.addChild(velocityArrow);
+    velocityArrow.scale.set(0, 0); // initially represent no speed
+}
+
 function animationLoop() {
     requestAnimationFrame(animationLoop);
-    if (clientInput.angle)
+    if (clientInput.angle != null)
         player.rotation = clientInput.angle + Math.PI;
+    if (driveArrow != null) {
+        if (driveVector.magnitude != 0) {
+            driveArrow.rotation = driveVector.angle;
+            driveArrow.visible = true;
+        } else
+            driveArrow.visible = false;
+    }
+    if (velocityArrow != null) {
+        velocityArrow.rotation = velocityVector.angle;
+        velocityArrow.scale.set(velocityVector.magnitude / SPEED_CAP, 1);
+    }
     renderer.render(stage);
 }
 animationLoop();
