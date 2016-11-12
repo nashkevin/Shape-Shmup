@@ -15,6 +15,11 @@ renderer.backgroundColor = 0x272822;
 renderer.autoResize = true;
 
 var stage = new PIXI.Container();
+var bg = new PIXI.Texture.fromImage("images/background.png");
+var bgTile = new PIXI.extras.TilingSprite(bg, 1920, 1080);
+bgTile.position.set(0, 0);
+bgTile.tilePosition.set(0, 0);
+stage.addChild(bgTile);
 var player;
 var velocityVector = { angle: 0, magnitude: 0 };
 var velocityArrow;
@@ -391,6 +396,11 @@ function animationLoop() {
         
         velocityArrow.rotation = velocityVector.angle;
         velocityArrow.scale.set(velocityVector.magnitude / SPEED_CAP, 1);
+
+        var x = velocityVector.magnitude * Math.cos(velocityVector.angle);
+        var y = velocityVector.magnitude * Math.sin(velocityVector.angle);
+        bgTile.tilePosition.x -= x / 10;
+        bgTile.tilePosition.y -= y / 19;
     }
     renderer.render(stage);
 }
