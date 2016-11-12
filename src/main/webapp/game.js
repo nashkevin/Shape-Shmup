@@ -357,6 +357,7 @@ function drawDriveArrow() {
 
     stage.addChild(driveArrow);
 }
+
 function drawVelocityArrow() {
     var arrowShape = new PIXI.Graphics();
     arrowShape.lineStyle(3, 0xFFFF00, 1);
@@ -374,16 +375,20 @@ function drawVelocityArrow() {
 
 function animationLoop() {
     requestAnimationFrame(animationLoop);
-    if (clientInput.angle != null)
-        player.rotation = clientInput.angle + Math.PI;
-    if (driveArrow != null) {
+    
+    if (player != null) {
+        
+        if (clientInput.angle != null)
+            player.rotation = clientInput.angle + Math.PI;
+
         if (driveVector.magnitude != 0) {
             driveArrow.rotation = driveVector.angle;
             driveArrow.visible = true;
-        } else
+        }
+        else {
             driveArrow.visible = false;
-    }
-    if (velocityArrow != null) {
+        }
+        
         velocityArrow.rotation = velocityVector.angle;
         velocityArrow.scale.set(velocityVector.magnitude / SPEED_CAP, 1);
     }
