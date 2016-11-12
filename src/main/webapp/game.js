@@ -25,6 +25,7 @@ var velocityVector = { angle: 0, magnitude: 0 };
 var velocityArrow;
 var driveVector = { angle: 0, magnitude: 0 };
 var driveArrow;
+var firingArrow;
 
 var pingStartTime;
 
@@ -82,6 +83,7 @@ function joinGame() {
             drawPlayer();
             drawDriveArrow();
             drawVelocityArrow();
+            drawFiringArrow();
             sendFrameInput();
         } else {
             alert("The connection to the server was closed before it could be established.");
@@ -378,6 +380,21 @@ function drawVelocityArrow() {
     velocityArrow.scale.set(0, 0); // initially represent no speed
 }
 
+function drawFiringArrow() {
+    var arrowShape = new PIXI.Graphics();
+    arrowShape.lineStyle(3, 0xFF0000, 1);
+    arrowShape.moveTo(0, 0);
+    arrowShape.lineTo(100, 0);
+
+    firingArrow = new PIXI.Sprite(renderer.generateTexture(arrowShape));
+    firingArrow.anchor.set(0, 0);
+    firingArrow.pivot.set(0, 0);
+    firingArrow.position.set(getGameWidth() / 2, getGameHeight() / 2);
+
+    stage.addChild(firingArrow);
+    firingArrow.visible = false; // initially not firing
+}
+
 function animationLoop() {
     requestAnimationFrame(animationLoop);
     
@@ -392,6 +409,13 @@ function animationLoop() {
         }
         else {
             driveArrow.visible = false;
+        }
+
+        if (clientInput.isFiring != null) {
+            firingArrow.rotation = player.rotation - Math.PI;
+            firingArrow.visible = true;
+        } else {
+            firingArrow.visible = false;
         }
         
         velocityArrow.rotation = velocityVector.angle;
