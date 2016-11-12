@@ -1,6 +1,7 @@
 const INPUT_RATE = 20; // maximum number of inputs per second
 var SPEED_CAP = 100;   // maximum speed a player can travel
 var webSocket;
+var username;
 var clientInput = {};  // represents the current input of the player
 var messages = document.getElementById("messages");
 
@@ -74,7 +75,7 @@ function joinGame() {
             setTimeout(completeConnection, 250);
         } else if (state === webSocket.OPEN) {
             // Once connection is established
-            var username = document.getElementById("username").value.trim();
+            username = document.getElementById("username").value.trim();
             webSocket.send(JSON.stringify({ 'name': username }));
 
             document.getElementById("pregame").classList.add("hidden");
@@ -349,6 +350,22 @@ function drawPlayer() {
     player.position.set(getGameWidth() / 2, getGameHeight() / 2);
 
     stage.addChild(player);
+
+    var playerName = new PIXI.Text(username, {
+        fontFamily: "Arial",
+        fontSize: 12 + (16 - username.length),
+        align: "center",
+        fill: "#F8F8F2",
+        dropShadow: true,
+        dropShadowColor: "#222222",
+        dropShadowDistance: 5,
+        stroke: "#131411",
+        strokeThickness: 2
+    });
+    playerName.anchor.set(0.5, 0.5);
+    playerName.position = player.position;
+    playerName.position.y += 50;
+    stage.addChild(playerName);
 }
 
 function drawDriveArrow() {
