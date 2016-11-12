@@ -42,4 +42,4 @@ Here is a comprehensive list of the pre-existing APIs, libraries, and other tech
 
 * **PixiJS**, Goodboy Digital Ltd., [license](https://github.com/pixijs/pixi.js/blob/master/LICENSE)
  * 2D WebGL renderer
- * (*not fully implemented*) graphics are drawn on an HTML5 canvas in the player's browser using PixiJS
+ * graphics are drawn on an HTML5 canvas in the player's browser using PixiJS
