@@ -4,18 +4,18 @@
 	<head>
 		<title>Web Browser Game v1.1</title>
 		<meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width">
-        <link rel='shortcut icon' type='image/x-icon' href='images/favicon.ico' />
-        <link rel="stylesheet" type="text/css" media="all" href="style.css" />
+		<meta name="viewport" content="width=device-width">
+		<link rel='shortcut icon' type='image/x-icon' href='images/favicon.ico' />
+		<link rel="stylesheet" type="text/css" media="all" href="style.css" />
 	</head>
 	<body>
 
-        <div id="pregame" class="noselect">
+		<div id="pregame" class="noselect">
 			<form action="javascript:joinGame();">
 				<h1>Web Browser Game<br>v1.1</h1>
-	            <h2><label>Enter a username<br><input type="text" id="username" name="username" maxlength="16" pattern="^[^-.\\\/\s][\s\S]{0,15}$" autofocus required></label></h2>
+				<h2><label>Enter a username<br><input type="text" id="username" name="username" maxlength="16" pattern="^[^-.\\\/\s][\s\S]{0,15}$" autofocus required></label></h2>
 				<p class="hidden-accessible"><button type="submit">Join Game</button></p>
-	        </form>
+			</form>
 			<ul id="instructions">
 				<li>
 					<p class="action"><kbd>W</kbd><br><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></p>
@@ -29,19 +29,22 @@
 			</ul>
 		</div>
 
-        <div id="game" class="hidden">
-        	<canvas id="gameCanvas" class="playarea" tabindex="0"></canvas>
+		<div id="game" class="hidden">
+			<canvas id="gameCanvas" class="playarea" tabindex="0"></canvas>
 
-            <div id="chat">
-            	<div id="messages"></div>
-            	<form action="javascript:sendChatMessage();" id="chatInput">
-	                <label>Chat: <input type="text" id="messageinput" autocomplete="off" maxlength="128"></label> <button type="submit">Send</button>
-	            </form>
-	                <button type="button" onclick="closeSocket();" id="leaveButton">Leave Game</button>
-            </div>
-        </div>
+			<div id="chat">
+				<div id="messages"></div>
+				<form action="javascript:sendChatMessage();" id="chatInput">
+					<label>
+						Chat: <input type="text" id="messageInput" autocomplete="off" maxlength="128">
+					</label>
+					<button type="submit">Send</button>
+				</form>
+				<button type="button" onclick="closeSocket();" id="leaveButton">Leave Game</button>
+			</div>
+		</div>
 
-        <script src="pixi.min.js"></script>
-        <script src="game.js"></script>
+		<script src="pixi.min.js"></script>
+		<script src="game.js"></script>
 	</body>
 </html>

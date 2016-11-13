@@ -113,12 +113,13 @@ function sendFrameInput() {
 
 // Sends the value of the text input to the server
 function sendChatMessage() {
-    var text = document.getElementById("messageinput").value;
-    document.getElementById("messageinput").value = "";
+    var text = document.getElementById("messageInput").value;
+    document.getElementById("messageInput").value = "";
     if (text != "") {
         pingStartTime = Date.now();
-        webSocket.send(JSON.stringify({ 'message': text }));
+        webSocket.send(JSON.stringify({ "message": text }));
     }
+    document.getElementById("gameCanvas").focus();
 }
 
 function closeSocket() {
@@ -178,6 +179,17 @@ window.onkeydown = function(e) {
                 clientInput.right = true;
                 delete clientInput.left;
                 break;
+            case 13:          // enter
+                e.preventDefault();
+                document.getElementById("messageInput").focus();
+                stopAllMovement();
+                break;
+            case 191:         // forward slash
+                e.preventDefault();
+                document.getElementById("messageInput").focus();
+                document.getElementById("messageInput").value = "/";
+                stopAllMovement();
+                break;
         }
         drive();
     }
@@ -214,6 +226,13 @@ window.onkeyup = function(e) {
         drive();
     }
 };
+
+function stopAllMovement() {
+    delete clientInput.up;
+    delete clientInput.left;
+    delete clientInput.down;
+    delete clientInput.right;
+}
 
 // Action when the user fires a projectile by clicking with the mouse
 function startFiring(e) {
@@ -414,7 +433,6 @@ function drawFiringArrow() {
 
 function animationLoop() {
     requestAnimationFrame(animationLoop);
-    
     if (player != null) {
         
         if (clientInput.angle != null)
