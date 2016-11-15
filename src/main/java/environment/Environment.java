@@ -6,9 +6,13 @@ import java.util.*;
 import main.java.agent.*;
 import main.java.projectile.*;
 
-
+/** TODOs
+  Fix constructor calls for NPC and Player agents for integration
+  Change check collision to use a set distance
+*/
 public class Environment {
   
+  private static final int NPCTOPLAYERRATIO = 5;
   private double radius;
   /** Maps from session ID (of WebSocket connection) to agent for each client. */
   private HashSet<PlayerAgent> activePlayerAgents;
@@ -112,15 +116,14 @@ public class Environment {
   }
 
   private void update(){
-    for(PlayerAgent agent : getActivePlayerAgents()){
+    for(PlayerAgent agent : getActivePlayerAgents())
       agent.update();
-    }
-    for(NPCAgent agent : getActiveNPCAgents()){
+    for(NPCAgent agent : getActiveNPCAgents())
       agent.update();
-    }
-    for(Projectile p : getActiveProjectiles()){
+    for(Projectile p : getActiveProjectiles())
       p.update();
-    }
+    while(getActiveNPCAgents().size() < (NPCTOPLAYERRATIO * getActivePlayerAgents().size()))
+      spawnNPC();
   }
 
   public static void main(String [ ] args){
