@@ -110,5 +110,24 @@ public class Environment {
     double distance = Math.random() * getRadius();
     return polarToCartesian(angle, distance);
   }
+
+  private void update(){
+    for(PlayerAgent agent : getActivePlayerAgents()){
+      agent.update();
+    }
+    for(NPCAgent agent : getActiveNPCAgents()){
+      agent.update();
+    }
+    for(Projectile p : getActiveProjectiles()){
+      p.update();
+    }
+  }
+
+  public static void main(String [ ] args){
+    Environment e = new Environment(5);
+    while(true){
+      e.update();
+    }
+  }
     
 }
