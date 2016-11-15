@@ -10,7 +10,8 @@ import main.java.projectile.*;
   Fix constructor calls for NPC and Player agents for integration
   Change check collision to use a set distance
 */
-public class Environment {
+public class Environment extends Thread {
+	private boolean gameplayOccurring = true;
   
   private static final int NPCTOPLAYERRATIO = 5;
   private double radius;
@@ -126,11 +127,18 @@ public class Environment {
       spawnNPC();
   }
 
-  public static void main(String [ ] args){
-    Environment e = new Environment(5);
-    while(true){
-      e.update();
-    }
-  }
+	public void run() {
+		while(gameplayOccurring) {
+			update();
+		}
+	}
+
+	public boolean isGameplayOccurring() {
+		return gameplayOccurring;
+	}
+
+	public void setGameplayOccurring(boolean gameplayOccurring) {
+		this.gameplayOccurring = gameplayOccurring;
+	}
     
 }

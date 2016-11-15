@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 public abstract class Projectile {
-	private Environment env;
+	private transient Environment env;
 	private Agent owner;
 	private Point position;
 	private Vector2D velocity;

@@ -26,12 +26,14 @@ public class WebServer {
 	private static final Map<Session, PlayerAgent> sessionToPlayerAgent = Collections.synchronizedMap(new HashMap<>());
 	/** The chosen name of each named player, mapped to session. */
 	private static final Map<String, Session> nameToSession = Collections.synchronizedMap(new HashMap<>());
-	private static Environment environment = new Environment(RADIUS);
+	private static Environment environment;
 	private static GameThread gameThread;
 	
 	public WebServer() {
+		environment = new Environment(RADIUS);
 		gameThread = new GameThread(this, environment);
 		gameThread.start();
+		environment.start();
 	}
 	
 	/** When a new client makes a connection to the server. */
@@ -136,6 +138,7 @@ public class WebServer {
 		synchronized(sessionToName) {
 			if (sessionToName.size() == 0) {
 				gameThread.setGameplayOccurring(false);
+				environment.setGameplayOccurring(false);
 			}
 		}
 	}

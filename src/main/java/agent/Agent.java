@@ -17,7 +17,7 @@ import main.java.projectile.ProjectileFactory;
 
 public abstract class Agent {
 	private UUID id;
-	private Environment env;
+	private transient Environment env;
 	private int level;
 	private int team;
 	
