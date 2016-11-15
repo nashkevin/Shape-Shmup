@@ -207,7 +207,7 @@ public abstract class Agent {
 		// Create a new velocity
 		// TODO: Create new velocity from given vector as acceleration
 		if (vector == null)
-			velocity = null;
+			velocity = new Vector2D(0, 0);
 		else
 			velocity = new Vector2D(vector);
 		
