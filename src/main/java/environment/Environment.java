@@ -11,12 +11,15 @@ public class Environment {
   
   private double radius;
   /** Maps from session ID (of WebSocket connection) to agent for each client. */
-  private HashSet<PlayerAgent> activePlayerAgents = new HashSet<PlayerAgent>();
-  private HashSet<NPCAgent> activeNPCAgents = new HashSet<NPCAgent>();
-  private HashSet<Projectile> activeProjectiles = new HashSet<Projectile>();
+  private HashSet<PlayerAgent> activePlayerAgents;
+  private HashSet<NPCAgent> activeNPCAgents;
+  private HashSet<Projectile> activeProjectiles;
   
   public Environment(double radius) {
     this.radius = radius;
+    activePlayerAgents = new HashSet<PlayerAgent>();
+    activeNPCAgents = new HashSet<NPCAgent>();
+    activeProjectiles = new HashSet<Projectile>();
   }
 
   public double getRadius(){
@@ -37,34 +40,31 @@ public class Environment {
   
   public void despawnNPCAgent(NPCAgent agent){
     activeNPCAgents.remove(agent);
-    agent.despawn();
   }
   
   public void despawnPlayerAgent(PlayerAgent agent){
     activePlayerAgents.remove(agent);
-    agent.despawn();
   }
 
   public void despawnProjectile(Projectile projectile){
     activeProjectiles.remove(projectile);
-    projectile.despawn();
   }
 
   /** Spawns a playable character entity. */
   public PlayerAgent spawnPlayer() {
-	UUID id = UUID.randomUUID();
-	PlayerAgent player = new PlayerAgent(id, this, randomPlayerSpawn(), 0, 0, 0, 0, 0, 0/*TODO insert appropriate constructor variables*/);
-	activePlayerAgents.add(player);
-	return player;
-	
-	//TODO send update message to server
+  	UUID id = UUID.randomUUID();
+  	PlayerAgent player = new PlayerAgent(id, this, randomPlayerSpawn(), 0, 0, 0, 0, 0, 0/*TODO insert appropriate constructor variables*/);
+  	activePlayerAgents.add(player);
+  	return player;
   }
 
   public void spawnNPC(){
     NPCAgent agent = new TestEnemyAgent(UUID.randomUUID(), this, randomNPCSpawn(), 0/*this level won't be necessary eventually*/);
     activeNPCAgents.add(agent);
-    
-    //TODO send update message to server
+  }
+
+  public void spawnProjectile(Projectile p){
+    activeProjectiles.add(p);
   }
   
   public static Point polarToCartesian(double angle, double radius){
