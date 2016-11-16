@@ -307,7 +307,7 @@ public enum Command {
 		// split commands into arguments
 		String[] args = input.substring(1).trim().split("\\s++");
 		
-		if (!args[0].equals("clear")) {
+		if (!args[0].equalsIgnoreCase("clear")) {
 			// echo the command to the client's chatbox
 			String selfText = "<strong>" + server.getNameBySession(session) + "</strong>: " + input;
 			server.unicast(selfText, session);
