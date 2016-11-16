@@ -3,6 +3,7 @@ package main.java.web;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
@@ -65,6 +66,25 @@ public enum Command {
 				server.unicast(sb.toString(), session);
 			}
 		},
+	BRING("bring",
+			new String[] {"fetch", "summon"},
+			"Brings a player to you or another player.<br>Syntax: /bring player [to_player]"
+		) {
+			@Override
+			protected void perform(String[] args, Session session, WebServer server) {
+				Point destination = new Point();
+				if (args.length == 3) {
+					destination = server.getPlayerAgentByName(args[2]).getPosition();
+				}
+				else if (args.length == 2) {
+					destination = server.getPlayerAgentBySession(session).getPosition();
+				}
+				else {
+					throw new IllegalArgumentException();
+				}
+				server.getPlayerAgentByName(args[1]).setPosition(destination);
+			}
+		},
 	CLEAR("clear",
 			null,
 			"Clears your chat window.<br>Syntax: /clear"
@@ -97,7 +117,7 @@ public enum Command {
 		},
 	KICK("kick",
 			null,
-			"Disconnects another user from the server.<br>Syntax: /kick (username)"
+			"Disconnects another user from the server.<br>Syntax: /kick username"
 		) {
 			@Override
 			protected void perform(String[] args, Session sourceSession, WebServer server) {
@@ -106,7 +126,7 @@ public enum Command {
 				}
 				
 				String targetName = args[1];
-				Session targetSession = server.getSessionByUser(targetName);
+				Session targetSession = server.getSessionByName(targetName);
 				if (sourceSession.equals(targetSession)) {
 					server.unicast("You can't kick yourself. Use /exit instead.", sourceSession);
 				} else if (targetSession != null) {
@@ -159,7 +179,7 @@ public enum Command {
 		},
 	PM("pm",
 			new String[] {"tell"},
-			"Sends a private message to a player.<br>Syntax: /pm (username) (message)"
+			"Sends a private message to a player.<br>Syntax: /pm username message"
 		) {
 			@Override
 			protected void perform(String[] args, Session sourceSession, WebServer server) {
@@ -168,7 +188,7 @@ public enum Command {
 				}
 				String sourceUser = server.getNameBySession(sourceSession);
 				String destinationUser = args[1];
-				Session destinationSession = server.getSessionByUser(destinationUser);
+				Session destinationSession = server.getSessionByName(destinationUser);
 				if (sourceSession.equals(destinationSession)) {
 					server.unicast("You can't private message yourself.", sourceSession);
 				} else if (destinationSession != null) {
@@ -185,7 +205,7 @@ public enum Command {
 		},
 	SAY("say",
 			new String[] {"announce", "broadcast"},
-			"Sends a message to all connected players. Useful for server announcements.<br>Syntax: /say (message)"
+			"Sends a message to all connected players. Useful for server announcements.<br>Syntax: /say message"
 		) {
 			@Override
 			protected void perform(String[] args, Session session, WebServer server) {
@@ -202,17 +222,22 @@ public enum Command {
 			}
 		},
 	WHERE("where",
-			null,
-			"Gives your coordinates.<br>Syntax: /where"
+			new String[] {"locate"} ,
+			"Gives your coordinates or the coordinates of another player.<br>Syntax: /where [username]"
 		) {
 			@Override
 			protected void perform(String[] args, Session session, WebServer server) {
-				if (args.length != 1) {
-					throw new IllegalArgumentException();
-				} else {
-					Point position = server.getPlayerAgentBySession(session).getPosition();
-					server.unicast("(" + position.getX() + ", " + position.getY() + ")", session);
+				Point position = new Point();
+				if (args.length == 1) {
+					position = server.getPlayerAgentBySession(session).getPosition();
 				}
+				else if (args.length == 2) {
+					position = server.getPlayerAgentByName(args[1]).getPosition();
+				}
+				else {
+					throw new IllegalArgumentException();
+				}
+				server.unicast("(" + position.getX() + ", " + position.getY() + ")", session);
 			}
 		};
 

@@ -109,7 +109,7 @@ public class WebServer {
 		session.getAsyncRemote().sendText(message);
 	}
 
-	Session getSessionByUser(String username) {
+	Session getSessionByName(String username) {
 		return nameToSession.get(username);
 	}
 	
@@ -119,6 +119,10 @@ public class WebServer {
 
 	PlayerAgent getPlayerAgentBySession(Session session) {
 		return sessionToPlayerAgent.get(session);
+	}
+
+	PlayerAgent getPlayerAgentByName(String username) {
+		return sessionToPlayerAgent.get(getSessionByName(username));
 	}
 	
 	Set<String> getNames() {

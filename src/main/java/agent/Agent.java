@@ -178,6 +178,14 @@ public abstract class Agent {
 	}
 	
 	public abstract void despawn();
+
+	public void setPosition(int x, int y) {
+		this.position.setLocation(x, y);
+	}
+
+	public void setPosition(Point p) {
+		this.position.setLocation(p);
+	}
 	
 	protected final void setAcceleration(Vector2D vector) {
 		if (vector == null) {
