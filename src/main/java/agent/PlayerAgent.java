@@ -16,10 +16,13 @@ import java.util.Random;
 import java.util.UUID;
 public class PlayerAgent extends Agent {
 
+	private String name;
+
 	Queue<ClientInput> eventInbox; 
 
-	public PlayerAgent(UUID id, Environment env, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
+	public PlayerAgent(String name, UUID id, Environment env, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
 		super(id, env, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
+		this.name = name;
         this.eventInbox = new LinkedList<ClientInput>();
 	}
 
@@ -102,6 +105,7 @@ public class PlayerAgent extends Agent {
 		public static void generateTestInstance() {
 			Random random = new Random();
 			
+			String name = "tester";
 			UUID id = UUID.randomUUID();
 			Environment env = new EnvironmentMock(random.nextDouble() * 100);
 			Point position = new Point();
@@ -114,7 +118,7 @@ public class PlayerAgent extends Agent {
 			int baseMovementSpeed = random.nextInt(100) + 1;
 			
 			//TODO: make player test agent implementation class
-			testInstance = new PlayerAgentTestImp(id, env, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
+			testInstance = new PlayerAgentTestImp(name, id, env, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
 		}
 		
 		public static PlayerAgent getTestInstance() {

@@ -8,11 +8,12 @@ import main.java.environment.Environment;
 
 public class PlayerAgentTestImp extends PlayerAgent {
 
-	public PlayerAgentTestImp(UUID id, Environment env, Point position,
-			int level, int team, int health, int damage, int projectileSpeed,
-			int baseMovementSpeed) {
-		super(id, env, position, level, team, health, damage, projectileSpeed,
+	public PlayerAgentTestImp(String name, UUID id, Environment env, Point position,
+							int level, int team, int health, int damage, int projectileSpeed,
+							int baseMovementSpeed) {
+		super(name, id, env, position, level, team, health, damage, projectileSpeed,
 				baseMovementSpeed);
+
 		// TODO Auto-generated constructor stub
 	}
 

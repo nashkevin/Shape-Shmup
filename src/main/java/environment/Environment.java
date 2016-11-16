@@ -2,6 +2,7 @@ package main.java.environment;
 
 import java.awt.Point;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import main.java.agent.*;
 import main.java.projectile.*;
@@ -16,30 +17,33 @@ public class Environment extends Thread {
   private static final int NPCTOPLAYERRATIO = 5;
   private double radius;
   /** Maps from session ID (of WebSocket connection) to agent for each client. */
-  private HashSet<PlayerAgent> activePlayerAgents;
-  private HashSet<NPCAgent> activeNPCAgents;
-  private HashSet<Projectile> activeProjectiles;
+  private Map<PlayerAgent, Boolean> playerMap = new ConcurrentHashMap();
+  private Set<PlayerAgent> activePlayerAgents;
+  private Map<NPCAgent, Boolean> npcMap = new ConcurrentHashMap();
+  private Set<NPCAgent> activeNPCAgents;
+  private Map<Projectile, Boolean> projectileMap = new ConcurrentHashMap();
+  private Set<Projectile> activeProjectiles;
   
   public Environment(double radius) {
     this.radius = radius;
-    activePlayerAgents = new HashSet<PlayerAgent>();
-    activeNPCAgents = new HashSet<NPCAgent>();
-    activeProjectiles = new HashSet<Projectile>();
+    activePlayerAgents = Collections.newSetFromMap(playerMap);
+    activeNPCAgents = Collections.newSetFromMap(npcMap);
+    activeProjectiles = Collections.newSetFromMap(projectileMap);
   }
 
   public double getRadius(){
     return this.radius;
   }
 
-  public HashSet<PlayerAgent> getActivePlayerAgents(){
+  public Set<PlayerAgent> getActivePlayerAgents(){
     return this.activePlayerAgents;
   }
 
-  public HashSet<NPCAgent> getActiveNPCAgents(){
+  public Set<NPCAgent> getActiveNPCAgents(){
     return this.activeNPCAgents;
   }
 
-  public HashSet<Projectile> getActiveProjectiles(){
+  public Set<Projectile> getActiveProjectiles(){
     return this.activeProjectiles;
   }
   
@@ -59,9 +63,9 @@ public class Environment extends Thread {
   }
 
   /** Spawns a playable character entity. */
-  public PlayerAgent spawnPlayer() {
+  public PlayerAgent spawnPlayer(String name) {
   	UUID id = UUID.randomUUID();
-  	PlayerAgent player = new PlayerAgent(id, this, randomPlayerSpawn(), 0, 0, 0, 0, 0, 0/*TODO insert appropriate constructor variables*/);
+  	PlayerAgent player = new PlayerAgent(name, id, this, randomPlayerSpawn(), 0, 0, 0, 0, 0, 0/*TODO insert appropriate constructor variables*/);
   	activePlayerAgents.add(player);
     System.out.println(player.getID() + " player was spawned.");
   	return player;

@@ -17,7 +17,7 @@ public class PlayerAgentTest {
 	@Test
 	public void testConstructor() {
 		Environment environment = new Environment(20);
-		PlayerAgent player = new PlayerAgent(UUID.randomUUID(), environment, new Point(10, 10), 1, 1, 100, 10, 1, 1);
+		PlayerAgent player = new PlayerAgent("Tester", UUID.randomUUID(), environment, new Point(10, 10), 1, 1, 100, 10, 1, 1);
 
 		Assert.assertEquals(new Point(10,10), player.getPosition());
 		Assert.assertEquals(1, player.getLevel());
@@ -30,7 +30,7 @@ public class PlayerAgentTest {
 	@Test
 	public void testAddPlayerEvent() {
 		Environment environment = new Environment(20);
-		PlayerAgent player = new PlayerAgent(UUID.randomUUID(), environment, new Point(10, 10), 1, 1, 100, 10, 1, 1);
+		PlayerAgent player = new PlayerAgent("Tester", UUID.randomUUID(), environment, new Point(10, 10), 1, 1, 100, 10, 1, 1);
 
 		ClientInput event = new ClientInput();
 		event.setLeft(true);
