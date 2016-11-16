@@ -45,14 +45,17 @@ public class Environment extends Thread {
   
   public void despawnNPCAgent(NPCAgent agent){
     activeNPCAgents.remove(agent);
+    System.out.println(agent.getID() + " npc was despawned.");
   }
   
   public void despawnPlayerAgent(PlayerAgent agent){
     activePlayerAgents.remove(agent);
+    System.out.println(agent.getID() + " player was despawned.");
   }
 
   public void despawnProjectile(Projectile projectile){
     activeProjectiles.remove(projectile);
+    System.out.println("Projectile was despawned.");
   }
 
   /** Spawns a playable character entity. */
@@ -60,16 +63,19 @@ public class Environment extends Thread {
   	UUID id = UUID.randomUUID();
   	PlayerAgent player = new PlayerAgent(id, this, randomPlayerSpawn(), 0, 0, 0, 0, 0, 0/*TODO insert appropriate constructor variables*/);
   	activePlayerAgents.add(player);
+    System.out.println(player.getID() + " player was spawned.");
   	return player;
   }
 
   public void spawnNPC(){
     NPCAgent agent = new TestEnemyAgent(UUID.randomUUID(), this, randomNPCSpawn(), 0/*this level won't be necessary eventually*/);
     activeNPCAgents.add(agent);
+    System.out.println(agent.getID() + " npc was spawned.");
   }
 
   public void spawnProjectile(Projectile p){
     activeProjectiles.add(p);
+    System.out.println("Projectile was spawned.");
   }
   
   public static Point polarToCartesian(double angle, double radius){
