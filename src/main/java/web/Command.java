@@ -7,12 +7,16 @@ import java.util.Map;
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
 
+import java.awt.Point;
+
+import main.java.agent.PlayerAgent;
+
 /** Manages commands that a player can perform by typing in the chat window. */
 public enum Command {
 	// Pro tip: the order in which the commands are defined
 	// is the order they will appear when using "/commands".
 	HELP("help",
-			null,
+			new String[] {"?"},
 			"Syntax: /help [command]"
 		) {
 			@Override
@@ -59,6 +63,17 @@ public enum Command {
 					
 				}
 				server.unicast(sb.toString(), session);
+			}
+		},
+	CLEAR("clear",
+			null,
+			"Clears your chat window.<br>Syntax: /clear"
+		) {
+			@Override
+			protected void perform(String[] args, Session session, WebServer server) {
+				if (args.length > 1) {
+					throw new IllegalArgumentException();
+				}
 			}
 		},
 	EXIT("exit",
@@ -118,9 +133,14 @@ public enum Command {
 				if (args.length > 1) {
 					throw new IllegalArgumentException();
 				}
+				Set<String> players = server.getNames();
 				StringBuilder sb = new StringBuilder();
-				sb.append(server.getNames().size());
-				sb.append(" players: ");
+				sb.append(players.size());
+				if (players.size() == 1) {
+					sb.append(" player: ");
+				} else {
+					sb.append(" players: ");
+				}
 				sb.append(String.join(", ", server.getNames()));
 				server.unicast(sb.toString(), session);
 			}
@@ -180,8 +200,22 @@ public enum Command {
 					server.broadcast(sb.toString());
 				}
 			}
+		},
+	WHERE("where",
+			null,
+			"Gives your coordinates.<br>Syntax: /where"
+		) {
+			@Override
+			protected void perform(String[] args, Session session, WebServer server) {
+				if (args.length != 1) {
+					throw new IllegalArgumentException();
+				} else {
+					Point position = server.getPlayerAgentBySession(session).getPosition();
+					server.unicast("(" + position.getX() + ", " + position.getY() + ")", session);
+				}
+			}
 		};
-	
+
 	
 	private String command;
 	private String[] aliases;
@@ -248,9 +282,11 @@ public enum Command {
 		// split commands into arguments
 		String[] args = input.substring(1).trim().split("\\s++");
 		
-		// echo the command to the client's chatbox.
-		String selfText = "<strong>" + server.getNameBySession(session) + "</strong>: " + input;
-		server.unicast(selfText, session);
+		if (!args[0].equals("clear")) {
+			// echo the command to the client's chatbox
+			String selfText = "<strong>" + server.getNameBySession(session) + "</strong>: " + input;
+			server.unicast(selfText, session);
+		}
 
 		parseCommand(args, session, server);
 	}

@@ -37,7 +37,7 @@ var accelerateID;
 
 function joinGame() {
     // Ensures only one connection is open at a time
-    if(webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
+    if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
         addMessageToChat("WebSocket is already opened.");
         return;
     }
@@ -47,8 +47,9 @@ function joinGame() {
 
     // Binds functions to the listeners for the websocket.
     webSocket.onopen = function(e) {
-        if(e.data === undefined)
+        if (e.data === undefined){
             return;
+        }
         addMessageToChat(e.data);
     };
 
@@ -58,10 +59,11 @@ function joinGame() {
             //TODO redraw the canvas using the new data
         } catch (error) { // Display non-JSON messages to the chat area
             // if the server is responding to a ping request
-            if (e.data === "PONG")
+            if (e.data === "PONG") {
                 addMessageToChat(Date.now() - pingStartTime + " ms");
-            else
+            } else {
                 addMessageToChat(e.data);
+            }
         }
     };
 
@@ -116,9 +118,13 @@ function sendChatMessage() {
     var text = document.getElementById("messageInput").value;
     document.getElementById("messageInput").value = "";
     if (text != "") {
+        if (text === "/clear") {
+            messages.innerHTML = "";
+            messages.scrollTop = messages.scrollHeight;
+        }
         pingStartTime = Date.now();
         webSocket.send(JSON.stringify({ "message": text }));
-    }
+    } 
     document.getElementById("gameCanvas").focus();
 }
 
@@ -250,8 +256,9 @@ function stopFiring(e) {
 }
 
 function trackAngle(e) {
-    if (connectedToGame())
+    if (connectedToGame()) {
         clientInput.angle = coordinateToAngle(e.clientX, e.clientY);
+    }
 }
 
 /* Returns angle in radians with the following conventions
@@ -309,19 +316,20 @@ function drive() {
             break;
     }
 
-    // no movement keys are held
+    // if no movement keys are held
     if (movement.indexOf(true) === -1) {
         clearInterval(accelerateID);
-        if (!isSpeedDecaying)
+        if (!isSpeedDecaying) {
             decaySpeedID = setInterval(decaySpeed, 20);
+        }
         isAccelerating = false;
         isSpeedDecaying = true;
         driveVector.magnitude = 0;
-    }
-    else {
+    } else {
         clearInterval(decaySpeedID);
-        if (!isAccelerating)
+        if (!isAccelerating) {
             accelerateID = setInterval(accelerate, 15);
+        }
         isSpeedDecaying = false;
         isAccelerating = true;
         driveVector.magnitude = 1;

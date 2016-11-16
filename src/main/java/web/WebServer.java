@@ -116,6 +116,10 @@ public class WebServer {
 	String getNameBySession(Session session) {
 		return sessionToName.get(session);
 	}
+
+	PlayerAgent getPlayerAgentBySession(Session session) {
+		return sessionToPlayerAgent.get(session);
+	}
 	
 	Set<String> getNames() {
 		return nameToSession.keySet();
