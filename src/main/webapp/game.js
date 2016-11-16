@@ -118,13 +118,13 @@ function sendChatMessage() {
     var text = document.getElementById("messageInput").value;
     document.getElementById("messageInput").value = "";
     if (text != "") {
-        if (text === "/clear") {
+        if (text.toLowerCase() === "/clear") {
             messages.innerHTML = "";
             messages.scrollTop = messages.scrollHeight;
         }
         pingStartTime = Date.now();
         webSocket.send(JSON.stringify({ "message": text }));
-    } 
+    }
     document.getElementById("gameCanvas").focus();
 }
 
@@ -279,16 +279,16 @@ function drive() {
         !!clientInput.up,
         !!clientInput.down,
         !!clientInput.left,
-        !!clientInput.right 
+        !!clientInput.right
     ];
 
     var movementCode = 0; // decimal representation of movement
-    
+
     for (var i = 0; i < movement.length; i++) {
         // convert binary to decimal
         movementCode += movement[i] * (1 << (movement.length - 1 - i));
     }
-    
+
     switch (movementCode) {
         case 1:  // right
             driveVector.angle = 0;
@@ -352,7 +352,7 @@ function accelerate() {
 
     x += driveVector.magnitude * Math.cos(driveVector.angle);
     y += driveVector.magnitude * Math.sin(driveVector.angle);
-    
+
     velocityVector.angle = Math.atan2(y, x);
 
     velocityVector.magnitude = Math.sqrt(x * x + y * y);
@@ -443,7 +443,7 @@ function drawFiringArrow() {
 function animationLoop() {
     requestAnimationFrame(animationLoop);
     if (player != null) {
-        
+
         if (clientInput.angle != null)
             player.rotation = clientInput.angle + Math.PI;
 
@@ -461,7 +461,7 @@ function animationLoop() {
         } else {
             firingArrow.visible = false;
         }
-        
+
         velocityArrow.rotation = velocityVector.angle;
         velocityArrow.scale.set(velocityVector.magnitude / SPEED_CAP, 1);
 
