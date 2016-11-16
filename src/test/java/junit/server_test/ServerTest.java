@@ -36,4 +36,39 @@ public class ServerTest {
 		server.onClose(user1.getSession());
 		server.onClose(user2.getSession());
 	}
+	
+	@Test
+	public void testKickSelf() {
+		MockConnection user = new MockConnection(server, "Test");
+		
+		// Try to kick the player itself.
+		String message = " {\"message\":\"/kick Test\"}";
+		server.onMessage(message, user.getSession());
+		
+		// Verify that the user received a message that they can't kick themself.
+		String receivedMessage = "You can't kick yourself.";
+		Assert.assertTrue(user.receivedMessage(receivedMessage));
+				
+		server.onClose(user.getSession());
+	}
+	
+	@Test
+	public void testKickOther() {
+		MockConnection user1 = new MockConnection(server, "Test1");
+		MockConnection user2 = new MockConnection(server, "Test2");
+		
+		// Have user 1 kick user 2.
+		String kickMessage = " {\"message\":\"/kick Test2\"}";
+		server.onMessage(kickMessage, user1.getSession());
+		
+		// Now try to PM user 2 to confirm that they are no longer present.
+		String playersMessage = " {\"message\":\"/pm Test2 hi\"}";
+		server.onMessage(playersMessage, user1.getSession());
+		
+		// Confirm the above by the chat output.
+		String receivedMessage = "User 'Test2' not found.";
+		Assert.assertTrue(user1.receivedMessage(receivedMessage));
+				
+		server.onClose(user1.getSession());
+	}
 }

@@ -16,6 +16,7 @@ import main.java.web.WebServer;
 
 /** Represents a mock client that connects to the web server. */
 public class MockConnection {
+	private WebServer server;
 	private List<String> output = new LinkedList<>();
 	private Session session;
 	
@@ -23,6 +24,7 @@ public class MockConnection {
 		session = getMockSession(output);
 		
 		server.onOpen(session);
+		this.server = server;
 		
 		String nameJSON = " {\"name\":\"" + name + "\"}";
 		server.onMessage(nameJSON, session);
@@ -36,6 +38,10 @@ public class MockConnection {
 		return session;
 	}
 	
+	protected WebServer getServer() {
+		return server;
+	}
+	
 	public boolean receivedMessage(String string) {
 		for (String listItem : output) {
 			if (listItem.contains(string)) {
@@ -45,7 +51,7 @@ public class MockConnection {
 		return false;
 	}
 	
-	private static Session getMockSession(List<String> output) {
+	private Session getMockSession(List<String> output) {
 		Session session = Mockito.mock(Session.class);
 		String uuid = UUID.randomUUID().toString();
 		Mockito.when(session.getId()).thenReturn(uuid);
@@ -63,6 +69,18 @@ public class MockConnection {
 				return getMockAsyncEndpoint(output);
 			}
 		});
+		
+		try {
+			Mockito.doAnswer(new Answer<Void>() {
+				@Override
+				public Void answer(InvocationOnMock invocation) throws Throwable {
+					getServer().onClose(session);
+					return null;
+				}
+			}).when(session).close(Mockito.any());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		return session;
 	}
