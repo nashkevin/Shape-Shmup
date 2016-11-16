@@ -128,9 +128,8 @@ public class Environment extends Thread {
   }
 
 	public void run() {
-		while(gameplayOccurring) {
+		while(gameplayOccurring)
 			update();
-		}
 	}
 
 	public boolean isGameplayOccurring() {
@@ -140,5 +139,4 @@ public class Environment extends Thread {
 	public void setGameplayOccurring(boolean gameplayOccurring) {
 		this.gameplayOccurring = gameplayOccurring;
 	}
-    
 }
