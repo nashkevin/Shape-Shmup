@@ -159,6 +159,24 @@ public enum Command {
 					server.unicast("User '" + destinationUser + "' not found.", sourceSession);
 				}
 			}
+		},
+	SAY("say",
+			new String[] {"announce", "broadcast"},
+			"Sends a message to all connected players. Useful for server announcements.<br>Syntax: /say (message)"
+		) {
+			@Override
+			protected void perform(String[] args, Session session, WebServer server) {
+				if (args.length < 2) {
+					throw new IllegalArgumentException();
+				} else {
+					StringBuilder sb = new StringBuilder();
+					sb.append("<b><i>");
+					for (int i = 1; i < args.length; i++)
+						sb.append(args[i] + " ");
+					sb.append("</b></i>");
+					server.broadcast(sb.toString());
+				}
+			}
 		};
 	
 	
