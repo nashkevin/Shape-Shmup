@@ -1,4 +1,5 @@
 package test.java.junit.agent_test;
+import main.java.agent.Agent;
 import main.java.agent.PlayerAgent;
 import main.java.environment.Environment;
 import main.java.web.ClientInput;
@@ -6,7 +7,9 @@ import main.java.misc.Vector2D;
 
 import org.junit.Assert;
 import org.junit.Test;
+
 import java.awt.Point;
+import java.util.Random;
 import java.util.UUID;
 import java.util.Queue;
 
@@ -44,8 +47,9 @@ public class PlayerAgentTest {
 	}
 
 	@Test
-	public void testUpdate() {
-		Environment environment = new Environment(20);
+	public void testPreUpdateCall() {
+		
+		/*Environment environment = new Environment(20);
 		PlayerAgent player = new PlayerAgent(UUID.randomUUID(), environment, new Point(10, 10), 1, 1, 100, 10, 1, 1);
 		ClientInput eventRight = new ClientInput();
 		eventRight.setRight(true);
@@ -53,14 +57,23 @@ public class PlayerAgentTest {
 		eventUp.setUp(true);
 		player.addPlayerEvent(eventRight);
 		player.addPlayerEvent(eventUp);
-
-		player.update();
+		*/
+		ClientInput eventRight = new ClientInput();
+		eventRight.setRight(true);
+		ClientInput eventUp = new ClientInput();
+		eventUp.setUp(true);
 		
-		Assert.assertEquals(null, player.getFiringVector());
+		PlayerAgent.PlayerAgentTester.generateTestInstance();
+		
+		PlayerAgent.PlayerAgentTester.call_addPlayerEvent(eventRight);
+		PlayerAgent.PlayerAgentTester.call_addPlayerEvent(eventUp);
+		PlayerAgent.PlayerAgentTester.call_preUpdateCall();
 
+		PlayerAgent testAgent = PlayerAgent.PlayerAgentTester.getTestInstance();
+		
 		Vector2D expectedAcceleration = new Vector2D(Math.sqrt(2), Math.PI/4);
-		Assert.assertEquals(expectedAcceleration.getMagnitude(), player.getAcceleration().getMagnitude(), 0.001);
-		Assert.assertEquals(expectedAcceleration.getAngle(), player.getAcceleration().getAngle(), 0.001);
+		Assert.assertEquals(expectedAcceleration.getMagnitude(), testAgent.getAcceleration().getMagnitude(), 0.001);
+		Assert.assertEquals(expectedAcceleration.getAngle(), testAgent.getAcceleration().getAngle(), 0.001);
 	
 
 
