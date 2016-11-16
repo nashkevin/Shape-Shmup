@@ -1,11 +1,18 @@
 package main.java.agent;
+import main.java.agent.test.AgentTestImp;
+import main.java.agent.test.EnvironmentMock;
+import main.java.agent.test.PlayerAgentTestImp;
 import main.java.environment.Environment;
 
 import java.awt.Point;
+
 import main.java.misc.Vector2D;
+import main.java.projectile.ProjectileFactory;
 import main.java.web.ClientInput;
+
 import java.util.Queue;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.UUID;
 public class PlayerAgent extends Agent {
 
@@ -89,4 +96,38 @@ public class PlayerAgent extends Agent {
 	}
 
 
+	public static final class PlayerAgentTester {
+		private static PlayerAgent testInstance;
+		
+		public static void generateTestInstance() {
+			Random random = new Random();
+			
+			UUID id = UUID.randomUUID();
+			Environment env = new EnvironmentMock(random.nextDouble() * 100);
+			Point position = new Point();
+			position.setLocation(random.nextDouble(), random.nextDouble());
+			int level = random.nextInt(10);
+			int team = random.nextInt(5);
+			int health = random.nextInt(490) + 10;
+			int damage = random.nextInt(500) + 1;
+			int projectileSpeed = random.nextInt(100) + 1;
+			int baseMovementSpeed = random.nextInt(100) + 1;
+			
+			//TODO: make player test agent implementation class
+			testInstance = new PlayerAgentTestImp(id, env, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
+		}
+		
+		public static PlayerAgent getTestInstance() {
+			return testInstance;
+		}
+		
+		public static void call_preUpdateCall() {
+			testInstance.preUpdateCall();
+		}
+
+		public static void call_addPlayerEvent(ClientInput event) {
+			testInstance.addPlayerEvent(event);
+			
+		}
+	}
 }
