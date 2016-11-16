@@ -124,6 +124,7 @@ function sendChatMessage() {
 
 function closeSocket() {
     webSocket.close();
+    window.location.reload();
 }
 
 function addMessageToChat(text) {
