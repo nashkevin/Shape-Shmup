@@ -118,8 +118,11 @@ public enum Command {
 				if (args.length > 1) {
 					throw new IllegalArgumentException();
 				}
-				String players = String.join(", ", server.getNames());
-				server.unicast(players, session);
+				StringBuilder sb = new StringBuilder();
+				sb.append(server.getNames().size());
+				sb.append(" players: ");
+				sb.append(String.join(", ", server.getNames()));
+				server.unicast(sb.toString(), session);
 			}
 		},
 	PING("ping",

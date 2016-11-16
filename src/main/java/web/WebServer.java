@@ -125,7 +125,7 @@ public class WebServer {
 	@OnClose
 	public void onClose(Session session) {
 		System.out.println("Session " + session.getId() + " has ended.");
-		broadcast(session.getId() + " left the game.");
+		broadcast(getNameBySession(session) + " left the game.");
 		PlayerAgent agent = sessionToPlayerAgent.remove(session);
 		
 		// Despawn player from environment
