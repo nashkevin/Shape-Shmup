@@ -66,6 +66,7 @@ public class WebServer {
 			synchronized(sessionToPlayerAgent) {
 				sessionToPlayerAgent.put(session, agent);
 			}
+			broadcast(input.getName() + " joined the game.");
 		}
 		
 		// handle client chat input
