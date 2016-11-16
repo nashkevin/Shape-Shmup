@@ -1,11 +1,19 @@
 package main.java.environment;
 
 import java.awt.Point;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-import main.java.agent.*;
-import main.java.projectile.*;
+import main.java.agent.Agent;
+import main.java.agent.NPCAgent;
+import main.java.agent.PlayerAgent;
+import main.java.agent.TestEnemyAgent;
+
+import main.java.projectile.Projectile;
 
 /** TODOs
   Fix constructor calls for NPC and Player agents for integration

@@ -23,7 +23,7 @@ public class PlayerAgent extends Agent {
 	public PlayerAgent(String name, UUID id, Environment env, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
 		super(id, env, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
 		this.name = name;
-        this.eventInbox = new LinkedList<ClientInput>();
+		this.eventInbox = new LinkedList<ClientInput>();
 	}
 
 	public final void despawn() {
@@ -39,7 +39,7 @@ public class PlayerAgent extends Agent {
 		int countUp = 0;
 		int countDown = 0;
 		Vector2D firingVector = null;
-		
+
 		while (!eventInbox.isEmpty()) {
 			ClientInput event = eventInbox.poll();
 			
@@ -91,7 +91,7 @@ public class PlayerAgent extends Agent {
 	}
 
 	public void addPlayerEvent(ClientInput event) {
-        eventInbox.add(event);
+		eventInbox.add(event);
 	}
 
 	public Queue<ClientInput> getPlayerEvents() {
@@ -101,10 +101,10 @@ public class PlayerAgent extends Agent {
 
 	public static final class PlayerAgentTester {
 		private static PlayerAgent testInstance;
-		
+
 		public static void generateTestInstance() {
 			Random random = new Random();
-			
+
 			String name = "tester";
 			UUID id = UUID.randomUUID();
 			Environment env = new EnvironmentMock(random.nextDouble() * 100);
@@ -120,18 +120,17 @@ public class PlayerAgent extends Agent {
 			//TODO: make player test agent implementation class
 			testInstance = new PlayerAgentTestImp(name, id, env, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
 		}
-		
+
 		public static PlayerAgent getTestInstance() {
 			return testInstance;
 		}
-		
+
 		public static void call_preUpdateCall() {
 			testInstance.preUpdateCall();
 		}
 
 		public static void call_addPlayerEvent(ClientInput event) {
 			testInstance.addPlayerEvent(event);
-			
 		}
 	}
 }
