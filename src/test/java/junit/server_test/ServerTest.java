@@ -66,7 +66,7 @@ public class ServerTest {
 		server.onMessage(playersMessage, user1.getSession());
 		
 		// Confirm the above by the chat output.
-		String receivedMessage = "User 'Test2' not found.";
+		String receivedMessage = "Player 'Test2' not found.";
 		Assert.assertTrue(user1.receivedMessage(receivedMessage));
 				
 		server.onClose(user1.getSession());
