@@ -40,6 +40,9 @@ public class PlayerAgent extends Agent {
 		int countDown = 0;
 		Vector2D firingVector = null;
 
+		if (eventInbox.isEmpty()) {
+			return; //don't change state of the agent if there are no inputs to be queued
+		}
 		while (!eventInbox.isEmpty()) {
 			ClientInput event = eventInbox.poll();
 			

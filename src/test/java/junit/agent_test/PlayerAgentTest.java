@@ -133,6 +133,19 @@ public class PlayerAgentTest {
 		
 		//Test boundary case: There are no events to be queued
 		
+		//Unit test in up direction just as a precondition
+		Assert.assertTrue(PlayerAgent.PlayerAgentTester.getTestInstance().getPlayerEvents().isEmpty());
+		PlayerAgent.PlayerAgentTester.call_addPlayerEvent(eventRight);
+		PlayerAgent.PlayerAgentTester.call_preUpdateCall();
+		Assert.assertEquals(1, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getMagnitude(), EPSILON);
+		Assert.assertEquals(0, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getAngle(), EPSILON);
+		
+		//call preupdate call again with no more inputs, there should be no change 
+		PlayerAgent.PlayerAgentTester.call_preUpdateCall();
+		Assert.assertEquals(1, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getMagnitude(), EPSILON);
+		Assert.assertEquals(0, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getAngle(), EPSILON);
+		
+		
 		//Test firing: There is no firing vector
 		
 		//Test not firing: There is no firing vector 
