@@ -14,6 +14,7 @@ import java.util.UUID;
 import java.util.Queue;
 
 public class PlayerAgentTest {
+	private static final double EPSILON = 0.00001; //Allowed error of floating point values for testing purposes
 	@Test
 	public void testConstructor() {
 		Environment environment = new Environment(20);
@@ -60,20 +61,83 @@ public class PlayerAgentTest {
 		*/
 		ClientInput eventRight = new ClientInput();
 		eventRight.setRight(true);
+		
+		ClientInput eventLeft = new ClientInput();
+		eventLeft.setLeft(true);
+		
 		ClientInput eventUp = new ClientInput();
 		eventUp.setUp(true);
 		
+		ClientInput eventDown = new ClientInput();
+		eventDown.setDown(true);
+		
 		PlayerAgent.PlayerAgentTester.generateTestInstance();
+		
+		//Test 0: Test where the summation of events sets the vectors to be zero vectors
+		
+		PlayerAgent.PlayerAgentTester.call_addPlayerEvent(eventRight);
+		PlayerAgent.PlayerAgentTester.call_addPlayerEvent(eventUp);
+		PlayerAgent.PlayerAgentTester.call_addPlayerEvent(eventDown);
+		PlayerAgent.PlayerAgentTester.call_addPlayerEvent(eventLeft);
+		PlayerAgent.PlayerAgentTester.call_preUpdateCall();
+		
+		
+
+		Assert.assertEquals(0, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getMagnitude(), EPSILON);
+		Assert.assertEquals(0, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getAngle(), EPSILON);
+		
+		
+		//Test 1: Test the unit vector in each direction
+		
+		
+		Assert.assertTrue(PlayerAgent.PlayerAgentTester.getTestInstance().getPlayerEvents().isEmpty());
+		PlayerAgent.PlayerAgentTester.call_addPlayerEvent(eventRight);
+		PlayerAgent.PlayerAgentTester.call_preUpdateCall();
+		Assert.assertEquals(1, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getMagnitude(), EPSILON);
+		Assert.assertEquals(0, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getAngle(), EPSILON);
+		
+		
+		Assert.assertTrue(PlayerAgent.PlayerAgentTester.getTestInstance().getPlayerEvents().isEmpty());
+		PlayerAgent.PlayerAgentTester.call_addPlayerEvent(eventUp);
+		PlayerAgent.PlayerAgentTester.call_preUpdateCall();
+		Assert.assertEquals(1, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getMagnitude(), EPSILON);
+		Assert.assertEquals(Math.PI/2.0, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getAngle(), EPSILON);
+		
+		
+		Assert.assertTrue(PlayerAgent.PlayerAgentTester.getTestInstance().getPlayerEvents().isEmpty());
+		PlayerAgent.PlayerAgentTester.call_addPlayerEvent(eventLeft);
+		PlayerAgent.PlayerAgentTester.call_preUpdateCall();
+		Assert.assertEquals(1, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getMagnitude(), EPSILON);
+		Assert.assertEquals(Math.PI, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getAngle(), EPSILON);
+		
+		Assert.assertTrue(PlayerAgent.PlayerAgentTester.getTestInstance().getPlayerEvents().isEmpty());
+		PlayerAgent.PlayerAgentTester.call_addPlayerEvent(eventDown);
+		PlayerAgent.PlayerAgentTester.call_preUpdateCall();
+		Assert.assertEquals(1, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getMagnitude(), EPSILON);
+		Assert.assertEquals(-Math.PI/2.0, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getAngle(), EPSILON);
+		
+		
+		
+		//Test many: Test with various test cases of multiple events
 		
 		PlayerAgent.PlayerAgentTester.call_addPlayerEvent(eventRight);
 		PlayerAgent.PlayerAgentTester.call_addPlayerEvent(eventUp);
 		PlayerAgent.PlayerAgentTester.call_preUpdateCall();
+		
 
 		PlayerAgent testAgent = PlayerAgent.PlayerAgentTester.getTestInstance();
 		
 		Vector2D expectedAcceleration = new Vector2D(Math.sqrt(2), Math.PI/4);
-		Assert.assertEquals(expectedAcceleration.getMagnitude(), testAgent.getAcceleration().getMagnitude(), 0.001);
-		Assert.assertEquals(expectedAcceleration.getAngle(), testAgent.getAcceleration().getAngle(), 0.001);
+		Assert.assertEquals(expectedAcceleration.getMagnitude(), testAgent.getAcceleration().getMagnitude(), EPSILON);
+		Assert.assertEquals(expectedAcceleration.getAngle(), testAgent.getAcceleration().getAngle(), EPSILON);
+		
+		//Test boundary case: There are no events to be queued
+		
+		//Test firing: There is no firing vector
+		
+		//Test not firing: There is no firing vector 
+		
+		
 	
 
 
