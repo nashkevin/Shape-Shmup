@@ -146,12 +146,19 @@ public class PlayerAgentTest {
 		Assert.assertEquals(0, PlayerAgent.PlayerAgentTester.getTestInstance().getAcceleration().getAngle(), EPSILON);
 		
 		
-		//Test firing: There is no firing vector
 		
-		//Test not firing: There is no firing vector 
+		//Test firing: There is a firing vector
+		
+		/*
+		ClientInput firingEvent = new ClientInput();
+		firingEvent.setIsFiring(true);
+		firingEvent.setAngle(Math.PI / 2.0);
 		
 		
-	
+		PlayerAgent.PlayerAgentTester.call_preUpdateCall();
+		Assert.assertEquals(1, PlayerAgent.PlayerAgentTester.getTestInstance().getFiringVector().getMagnitude(), EPSILON);
+		Assert.assertEquals(Math.PI / 2.0, PlayerAgent.PlayerAgentTester.getTestInstance().getFiringVector().getAngle(), EPSILON);
+		*/
 
 
 
