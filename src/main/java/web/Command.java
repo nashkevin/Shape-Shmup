@@ -12,11 +12,12 @@ import java.awt.Point;
 
 import main.java.agent.PlayerAgent;
 
+
 /** Manages commands that a player can perform by typing in the chat window. */
 public enum Command {
 	// Pro tip: the order in which the commands are defined
 	// is the order they will appear when using "/commands".
-	HELP("help",
+	HELP ("help",
 			new String[] {"?"},
 			"Syntax: /help [command]"
 		) {
@@ -39,7 +40,7 @@ public enum Command {
 				}
 			}
 		},
-	COMMANDS("commands",
+	COMMANDS ("commands",
 			null,
 			"Lists all available commands.<br>Syntax: /commands"
 		) {
@@ -48,9 +49,10 @@ public enum Command {
 				if (args.length > 1) {
 					throw new IllegalArgumentException();
 				}
-				
+
 				StringBuilder sb = new StringBuilder();
 				boolean firstInList = true;
+
 				for (Command command : Command.values()) {
 					// Put a comma before every command except the first.
 					if (firstInList) {
@@ -58,17 +60,18 @@ public enum Command {
 					} else {
 						sb.append(", ");
 					}
-					
+
 					// Prepend each command with a slash.
 					sb.append("/").append(command.getCommand());
-					
+
 				}
 				server.unicast(sb.toString(), session);
 			}
 		},
-	BRING("bring",
+	BRING ("bring",
 			new String[] {"fetch", "summon"},
-			"Brings a player to you or to another player or to a location.<br>Syntax: /bring username [username|x y]"
+			("Brings a player to you or to another player or to a location." +
+				"<br>Syntax: /bring username [username|x y]")
 		) {
 			@Override
 			protected void perform(String[] args, Session session, WebServer server) {
@@ -113,7 +116,7 @@ public enum Command {
 				}
 			}
 		},
-	CLEAR("clear",
+	CLEAR ("clear",
 			null,
 			"Clears your chat window.<br>Syntax: /clear"
 		) {
@@ -124,7 +127,7 @@ public enum Command {
 				}
 			}
 		},
-	EXIT("exit",
+	EXIT ("exit",
 			new String[] {"quit"},
 			"Disconnects you from the server.<br>Syntax: /exit"
 		) {
@@ -143,7 +146,7 @@ public enum Command {
 				}
 			}
 		},
-	GOTO("goto",
+	GOTO ("goto",
 			new String[] {"tp"},
 			"Sends you to a location.<br>Syntax: /goto [player|x y]"
 		) {
@@ -174,7 +177,7 @@ public enum Command {
 				}
 			}
 		},
-	KICK("kick",
+	KICK ("kick",
 			null,
 			"Disconnects another user from the server.<br>Syntax: /kick username"
 		) {
@@ -183,7 +186,7 @@ public enum Command {
 				if (args.length != 2) {
 					throw new IllegalArgumentException();
 				}
-				
+
 				String targetName = args[1];
 				String sourceName = server.getNameBySession(sourceSession);
 				Session targetSession = server.getSessionByName(targetName);
@@ -204,7 +207,7 @@ public enum Command {
 					server.unicast("Player '" + targetName + "' not found.", sourceSession);
 			}
 		},
-	PLAYERS("players",
+	PLAYERS ("players",
 			new String[] {"who"},
 			"Lists the usernames of everyone playing.<br>Syntax: /players"
 		) {
@@ -225,7 +228,7 @@ public enum Command {
 				server.unicast(sb.toString(), session);
 			}
 		},
-	PING("ping",
+	PING ("ping",
 			null,
 			"Requests a timed response from the server.<br>Syntax: /ping"
 		) {
@@ -237,7 +240,7 @@ public enum Command {
 				server.unicast("PONG", session);
 			}
 		},
-	PM("pm",
+	PM ("pm",
 			new String[] {"tell"},
 			"Sends a private message to a player.<br>Syntax: /pm username message"
 		) {
@@ -246,12 +249,15 @@ public enum Command {
 				if (args.length <= 2) {
 					throw new IllegalArgumentException();
 				}
+
 				String sourceName = server.getNameBySession(sourceSession);
 				String destinationName = args[1];
 				Session destinationSession = server.getSessionByName(destinationName);
+
 				if (sourceSession.equals(destinationSession)) {
 					server.unicast("You can't private message yourself.", sourceSession);
-				} else if (destinationSession != null) {
+				}
+				else if (destinationSession != null) {
 					StringBuilder msg = new StringBuilder();
 					StringBuilder echo = new StringBuilder();
 					msg.append("<i>From " + sourceName + ":");
@@ -261,7 +267,7 @@ public enum Command {
 						echo.append(" ").append(args[i]);
 					}
 					msg.append("</i>");
-					echo.append("</i>");					
+					echo.append("</i>");
 					server.unicast(msg.toString(), destinationSession);
 					server.unicast(echo.toString(), sourceSession);
 				}
@@ -270,9 +276,10 @@ public enum Command {
 				}
 			}
 		},
-	SAY("say",
+	SAY ("say",
 			new String[] {"announce", "broadcast"},
-			"Sends a message to all connected players. Useful for server announcements.<br>Syntax: /say message"
+			("Sends a message to all connected players. " +
+				"Useful for server announcements.<br>Syntax: /say message")
 		) {
 			@Override
 			protected void perform(String[] args, Session session, WebServer server) {
@@ -288,9 +295,10 @@ public enum Command {
 				}
 			}
 		},
-	WHERE("where",
+	WHERE ("where",
 			new String[] {"locate"} ,
-			"Gives your location or the location of another player.<br>Syntax: /where [username]"
+			("Gives your location or the location of another player. " +
+				"<br>Syntax: /where [username]")
 		) {
 			@Override
 			protected void perform(String[] args, Session session, WebServer server) {
@@ -313,7 +321,7 @@ public enum Command {
 			}
 		};
 
-	
+
 	private String command;
 	private String[] aliases;
 	private String helpText;
@@ -327,17 +335,17 @@ public enum Command {
 		this.aliases = aliases;
 		this.helpText = helpText;
 	}
-	
+
 	/** Returns alternate ways to call the command. Can be null. */
 	public String[] getAliases() {
 		return aliases;
 	}
-	
+
 	/** Returns the primary way to call the command. */
 	public String getCommand() {
 		return command;
 	}
-	
+
 	/** Returns the description of the command, including any aliases. */
 	public String getHelpText() {
 		if (aliases != null) {
@@ -351,15 +359,15 @@ public enum Command {
 			return helpText;
 		}
 	}
-	
+
 	/** Performs the command. Each command must implement this function. */
 	protected abstract void perform(String[] args, Session session, WebServer server);
-	
-	
-	
+
+
+
 	/** Map of names + aliases to commands. */
 	private static Map<String, Command> commands = new HashMap<>();
-	
+
 	static {
 		// Populate the commands map.
 		for (Command command : Command.values()) {
@@ -371,20 +379,21 @@ public enum Command {
 			}
 		}
 	}
-	
+
 	public static void handleInput(String input, Session session, WebServer server) {
 		// split commands into arguments
 		String[] args = input.substring(1).trim().split("\\s++");
-		
+
 		if (!args[0].equalsIgnoreCase("clear")) {
 			// echo the command to the client's chatbox
-			String selfText = "<strong>" + server.getNameBySession(session) + "</strong>: " + input;
+			String selfText = "<strong>" + server.getNameBySession(session)
+				+ "</strong>: " + input;
 			server.unicast(selfText, session);
 		}
 
 		parseCommand(args, session, server);
 	}
-	
+
 	private static void parseCommand(String[] args, Session session, WebServer server) {
 		Command command = commands.get(args[0].toLowerCase());
 		if (command != null) {

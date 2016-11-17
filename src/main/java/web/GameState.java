@@ -6,21 +6,23 @@ import main.java.agent.NPCAgent;
 import main.java.agent.PlayerAgent;
 import main.java.projectile.Projectile;
 
+
 /**
  * POJO representing the state of the game, which is broadcast to each client.
  */
 public class GameState {
+
 	private Collection<PlayerAgent> playerAgents;
 	private Collection<NPCAgent> npcAgents;
 	private Collection<Projectile> projectiles;
-	
+
 	public GameState(Collection<PlayerAgent> playerAgents, Collection<NPCAgent> npcAgents, 
 			Collection<Projectile> projectiles) {
 		this.playerAgents = playerAgents;
 		this.npcAgents = npcAgents;
 		this.projectiles = projectiles;
 	}
-	
+
 	public Collection<PlayerAgent> getPlayerAgents() {
 		return playerAgents;
 	}

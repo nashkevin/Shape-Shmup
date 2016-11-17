@@ -16,26 +16,30 @@ import com.google.gson.Gson;
 import main.java.agent.PlayerAgent;
 import main.java.environment.Environment;
 
-@ServerEndpoint("/socket") 
+
+@ServerEndpoint("/socket")
 public class WebServer {
 	private static final int RADIUS = 200;
-	
+
 	/** The sessions of all players, mapped to each player's chosen name. */
-	private static final Map<Session, String> sessionToName = Collections.synchronizedMap(new HashMap<>());
+	private static final Map<Session, String> sessionToName =
+		Collections.synchronizedMap(new HashMap<>());
 	/** The sessions of all players, mapped to each player agent. */
-	private static final Map<Session, PlayerAgent> sessionToPlayerAgent = Collections.synchronizedMap(new HashMap<>());
+	private static final Map<Session, PlayerAgent> sessionToPlayerAgent =
+		Collections.synchronizedMap(new HashMap<>());
 	/** The chosen name of each named player, mapped to session. */
-	private static final Map<String, Session> nameToSession = Collections.synchronizedMap(new HashMap<>());
+	private static final Map<String, Session> nameToSession =
+		Collections.synchronizedMap(new HashMap<>());
 	private static Environment environment;
 	private static GameThread gameThread;
-	
+
 	public WebServer() {
 		environment = new Environment(RADIUS);
 		gameThread = new GameThread(this, environment);
 		gameThread.start();
 		environment.start();
 	}
-	
+
 	/** When a new client makes a connection to the server. */
 	@OnOpen
 	public void onOpen(Session session) {
@@ -45,15 +49,15 @@ public class WebServer {
 			sessionToName.put(session, null);
 		}
 	}
-	 
+	
 	/** When a client sends a message to the server. */
 	@OnMessage
 	public void onMessage(String message, Session session) {
 		System.out.println("Message from " + session.getId() + ": " + message);
-		
+
 		Gson g = new Gson();
 		ClientInput input = g.fromJson(message, ClientInput.class);
-		
+
 		// Add new player.
 		if (input.getName() != null && input.getName() != "") {
 			synchronized(sessionToName) {
@@ -68,7 +72,7 @@ public class WebServer {
 			}
 			broadcast(input.getName() + " joined the game.");
 		}
-		
+
 		// handle client chat input
 		if (input.getMessage() != null && !input.getMessage().isEmpty()) {
 			if (input.getMessage().charAt(0) == '/') {
@@ -78,7 +82,7 @@ public class WebServer {
 				broadcast(input.getMessage(), session);
 			}
 		}
-		
+
 		// Send client's update to the relevant agent entity.
 		PlayerAgent agent = sessionToPlayerAgent.get(session);
 		agent.addPlayerEvent(input);
@@ -99,7 +103,7 @@ public class WebServer {
 			}
 		}
 	}
-	
+
 	void broadcast(String message) {
 		broadcast(message, null);
 	}
@@ -112,7 +116,7 @@ public class WebServer {
 	Session getSessionByName(String username) {
 		return nameToSession.get(username);
 	}
-	
+
 	String getNameBySession(Session session) {
 		return sessionToName.get(session);
 	}
@@ -124,27 +128,27 @@ public class WebServer {
 	PlayerAgent getPlayerAgentByName(String username) {
 		return sessionToPlayerAgent.get(getSessionByName(username));
 	}
-	
+
 	Set<String> getNames() {
 		return nameToSession.keySet();
 	}
- 
+
 	/** When a client closes their connection. */
 	@OnClose
 	public void onClose(Session session) {
 		System.out.println("Session " + session.getId() + " has ended.");
 		broadcast(getNameBySession(session) + " left the game.");
 		PlayerAgent agent = sessionToPlayerAgent.remove(session);
-		
+
 		// Despawn player from environment
 		environment.despawnPlayerAgent(agent);
-		
+
 		// Remove name from mapping
 		String name = sessionToName.remove(session);
 		if (name != null) {
 			nameToSession.remove(name);
 		}
-		
+
 		synchronized(sessionToName) {
 			if (sessionToName.size() == 0) {
 				gameThread.setGameplayOccurring(false);

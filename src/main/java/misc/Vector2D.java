@@ -1,13 +1,11 @@
 package main.java.misc;
 
-/**
- * @ Zach Janice
- */
 
 public final class Vector2D {
+	
 	private double magnitude;
 	private double angle;
-	
+
 	public Vector2D(Vector2D original) {
 		this(original.magnitude, original.angle);
 	}

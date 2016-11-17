@@ -3,22 +3,19 @@ import main.java.environment.Environment;
 
 import java.awt.Point;
 import java.util.UUID;
-/**
- * @ Zach Janice
- */
 
 public final class TestEnemyAgent extends NPCAgent {
 	public TestEnemyAgent(UUID id, Environment env, Point spawnPoint, int level) {
 		super(
-				id,
-				env,
-				spawnPoint,
-				Math.min(level, 1),
-				2,
-				80 + (20 * level),
-				10 * level,
-				50,
-				10
+			id,
+			env,
+			spawnPoint,
+			Math.min(level, 1),
+			2,
+			80 + (20 * level),
+			10 * level,
+			50,
+			10
 		);
 	}
 	

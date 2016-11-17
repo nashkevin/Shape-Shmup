@@ -18,27 +18,28 @@ import main.java.agent.PlayerAgent;
 import main.java.environment.Environment;
 import main.java.projectile.Projectile;
 
+
 public class GameThread extends Thread {
-	private static final int FRAME_RATE = 20;
 	
+	private static final int FRAME_RATE = 20;
+
 	private WebServer server;
 	private Environment environment;
 	private boolean gameplayOccurring = true;
-	
+
 	private Gson gson;
-	
+
 	public GameThread(WebServer server, Environment environment) {
 		this.server = server;
 		this.environment = environment;
-		
+
 		gson = new GsonBuilder()
 				.registerTypeAdapter(Agent.class, new AgentSerializer())
 				.registerTypeAdapter(PlayerAgent.class, new AgentSerializer())
 				.registerTypeAdapter(NPCAgent.class, new AgentSerializer())
 				.create();
 	}
-	
-	
+
 	@Override
 	public void run() {
 		while (gameplayOccurring) {
@@ -46,10 +47,10 @@ public class GameThread extends Thread {
 			Collection<PlayerAgent> playerAgents = new ArrayList<>(environment.getActivePlayerAgents());
 			Collection<NPCAgent> npcAgents = new ArrayList<>(environment.getActiveNPCAgents());
 			Collection<Projectile> projectiles = new ArrayList<>(environment.getActiveProjectiles());
-			
+
 			GameState state = new GameState(playerAgents, npcAgents, projectiles);
 			server.broadcast(gson.toJson(state));
-			
+
 			try {
 				sleep(1000 / FRAME_RATE);
 			} catch (InterruptedException e) {
