@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,19 +23,15 @@ public class Environment extends Thread {
   
   private static final int NPCTOPLAYERRATIO = 5;
   private double radius;
-  /** Maps from session ID (of WebSocket connection) to agent for each client. */
-  private Map<PlayerAgent, Boolean> playerMap = new ConcurrentHashMap();
   private Set<PlayerAgent> activePlayerAgents;
-  private Map<NPCAgent, Boolean> npcMap = new ConcurrentHashMap();
   private Set<NPCAgent> activeNPCAgents;
-  private Map<Projectile, Boolean> projectileMap = new ConcurrentHashMap();
   private Set<Projectile> activeProjectiles;
   
   public Environment(double radius) {
     this.radius = radius;
-    activePlayerAgents = Collections.newSetFromMap(playerMap);
-    activeNPCAgents = Collections.newSetFromMap(npcMap);
-    activeProjectiles = Collections.newSetFromMap(projectileMap);
+    activePlayerAgents = Collections.newSetFromMap(new ConcurrentHashMap<PlayerAgent, Boolean>());
+    activeNPCAgents = Collections.newSetFromMap(new ConcurrentHashMap<NPCAgent, Boolean>());
+    activeProjectiles = Collections.newSetFromMap(new ConcurrentHashMap<Projectile, Boolean>());
   }
 
   public double getRadius(){
