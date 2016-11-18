@@ -7,7 +7,6 @@ import main.java.agent.test.EnvironmentMock;
 
 import java.awt.Point;
 import main.java.misc.Vector2D;
-import main.java.projectile.test.ProjectileTestImp;
 
 import java.util.List;
 import java.util.Random;
@@ -83,7 +82,7 @@ public abstract class Projectile {
 			position.setLocation(random.nextDouble(), random.nextDouble());
 			Vector2D velocity = new Vector2D(random.nextDouble() * 5, random.nextDouble() * 5);
 			
-			testInstance = new ProjectileTestImp(env, owner, position, velocity);
+			//testInstance = new ProjectileTestImp(env, owner, position, velocity);
 		}
 		
 		public static final Projectile getTestInstance() {
