@@ -9,22 +9,24 @@ import java.util.List;
 
 
 public abstract class Projectile {
-	private transient Environment env;
+
+	private transient Environment environment;
 	private Agent owner;
 	private Point position;
 	private Vector2D velocity;
 
-	public Projectile(Environment env, Agent owner, Point position,
-		Vector2D velocity) {
-		
-		this.env = env;
+	public Projectile(
+		Environment environment, Agent owner, Point position,
+		Vector2D velocity
+	) {	
+		this.environment = environment;
 		this.owner = owner;
 		this.position = position;
 		this.velocity = velocity;
 	}
 
 	protected final Environment getEnvironment() {
-		return env;
+		return environment;
 	}
 
 	public final Agent getOwner() {
@@ -48,11 +50,11 @@ public abstract class Projectile {
 
 		position.setLocation(newX, newY);
 
-		onCollision(env.checkCollision(this));
+		onCollision(environment.checkCollision(this));
 	}
 
 	public final void despawn() {
-		env.despawnProjectile(this);
+		environment.despawnProjectile(this);
 	}
 
 	protected abstract void onCollision(List<Agent> agents);

@@ -5,12 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;
-import java.util.UUID;
 
 import main.java.agent.Agent;
 import main.java.agent.NPCAgent;
 import main.java.agent.PlayerAgent;
-import main.java.agent.TestEnemyAgent;
 
 import main.java.projectile.Projectile;
 
@@ -68,17 +66,17 @@ public class Environment extends Thread {
 
 	/** Spawns a playable character entity. */
 	public PlayerAgent spawnPlayer(String name) {
-		UUID id = UUID.randomUUID();
-		PlayerAgent player = new PlayerAgent(name, id, this, randomPlayerSpawn(), 0, 0, 0, 0, 0, 0/*TODO insert appropriate constructor variables*/);
+		PlayerAgent player = new PlayerAgent(this, randomPlayerSpawn(), Agent.Team.RED, name);
 		activePlayerAgents.add(player);
-		System.out.println(player.getID() + " player was spawned.");
+		System.out.println("Player (" + player.getID() + ") was spawned.");
 		return player;
 	}
 
 	public void spawnNPC(){
-		NPCAgent agent = new TestEnemyAgent(UUID.randomUUID(), this, randomNPCSpawn(), 0/*this level won't be necessary eventually*/);
+		NPCAgent agent = new NPCAgent(this, randomNPCSpawn(), Agent.Team.ENEMY,
+			NPCAgent.EnemyType.SCOUT, 1);
 		activeNPCAgents.add(agent);
-		System.out.println(agent.getID() + " npc was spawned.");
+		System.out.println("Level 1 scout (" + agent.getID() + ") was spawned.");
 	}
 
 	public void spawnProjectile(Projectile p){
