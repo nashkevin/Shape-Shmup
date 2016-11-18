@@ -3,10 +3,14 @@ package main.java.projectile;
 import main.java.environment.Environment;
 
 import main.java.agent.Agent;
+import main.java.agent.test.EnvironmentMock;
+
 import java.awt.Point;
 import main.java.misc.Vector2D;
-import java.util.List;
+import main.java.projectile.test.ProjectileTestImp;
 
+import java.util.List;
+import java.util.Random;
 
 public abstract class Projectile {
 	private transient Environment env;
@@ -16,6 +20,15 @@ public abstract class Projectile {
 
 	public Projectile(Environment env, Agent owner, Point position,
 		Vector2D velocity) {
+		
+		//if (env == null)
+		//	throw new Exception("Cannot have null environment parameter.");
+		//if (owner == null)
+		//	throw new Exception("Cannot have null owner.");
+		//if (position == null)
+		//	throw new Exception("Cannot have null position parameter.");
+		//if (velocity == null)
+		//	throw new Exception("Cannot have null velocity.");
 		
 		this.env = env;
 		this.owner = owner;
@@ -56,4 +69,29 @@ public abstract class Projectile {
 	}
 
 	protected abstract void onCollision(List<Agent> agents);
+	
+	public static final class ProjectileTester {
+		private static Projectile testInstance;
+		
+		public static void generateTestInstance() {
+			Random random = new Random();
+			
+			Environment env = new EnvironmentMock(random.nextDouble() * 100);
+			Agent.AgentTester.generateTestInstance();
+			Agent owner = Agent.AgentTester.getTestInstance();
+			Point position = new Point();
+			position.setLocation(random.nextDouble(), random.nextDouble());
+			Vector2D velocity = new Vector2D(random.nextDouble() * 5, random.nextDouble() * 5);
+			
+			testInstance = new ProjectileTestImp(env, owner, position, velocity);
+		}
+		
+		public static final Projectile getTestInstance() {
+			return testInstance;
+		}
+		
+		public static final Environment call_getEnvironment() {
+			return testInstance.getEnvironment();
+		}
+	}
 }

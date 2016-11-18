@@ -238,7 +238,7 @@ public abstract class Agent {
 	public static final class AgentTester {
 		private static Agent testInstance;
 
-		public static void generateTestInstance() {
+		public static final void generateTestInstance() {
 			Random random = new Random();
 
 			UUID id = UUID.randomUUID();
@@ -255,27 +255,27 @@ public abstract class Agent {
 			testInstance = new AgentTestImp(id, env, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
 		}
 
-		public static Agent getTestInstance() {
+		public static final Agent getTestInstance() {
 			return testInstance;
 		}
 
-		public static void call_setAcceleration(Vector2D vector) {
+		public static final void call_setAcceleration(Vector2D vector) {
 			testInstance.setAcceleration(vector);
 		}
 
-		public static void call_setFiringVector(Vector2D vector) {
+		public static final void call_setFiringVector(Vector2D vector) {
 			testInstance.setFiringVector(vector);
 		}
 
-		public static void call_setProjectileType(ProjectileFactory.Type type) {
+		public static final void call_setProjectileType(ProjectileFactory.Type type) {
 			testInstance.setProjectileType(type);
 		}
 
-		public static void call_move(Vector2D vector) {
+		public static final void call_move(Vector2D vector) {
 			testInstance.move(vector);
 		}
 
-		public static void call_fireProjectile(Vector2D vector) {
+		public static final void call_fireProjectile(Vector2D vector) {
 			testInstance.fireProjectile(vector);
 		}
 	}
