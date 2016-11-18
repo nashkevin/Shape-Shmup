@@ -15,12 +15,10 @@ public class NPCAgent extends Agent {
 
 	private PlayerAgent target;
 	private EnemyType type;
+	private double aggroRange;
 
-	public NPCAgent(
-		Environment environment, Point position,
-		Agent.Team team, EnemyType type, int level
-	) {
-		super(environment, position, team);
+	public NPCAgent(Environment environment, Point position, EnemyType type, int level) {
+		super(environment, position, Agent.Team.ENEMY);
 
 		this.type = type;
 
@@ -34,6 +32,7 @@ public class NPCAgent extends Agent {
 				setProjectileSpeed(10);
 				setProjectileSpread(Math.toRadians(10));
 				setFireRate(1.0);
+				setAggroRange(50);
 				break;
 			case HEAVY:
 				setSize(1 + 2 * Math.log(level));
@@ -44,12 +43,29 @@ public class NPCAgent extends Agent {
 				setProjectileSpeed(7);
 				setProjectileSpread(Math.toRadians(10));
 				setFireRate(0.75);
+				setAggroRange(50);
 				break;
 		}
 	}
-	
+
 	public final Agent getTarget() {
 		return target;
+	}
+
+	public final void setTarget(Agent target) {
+		this.target = target;
+	}
+
+	public final double getAggroRange() {
+		return aggroRange;
+	}
+
+	public final void setAggroRange(double range) {
+		this.aggroRange = range;
+	}
+
+	public final void findNewTarget() {
+		target = getEnvironment().getNearestPlayer(this, getAggroRange());
 	}
 	
 	@Override
