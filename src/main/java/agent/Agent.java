@@ -4,6 +4,8 @@ import main.java.environment.Environment;
 
 import java.awt.Point;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import main.java.misc.Vector2D;
@@ -18,10 +20,10 @@ public abstract class Agent {
 	}
 
 	private UUID id = UUID.randomUUID();
+	private double rotation = 0;
 	private transient Environment environment;
-	private Team team;
 	private Point position;
-	private double rotation;
+	private Team team;
 	private double size;
 
 	/** gameplay attributes */
@@ -31,13 +33,26 @@ public abstract class Agent {
 	private int projectileDamage;
 	private int projectileSpeed;
 	private double projectileSpread;
-	private double fireRate;
+	private int firingDelay; // how long the Agent must wait before firing (ms)
 
-	public Agent(Environment environment, Point position, Team team) {
+	private boolean isReadyToFire;
+
+	private Timer timer = new Timer();
+
+	public Agent(
+		Environment environment, Point position, Team team, double size,
+		int health, int movementSpeed, int projectileDamage, 
+	) {
 		this.environment = environment;
 		this.team = team;
 		this.position = new Point(position);
-		this.rotation = 0;
+
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				setReadyToFire(true);
+			}, 0, firingDelay
+		);
 	}
 
 	/******************************
@@ -138,20 +153,24 @@ public abstract class Agent {
 		this.projectileSpread = projectileSpread;
 	}
 
-	public final double getFireRate() {
-		return fireRate;
+	public final double getFiringDelay() {
+		return firingDelay;
 	}
 
-	public final void setFireRate(double fireRate) {
-		this.fireRate = fireRate;
+	public final void setFiringDelay(double firingDelay) {
+		this.firingDelay = firingDelay;
+	}
+
+	public final boolean isReadyToFire() {
+		return isReadyToFire;
+	}
+
+	public final void setReadyToFire(boolean b) {
+		this.isReadyToFire = b;
 	}
 	/******************************
 	 * end of getters and setters *
 	 ******************************/
-
-	public void update() {
-		
-	}
 
 	/** reduces health by an amount */
 	public final void applyDamage(int amount) {
@@ -161,5 +180,13 @@ public abstract class Agent {
 		}
 	}
 
+	class FiringTask extends TimerTask {
+		@Override
+		public void run() {
+			setReadyToFire(true);
+		}
+	}
+
+	public abstract void update();
 	public abstract void despawn();
 }

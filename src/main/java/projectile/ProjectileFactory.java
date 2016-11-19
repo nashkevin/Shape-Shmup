@@ -1,33 +1,39 @@
 package main.java.projectile;
 
-import main.java.environment.Environment;
-
-import main.java.agent.Agent;
-import java.awt.Point;
-import main.java.misc.Vector2D;
-import java.util.HashMap;
-
-
 public class ProjectileFactory {
-	public static enum Type {
-		NONE,
-		TEST
+	
+	private transient Environment environment;
+	private Agent owner;
+	private Point position;
+	private Vector2D velocity;
+
+	private int damage;
+	private int speed;
+	private double size;
+
+	public ProjectileFactory(Environment environment, Agent owner, int damage,
+		int speed, int size
+	) {
+		this.environment = environment;
+		this.owner = owner;
+		this.damage = damage;
+		this.speed = speed;
+		this.size = size;
 	}
 
-	@SuppressWarnings("serial")
-	public static HashMap<Type, FIProjectileCreator> factory = new HashMap<Type, FIProjectileCreator>() {{
-		put(Type.TEST, (env, owner, position, velocity) -> { return new TestProjectile(env, owner, position, velocity); });
-	}};
+	public void increaseDamage(int amount) {
+		this.damage += amount;
+	}
 
-	public static Projectile makeProjectile(Type type, Environment env,
-		Agent owner, Point position, Vector2D velocity) {
-		
-		FIProjectileCreator creator = factory.get(type);
+	public void increaseSpeed(int amount) {
+		this.speed += amount;
+	}
 
-		if (creator == null) {
-			return null;
-		}
-
-		return creator.createProjectile(env, owner, position, velocity);
+	public void increaseSize(double amount) {
+		this.size += amount;
+	}
+ 
+	public Projectile spawn() {
+		return new projectile(environment, owner, damage, speed, size);
 	}
 }

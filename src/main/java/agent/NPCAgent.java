@@ -7,17 +7,13 @@ import java.lang.Math;
 import java.util.UUID;
 
 
-public class NPCAgent extends Agent {
-	
-	public static enum EnemyType {
-		SCOUT, HEAVY
-	}
+public abstract class NPCAgent extends Agent {
 
 	private PlayerAgent target;
 	private EnemyType type;
 	private double aggroRange;
 
-	public NPCAgent(Environment environment, Point position, EnemyType type, int level) {
+	public NPCAgent(Environment environment, Point position, ) {
 		super(environment, position, Agent.Team.ENEMY);
 
 		this.type = type;
@@ -31,8 +27,8 @@ public class NPCAgent extends Agent {
 				setProjectileDamage(1 + level / 3);
 				setProjectileSpeed(10);
 				setProjectileSpread(Math.toRadians(10));
-				setFireRate(1.0);
-				setAggroRange(50);
+				setFiringDelay(1000);
+				setAggroRange(100);
 				break;
 			case HEAVY:
 				setSize(1 + 2 * Math.log(level));
@@ -42,7 +38,7 @@ public class NPCAgent extends Agent {
 				setProjectileDamage(10 + level / 3);
 				setProjectileSpeed(7);
 				setProjectileSpread(Math.toRadians(10));
-				setFireRate(0.75);
+				setFiringDelay(1500);
 				setAggroRange(50);
 				break;
 		}
@@ -64,12 +60,26 @@ public class NPCAgent extends Agent {
 		this.aggroRange = range;
 	}
 
-	public final void findNewTarget() {
-		target = getEnvironment().getNearestPlayer(this, getAggroRange());
+	@Override
+	public void update() {
+		if (target == null || getPosition().distance(target.getPosition()) > getAggroRange()) {
+			target = findNewTarget();
+		}
+		if (target != null) {
+			fireAtTarget
+		}
 	}
-	
+
 	@Override
 	public final void despawn() {
 		getEnvironment().despawnNPCAgent(this);
+	}
+
+	private PlayerAgent findNewTarget() {
+		return getEnvironment().getNearestPlayer(this, getAggroRange());
+	}
+
+	private void fireAtTarget() {
+
 	}
 }

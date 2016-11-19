@@ -34,7 +34,7 @@ public class PlayerAgent extends Agent {
 		setProjectileDamage(1);
 		setProjectileSpeed(20);
 		setProjectileSpread(Math.toRadians(5));
-		setFireRate(2.0);
+		setFiringDelay(500);
 	}
 
 	public final String getName() {
@@ -55,5 +55,10 @@ public class PlayerAgent extends Agent {
 
 	public Queue<ClientInput> getPlayerEvents() {
 		return new LinkedList<ClientInput>(eventInbox);
+	}
+
+	@Override
+	public void update() {
+		;
 	}
 }
