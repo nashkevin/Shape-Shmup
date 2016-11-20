@@ -8,6 +8,12 @@ import main.java.projectile.Projectile;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
+/*****************************************************************************
+ * To-do:                                                                    *
+ *   Notify environment of spawned projectile                                *
+ *****************************************************************************/
+
 public class ProjectileFactory {
 	
 	private transient Environment environment;

@@ -6,6 +6,11 @@ import main.java.projectile.ProjectileFactory;
 import java.awt.Point;
 
 
+/*****************************************************************************
+ * To-do:                                                                    *
+ *   Add AI for movement                                                     *
+ *****************************************************************************/
+
 public abstract class NPCAgent extends Agent {
 
 	private Agent target;
@@ -37,12 +42,17 @@ public abstract class NPCAgent extends Agent {
 
 	@Override
 	public void update() {
+		// if targetting no one or target moves out of range
 		if (target == null || getPosition().distance(target.getPosition()) > getAggroRange()) {
 			target = findNewTarget();
 		}
+		// if finding new target was successful
 		if (target != null) {
+			// update to face the target
 			setRotation(getAngleTo(target));
+			
 			// To-do: move closer to target, if necessary
+
 			getGun().fireProjectile();
 		}
 	}

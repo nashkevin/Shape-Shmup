@@ -16,7 +16,8 @@ import java.util.Set;
 
 /** TODOs
 	Fix constructor calls for NPC and Player agents for integration
-	Change check collision to use a set distance
+	Change check collision to use range instead of exact coords
+	Limit update frequency
 */
 public class Environment extends Thread {
 	private boolean gameplayOccurring = true;

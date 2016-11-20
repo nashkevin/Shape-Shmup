@@ -8,6 +8,10 @@ import java.awt.Point;
 import java.util.UUID;
 
 
+/*****************************************************************************
+ * To-do:                                                                    *
+ *   Nothing in this one...                                                  *
+ *****************************************************************************/
 
 public abstract class Agent {
 	
@@ -109,7 +113,7 @@ public abstract class Agent {
 	public final void setHealth(int health) {
 		this.health = health;
 
-		// if current health exceeds maxHealth, reduce to maxHealth
+		// if given health exceeds maxHealth, increase to maxHealth
 		this.health = (health > maxHealth) ? maxHealth : health;
 	}
 

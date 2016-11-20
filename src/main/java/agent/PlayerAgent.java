@@ -10,6 +10,14 @@ import java.util.Queue;
 import java.util.LinkedList;
 
 
+/*****************************************************************************
+ * To-do:                                                                    *
+ *   Port over code to handle update and player input                        *
+ *   Set rotation variable according to input                                *
+ *   Implement points gain and levelling up system                           *
+ *   Implement levelling up to increase stats                                *
+ *****************************************************************************/
+
 public class PlayerAgent extends Agent {
 
 	private String name = "An Unnamed Hero";

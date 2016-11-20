@@ -7,6 +7,11 @@ import java.awt.Point;
 import java.lang.Math;
 
 
+/*****************************************************************************
+ * To-do:                                                                    *
+ *  Nothing here...                                                          *
+ *****************************************************************************/
+
 public class Scout extends NPCAgent {
 
 	public Scout(Environment environment, Point position, int level) {

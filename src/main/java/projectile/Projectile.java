@@ -8,6 +8,12 @@ import main.java.misc.Vector2D;
 import java.util.List;
 
 
+/*****************************************************************************
+ * To-do:                                                                    *
+ *   Award shooter points when collision results in kill                     *
+ *   Check that onCollision() actually works                                 *
+ *****************************************************************************/
+
 public class Projectile {
 
 	private transient Environment environment;
