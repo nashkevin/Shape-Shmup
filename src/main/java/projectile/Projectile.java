@@ -8,21 +8,23 @@ import main.java.misc.Vector2D;
 import java.util.List;
 
 
-public abstract class Projectile {
+public class Projectile {
 
 	private transient Environment environment;
 	private Agent owner;
 	private Point position;
 	private Vector2D velocity;
+	private int damage;
 
 	public Projectile(
 		Environment environment, Agent owner, Point position,
-		Vector2D velocity
+		Vector2D velocity, int damage
 	) {	
 		this.environment = environment;
 		this.owner = owner;
 		this.position = position;
 		this.velocity = velocity;
+		this.damage = damage;
 	}
 
 	protected final Environment getEnvironment() {
@@ -57,5 +59,10 @@ public abstract class Projectile {
 		environment.despawnProjectile(this);
 	}
 
-	protected abstract void onCollision(List<Agent> agents);
+	protected final void onCollision(List<Agent> agents) {
+		if (agents != null && !agents.isEmpty()) {
+			Agent firstHit = agents.get(0);
+			firstHit.applyDamage(damage);
+		}
+	}
 }

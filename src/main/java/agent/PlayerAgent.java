@@ -1,10 +1,10 @@
 package main.java.agent;
 
 import main.java.environment.Environment;
+import main.java.projectile.ProjectileFactory;
+import main.java.web.ClientInput;
 
 import java.awt.Point;
-
-import main.java.web.ClientInput;
 
 import java.util.Queue;
 import java.util.LinkedList;
@@ -19,22 +19,23 @@ public class PlayerAgent extends Agent {
 	Queue<ClientInput> eventInbox; 
 
 	public PlayerAgent(
-		Environment environment, Point position, Team team, String name
+		Environment environment, Point position, String name
 	) {
-		super(environment, position, team);
+		super(
+			environment,
+			position,
+			new ProjectileFactory(environment, null, 1, 10,
+				Math.toRadians(5.0), 750, 1.0),
+			Agent.Team.RED,
+			5,
+			100,
+			10
+		);
 
 		this.name = name;
 		this.eventInbox = new LinkedList<ClientInput>();
 
-
-		setSize(10);
-		setMaxHealth(100);
-		setHealth(getMaxHealth());
-		setMovementSpeed(10);
-		setProjectileDamage(1);
-		setProjectileSpeed(20);
-		setProjectileSpread(Math.toRadians(5));
-		setFiringDelay(500);
+		this.getGun().setOwner(this);
 	}
 
 	public final String getName() {

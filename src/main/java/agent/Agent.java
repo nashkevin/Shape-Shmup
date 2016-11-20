@@ -1,16 +1,12 @@
 package main.java.agent;
 
 import main.java.environment.Environment;
+import main.java.misc.Vector2D;
+import main.java.projectile.ProjectileFactory;
 
 import java.awt.Point;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 
-import main.java.misc.Vector2D;
-import main.java.projectile.Projectile;
-import main.java.projectile.ProjectileFactory;
 
 
 public abstract class Agent {
@@ -26,33 +22,28 @@ public abstract class Agent {
 	private Team team;
 	private double size;
 
+	private ProjectileFactory gun;
+
 	/** gameplay attributes */
 	private int health;
 	private int maxHealth;
-	private int movementSpeed;
-	private int projectileDamage;
-	private int projectileSpeed;
-	private double projectileSpread;
-	private int firingDelay; // how long the Agent must wait before firing (ms)
+	private int speed;
+	private int firingDelay; // must wait this duration (in ms) before firing
 
 	private boolean isReadyToFire;
 
-	private Timer timer = new Timer();
-
 	public Agent(
-		Environment environment, Point position, Team team, double size,
-		int health, int movementSpeed, int projectileDamage, 
+		Environment environment, Point position, ProjectileFactory gun,
+		Team team, double size, int health, int speed
 	) {
 		this.environment = environment;
-		this.team = team;
 		this.position = new Point(position);
-
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				setReadyToFire(true);
-			}, 0, firingDelay
-		);
+		this.team = team;
+		this.size = size;
+		this.health = health;
+		this.maxHealth = health;
+		this.speed = speed;
+		this.gun = gun;
 	}
 
 	/******************************
@@ -62,16 +53,16 @@ public abstract class Agent {
 		return id;
 	}
 
+	public final double getRotation() {
+		return rotation;
+	}
+
+	public final void setRotation(double rotation) {
+		this.rotation = rotation;
+	}
+
 	protected final Environment getEnvironment() {
 		return environment;
-	}
-
-	public final Team getTeam() {
-		return team;
-	}
-
-	public final void setTeam(Team team) {
-		this.team = team;
 	}
 
 	public final Point getPosition() {
@@ -86,10 +77,22 @@ public abstract class Agent {
 		this.position.setLocation(p);
 	}
 
-	public final double getRotation() {
-		return rotation;
-
+	public final ProjectileFactory getGun() {
+		return gun;
 	}
+
+	public final void setGun(ProjectileFactory gun) {
+		this.gun = gun;
+	}	
+
+	public final Team getTeam() {
+		return team;
+	}
+
+	public final void setTeam(Team team) {
+		this.team = team;
+	}
+
 
 	public final double getSize() {
 		return size;
@@ -121,52 +124,12 @@ public abstract class Agent {
 		this.health = (health > maxHealth) ? maxHealth : health;
 	}
 
-	public final int movementSpeed() {
-		return movementSpeed;
+	public final int getSpeed() {
+		return speed;
 	}
 
-	public final void setMovementSpeed(int movementSpeed) {
-		this.movementSpeed = movementSpeed;
-	}
-
-	public final int getProjectileDamage() {
-		return projectileDamage;
-	}
-
-	public final void setProjectileDamage(int projectileDamage) {
-		this.projectileDamage = projectileDamage;
-	}
-
-	public final int getProjectileSpeed() {
-		return projectileSpeed;
-	}
-
-	public final void setProjectileSpeed(int projectileSpeed) {
-		this.projectileSpeed = projectileSpeed;
-	}
-
-	public final double getProjectileSpread() {
-		return projectileSpread;
-	}
-
-	public final void setProjectileSpread(double projectileSpread) {
-		this.projectileSpread = projectileSpread;
-	}
-
-	public final double getFiringDelay() {
-		return firingDelay;
-	}
-
-	public final void setFiringDelay(double firingDelay) {
-		this.firingDelay = firingDelay;
-	}
-
-	public final boolean isReadyToFire() {
-		return isReadyToFire;
-	}
-
-	public final void setReadyToFire(boolean b) {
-		this.isReadyToFire = b;
+	public final void setSpeed(int speed) {
+		this.speed = speed;
 	}
 	/******************************
 	 * end of getters and setters *
@@ -180,11 +143,9 @@ public abstract class Agent {
 		}
 	}
 
-	class FiringTask extends TimerTask {
-		@Override
-		public void run() {
-			setReadyToFire(true);
-		}
+	public final double getAngleTo(Agent other) {
+		return Math.atan2(other.getPosition().getY() - this.getPosition().getY(),
+			other.getPosition().getX() - this.getPosition().getX());
 	}
 
 	public abstract void update();

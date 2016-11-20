@@ -1,16 +1,17 @@
 package main.java.environment;
 
+import main.java.agent.Agent;
+import main.java.agent.NPCAgent;
+import main.java.agent.PlayerAgent;
+import main.java.agent.Scout;
+
+import main.java.projectile.Projectile;
+
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;
-
-import main.java.agent.Agent;
-import main.java.agent.NPCAgent;
-import main.java.agent.PlayerAgent;
-
-import main.java.projectile.Projectile;
 
 
 /** TODOs
@@ -66,15 +67,14 @@ public class Environment extends Thread {
 
 	/** Spawns a playable character entity. */
 	public PlayerAgent spawnPlayer(String name) {
-		PlayerAgent player = new PlayerAgent(this, randomPlayerSpawn(), Agent.Team.RED, name);
+		PlayerAgent player = new PlayerAgent(this, randomPlayerSpawn(), name);
 		activePlayerAgents.add(player);
 		System.out.println("Player (" + player.getID() + ") was spawned.");
 		return player;
 	}
 
-	public void spawnNPC(){
-		NPCAgent agent = new NPCAgent(this, randomNPCSpawn(),
-			NPCAgent.EnemyType.SCOUT, 1);
+	public void spawnScout(){
+		Scout agent = new Scout(this, randomNPCSpawn(), 1);
 		activeNPCAgents.add(agent);
 		System.out.println("Level 1 scout (" + agent.getID() + ") was spawned.");
 	}
@@ -126,12 +126,12 @@ public class Environment extends Thread {
 
 	public ArrayList<Agent> checkCollision(Projectile p){
 		ArrayList<Agent> collisions = new ArrayList<Agent>();
-		for (Agent a : getActivePlayerAgents()){
-			if (p.getPosition() == a.getPosition() && a.getTeam() != p.getOwner().getTeam())
+		for (Agent a : getActivePlayerAgents()) {
+			if (p.getPosition().equals(a.getPosition()) && a.getTeam() != p.getOwner().getTeam())
 				collisions.add(a);
 		}
-		for (Agent a : getActiveNPCAgents()){
-			if (p.getPosition() == a.getPosition() && a.getTeam() != p.getOwner().getTeam())
+		for (Agent a : getActiveNPCAgents()) {
+			if (p.getPosition().equals(a.getPosition()) && a.getTeam() != p.getOwner().getTeam())
 				collisions.add(a);
 		}
 		return collisions;
@@ -156,7 +156,7 @@ public class Environment extends Thread {
 		for(Projectile p : getActiveProjectiles())
 			p.update();
 		while(getActiveNPCAgents().size() < (NPC_PLAYER_RATIO * getActivePlayerAgents().size()))
-			spawnNPC();
+			spawnScout();
 	}
 
 	public void run() {
