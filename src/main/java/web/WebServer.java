@@ -19,8 +19,6 @@ import main.java.environment.Environment;
 
 @ServerEndpoint("/socket")
 public class WebServer {
-	private static final int RADIUS = 200;
-
 	/** The sessions of all players, mapped to each player's chosen name. */
 	private static final Map<Session, String> sessionToName =
 		Collections.synchronizedMap(new HashMap<>());
@@ -34,7 +32,7 @@ public class WebServer {
 	private static GameThread gameThread;
 
 	public WebServer() {
-		environment = new Environment(RADIUS);
+		environment = new Environment();
 		gameThread = new GameThread(this, environment);
 		gameThread.start();
 		environment.start();

@@ -17,7 +17,7 @@ public class PlayerAgentTest {
 	private static final double EPSILON = 0.00001; //Allowed error of floating point values for testing purposes
 	@Test
 	public void testConstructor() {
-		Environment environment = new Environment(20);
+		Environment environment = new Environment();
 		PlayerAgent player = new PlayerAgent("Tester", UUID.randomUUID(), environment, new Point(10, 10), 1, 1, 100, 10, 1, 1);
 
 		Assert.assertEquals(new Point(10,10), player.getPosition());
@@ -30,7 +30,7 @@ public class PlayerAgentTest {
 	}
 	@Test
 	public void testAddPlayerEvent() {
-		Environment environment = new Environment(20);
+		Environment environment = new Environment();
 		PlayerAgent player = new PlayerAgent("Tester", UUID.randomUUID(), environment, new Point(10, 10), 1, 1, 100, 10, 1, 1);
 
 		ClientInput event = new ClientInput();
@@ -50,7 +50,7 @@ public class PlayerAgentTest {
 	@Test
 	public void testPreUpdateCall() {
 		
-		/*Environment environment = new Environment(20);
+		/*Environment environment = new Environment();
 		PlayerAgent player = new PlayerAgent(UUID.randomUUID(), environment, new Point(10, 10), 1, 1, 100, 10, 1, 1);
 		ClientInput eventRight = new ClientInput();
 		eventRight.setRight(true);

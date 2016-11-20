@@ -20,23 +20,24 @@ import main.java.projectile.Projectile;
 	Change check collision to use a set distance
 */
 public class Environment extends Thread {
+	/** Radius of the environment, in pixels. Value is arbitrarily chosen. */
+	private static final double RADIUS = 50000;
+	private static final int NPCTOPLAYERRATIO = 5;
+	
 	private boolean gameplayOccurring = true;
 	
-	private static final int NPCTOPLAYERRATIO = 5;
-	private double radius;
 	private Set<PlayerAgent> activePlayerAgents;
 	private Set<NPCAgent> activeNPCAgents;
 	private Set<Projectile> activeProjectiles;
 	
-	public Environment(double radius) {
-		this.radius = radius;
+	public Environment() {
 		activePlayerAgents = Collections.newSetFromMap(new ConcurrentHashMap<PlayerAgent, Boolean>());
 		activeNPCAgents = Collections.newSetFromMap(new ConcurrentHashMap<NPCAgent, Boolean>());
 		activeProjectiles = Collections.newSetFromMap(new ConcurrentHashMap<Projectile, Boolean>());
 	}
 
 	public double getRadius(){
-		return this.radius;
+		return RADIUS;
 	}
 
 	public Set<PlayerAgent> getActivePlayerAgents(){

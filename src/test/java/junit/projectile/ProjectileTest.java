@@ -33,7 +33,7 @@ public class ProjectileTest {
 	public void test_constructor() {
 		Random random = new Random();
 
-		Environment env = new EnvironmentMock(random.nextDouble() * 100);
+		Environment env = new EnvironmentMock();
 		Agent.AgentTester.generateTestInstance();
 		Agent owner = Agent.AgentTester.getTestInstance();
 		Point position = new Point();

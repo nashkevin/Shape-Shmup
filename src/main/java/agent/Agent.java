@@ -242,7 +242,7 @@ public abstract class Agent {
 			Random random = new Random();
 
 			UUID id = UUID.randomUUID();
-			Environment env = new EnvironmentMock(random.nextDouble() * 100);
+			Environment env = new EnvironmentMock();
 			Point position = new Point();
 			position.setLocation(random.nextDouble(), random.nextDouble());
 			int level = random.nextInt(10);

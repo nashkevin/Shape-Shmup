@@ -75,7 +75,7 @@ public abstract class Projectile {
 		public static void generateTestInstance() {
 			Random random = new Random();
 			
-			Environment env = new EnvironmentMock(random.nextDouble() * 100);
+			Environment env = new EnvironmentMock();
 			Agent.AgentTester.generateTestInstance();
 			Agent owner = Agent.AgentTester.getTestInstance();
 			Point position = new Point();
