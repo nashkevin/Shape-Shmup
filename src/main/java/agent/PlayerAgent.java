@@ -92,6 +92,10 @@ public class PlayerAgent extends Agent {
 		double horizontalDistance = p2.x - p1.x;
 		return Math.sqrt(verticalDistance * verticalDistance + horizontalDistance * horizontalDistance);
 	}
+	
+	public String getName() {
+		return name;
+	}
 
 	public void addPlayerEvent(ClientInput event) {
 		eventInbox.add(event);

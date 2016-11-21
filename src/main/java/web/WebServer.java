@@ -28,14 +28,20 @@ public class WebServer {
 	/** The chosen name of each named player, mapped to session. */
 	private static final Map<String, Session> nameToSession =
 		Collections.synchronizedMap(new HashMap<>());
-	private static Environment environment;
+	private static Environment environment = new Environment();
 	private static GameThread gameThread;
 
 	public WebServer() {
-		environment = new Environment();
-		gameThread = new GameThread(this, environment);
-		gameThread.start();
-		environment.start();
+		// The WebServer is instantiated once for each client, but we should
+		// only instantiate one GameThread.
+		synchronized(environment) {
+			if (gameThread == null) {
+				// The GameThread needs a reference to any one WebServer so that it can broadcast.
+				gameThread = new GameThread(this, environment);
+				gameThread.start();
+				environment.start();
+			}
+		}
 	}
 
 	/** When a new client makes a connection to the server. */
@@ -68,6 +74,9 @@ public class WebServer {
 			synchronized(sessionToPlayerAgent) {
 				sessionToPlayerAgent.put(session, agent);
 			}
+			
+			// Send the character's ID to the client.
+			unicast("{\"pregame\":true, \"id\": \"" + agent.getID() + "\"}", session);
 			broadcast(input.getName() + " joined the game.");
 		}
 
@@ -145,13 +154,6 @@ public class WebServer {
 		String name = sessionToName.remove(session);
 		if (name != null) {
 			nameToSession.remove(name);
-		}
-
-		synchronized(sessionToName) {
-			if (sessionToName.size() == 0) {
-				gameThread.setGameplayOccurring(false);
-				environment.setGameplayOccurring(false);
-			}
 		}
 	}
 }

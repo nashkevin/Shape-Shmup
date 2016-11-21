@@ -2,8 +2,12 @@ const INPUT_RATE = 20; // maximum number of inputs per second
 var SPEED_CAP = 100;   // maximum speed a player can travel
 var webSocket;
 var username;
+var playerAgentID;
 var clientInput = {};  // represents the current input of the player
 var messages = document.getElementById("messages");
+
+// Contains game objects (e.g. player agents) drawn on the screen, indexed by UUID.
+var gameEntities = {};
 
 var canvas = document.getElementById("gameCanvas");
 
@@ -21,12 +25,6 @@ var bgTile = new PIXI.extras.TilingSprite(bg, 1920, 1080);
 bgTile.position.set(0, 0);
 bgTile.tilePosition.set(0, 0);
 stage.addChild(bgTile);
-var player;
-var velocityVector = { angle: 0, magnitude: 0 };
-var velocityArrow;
-var driveVector = { angle: 0, magnitude: 0 };
-var driveArrow;
-var firingArrow;
 
 var pingStartTime;
 
@@ -56,13 +54,18 @@ function joinGame() {
 	webSocket.onmessage = function(e) {
 		try {
 			var json = JSON.parse(e.data);
-			//TODO redraw the canvas using the new data
+			parseJson(json);
 		} catch (error) { // Display non-JSON messages to the chat area
 			// if the server is responding to a ping request
-			if (e.data === "PONG") {
-				addMessageToChat(Date.now() - pingStartTime + " ms");
+			if (error instanceof SyntaxError) {
+				// If input is invalid JSON, treat it as plain text.
+				if (e.data === "PONG") {
+					addMessageToChat(Date.now() - pingStartTime + " ms");
+				} else {
+					addMessageToChat(e.data);
+				}
 			} else {
-				addMessageToChat(e.data);
+				throw error;
 			}
 		}
 	};
@@ -83,10 +86,6 @@ function joinGame() {
 			document.getElementById("pregame").classList.add("hidden");
 			document.getElementById("game").classList.remove("hidden");
 			resize();
-			drawPlayer();
-			drawDriveArrow();
-			drawVelocityArrow();
-			drawFiringArrow();
 			sendFrameInput();
 		} else {
 			alert("The connection to the server was closed before it could be established.");
@@ -148,11 +147,67 @@ function getGameWidth() {
 
 function resize() {
 	renderer.resize(getGameWidth(), getGameHeight());
+	renderer.render(stage);
 }
 window.onresize = resize;
 
 function connectedToGame() {
 	return (typeof webSocket !== "undefined" && webSocket.readyState === webSocket.OPEN);
+}
+
+function parseJson(json) {
+	if (json.pregame) {
+		// Set the ID of the corresponding player agent on the server end
+		// so this client knows which agent it is when updating the screen.
+		playerAgentID = json.id;
+	} else {
+		updateStage(json);
+	}
+}
+
+function updateStage(json) {
+	var playerAgents = json.playerAgents;
+	var npcAgents = json.npcAgents;
+	var projectiles = json.projectiles;
+
+	// Get the player agent corresponding to this client.
+	var thisPlayer = null;
+	for (var i=0; i<playerAgents.length; i++) {
+		var agent = playerAgents[i];
+		if (agent.id === playerAgentID) {
+			thisPlayer = agent;
+			break;
+		}
+	}
+	if (thisPlayer === null) {
+		return;
+	}
+
+	// Mark all game entities as invisible (in case they should be despawned).
+	for (var id in gameEntities) {
+	    gameEntities[id].visible = false;
+	}
+
+	// Iterate through player agents
+	for (var i=0; i<playerAgents.length; i++) {
+		setScreenCoordinates(playerAgents[i], thisPlayer);
+		var player = drawPlayer(playerAgents[i]);
+		// If the player was included in the JSON, they should remain visible.
+		player.visible = true;
+	}
+
+	//TODO iterate over NPC agents and projectiles.
+
+	renderer.render(stage);
+}
+
+/** Calculate the coordinates of the entity in relation to the canvas screen.
+thisPlayer is used as the center of the screen. */
+function setScreenCoordinates(entity, thisPlayer) {
+	var x_offset = entity.x - thisPlayer.x;
+	var y_offset = entity.y - thisPlayer.y;
+	entity.screen_x = getGameWidth() / 2 + x_offset;
+	entity.screen_y = getGameHeight() / 2 + y_offset;
 }
 
 // Key down listener
@@ -198,7 +253,6 @@ window.onkeydown = function(e) {
 				stopAllMovement();
 				break;
 		}
-		drive();
 	}
 };
 
@@ -230,7 +284,6 @@ window.onkeyup = function(e) {
 				delete clientInput.right;
 				break;
 		}
-		drive();
 	}
 };
 
@@ -273,94 +326,18 @@ function coordinateToAngle(x, y) {
 	return Math.atan2(y - y_origin, x - x_origin);
 }
 
-function drive() {
-	// directional client input as boolean array (binary number)
-	var movement = [
-		!!clientInput.up,
-		!!clientInput.down,
-		!!clientInput.left,
-		!!clientInput.right
-	];
-
-	var movementCode = 0; // decimal representation of movement
-
-	for (var i = 0; i < movement.length; i++) {
-		// convert binary to decimal
-		movementCode += movement[i] * (1 << (movement.length - 1 - i));
+function drawPlayer(playerObject) {
+	if (!gameEntities[playerObject.id]) {
+		createPlayer(playerObject);
 	}
-
-	switch (movementCode) {
-		case 1:  // right
-			driveVector.angle = 0;
-			break;
-		case 2:  // left
-			driveVector.angle = Math.PI;
-			break;
-		case 4:  // down
-			driveVector.angle = Math.PI / 2;
-			break;
-		case 5:  // down right
-			driveVector.angle = Math.PI / 4;
-			break;
-		case 6:  // down left
-			driveVector.angle = 3 * Math.PI / 4;
-			break;
-		case 8:  // up
-			driveVector.angle = -Math.PI / 2;
-			break;
-		case 9:  // up right
-			driveVector.angle = -Math.PI / 4;
-			break;
-		case 10: // up left
-			driveVector.angle = -3 * Math.PI / 4;
-			break;
-	}
-
-	// if no movement keys are held
-	if (movement.indexOf(true) === -1) {
-		clearInterval(accelerateID);
-		if (!isSpeedDecaying) {
-			decaySpeedID = setInterval(decaySpeed, 20);
-		}
-		isAccelerating = false;
-		isSpeedDecaying = true;
-		driveVector.magnitude = 0;
-	} else {
-		clearInterval(decaySpeedID);
-		if (!isAccelerating) {
-			accelerateID = setInterval(accelerate, 15);
-		}
-		isSpeedDecaying = false;
-		isAccelerating = true;
-		driveVector.magnitude = 1;
-	}
+	return updatePlayer(playerObject);
 }
 
-function decaySpeed() {
-	if (velocityVector.magnitude > 0) {
-		velocityVector.magnitude--;
-	} else {
-		velocityVector.magnitude = 0;
-		clearInterval(decaySpeedID);
-		isSpeedDecaying = false;
-	}
-}
+function createPlayer(playerObject) {
+	// Create the container, which will contain all parts of the player.
+	var playerContainer = new PIXI.Container();
 
-function accelerate() {
-	var x = velocityVector.magnitude * Math.cos(velocityVector.angle);
-	var y = velocityVector.magnitude * Math.sin(velocityVector.angle);
-
-	x += driveVector.magnitude * Math.cos(driveVector.angle);
-	y += driveVector.magnitude * Math.sin(driveVector.angle);
-
-	velocityVector.angle = Math.atan2(y, x);
-
-	velocityVector.magnitude = Math.sqrt(x * x + y * y);
-	if (velocityVector.magnitude >= SPEED_CAP)
-		velocityVector.magnitude = SPEED_CAP;
-}
-
-function drawPlayer() {
+	// Create the shape, which will be used as the graphic for the sprite.
 	var playerShape = new PIXI.Graphics();
 	playerShape.lineStyle(4, 0x87B56C, 1)
 	playerShape.beginFill(0xD6EAD5);
@@ -372,16 +349,18 @@ function drawPlayer() {
 	]);
 	playerShape.endFill();
 
-	player = new PIXI.Sprite(renderer.generateTexture(playerShape));
-	player.anchor.set(2/3, 0.5);
-	player.pivot.set(2/3, 0.5);
-	player.position.set(getGameWidth() / 2, getGameHeight() / 2);
+	// Create the sprite, which is the shape itself that represents the player.
+	var playerSprite = new PIXI.Sprite(renderer.generateTexture(playerShape));
+	playerSprite.anchor.set(2/3, 0.5);
+	playerSprite.pivot.set(2/3, 0.5);
+	playerSprite.position.set(0, 0);
 
-	stage.addChild(player);
+	playerContainer.addChild(playerSprite);
 
-	var playerName = new PIXI.Text(username, {
+	// Create the text, which will display the player's name.
+	var playerName = new PIXI.Text(playerObject.name, {
 		fontFamily: "Arial",
-		fontSize: 12 + (16 - username.length),
+		fontSize: 12 + (16 - playerObject.name.length),
 		align: "center",
 		fill: "#F8F8F2",
 		dropShadow: true,
@@ -391,88 +370,26 @@ function drawPlayer() {
 		strokeThickness: 2
 	});
 	playerName.anchor.set(0.5, 0.5);
-	playerName.position = player.position;
+	playerName.position = playerSprite.position;
 	playerName.position.y += 50;
-	stage.addChild(playerName);
+
+	playerContainer.addChild(playerName);
+
+	var containerX = 0;
+	var containerY = 0;
+
+	playerContainer.position.set(containerX, containerY);
+	stage.addChild(playerContainer);
+
+	gameEntities[playerObject.id] = playerContainer;
+	return playerContainer;
 }
 
-function drawDriveArrow() {
-	var arrowShape = new PIXI.Graphics();
-	arrowShape.lineStyle(3, 0xFFFFFF, 1);
-	arrowShape.moveTo(0, 0);
-	arrowShape.lineTo(100, 0);
-
-	driveArrow = new PIXI.Sprite(renderer.generateTexture(arrowShape));
-	driveArrow.anchor.set(0, 0);
-	driveArrow.pivot.set(0, 0);
-	driveArrow.position.set(getGameWidth() / 2, getGameHeight() / 2);
-
-	stage.addChild(driveArrow);
+function updatePlayer(playerObject) {
+	var playerContainer = gameEntities[playerObject.id];
+	playerContainer.position.set(playerObject.screen_x, playerObject.screen_y);
+	return playerContainer;
 }
-
-function drawVelocityArrow() {
-	var arrowShape = new PIXI.Graphics();
-	arrowShape.lineStyle(3, 0xFFFF00, 1);
-	arrowShape.moveTo(0, 0);
-	arrowShape.lineTo(150, 0);
-
-	velocityArrow = new PIXI.Sprite(renderer.generateTexture(arrowShape));
-	velocityArrow.anchor.set(0, 0);
-	velocityArrow.pivot.set(0, 0);
-	velocityArrow.position.set(getGameWidth() / 2, getGameHeight() / 2);
-
-	stage.addChild(velocityArrow);
-	velocityArrow.scale.set(0, 0); // initially represent no speed
-}
-
-function drawFiringArrow() {
-	var arrowShape = new PIXI.Graphics();
-	arrowShape.lineStyle(3, 0xFF0000, 1);
-	arrowShape.moveTo(0, 0);
-	arrowShape.lineTo(100, 0);
-
-	firingArrow = new PIXI.Sprite(renderer.generateTexture(arrowShape));
-	firingArrow.anchor.set(0, 0);
-	firingArrow.pivot.set(0, 0);
-	firingArrow.position.set(getGameWidth() / 2, getGameHeight() / 2);
-
-	stage.addChild(firingArrow);
-	firingArrow.visible = false; // initially not firing
-}
-
-function animationLoop() {
-	requestAnimationFrame(animationLoop);
-	if (player != null) {
-
-		if (clientInput.angle != null)
-			player.rotation = clientInput.angle + Math.PI;
-
-		if (driveVector.magnitude != 0) {
-			driveArrow.rotation = driveVector.angle;
-			driveArrow.visible = true;
-		}
-		else {
-			driveArrow.visible = false;
-		}
-
-		if (clientInput.isFiring != null) {
-			firingArrow.rotation = player.rotation - Math.PI;
-			firingArrow.visible = true;
-		} else {
-			firingArrow.visible = false;
-		}
-
-		velocityArrow.rotation = velocityVector.angle;
-		velocityArrow.scale.set(velocityVector.magnitude / SPEED_CAP, 1);
-
-		var x = velocityVector.magnitude * Math.cos(velocityVector.angle);
-		var y = velocityVector.magnitude * Math.sin(velocityVector.angle);
-		bgTile.tilePosition.x -= x / 10;
-		bgTile.tilePosition.y -= y / 19;
-	}
-	renderer.render(stage);
-}
-animationLoop();
 
 window.onload = function() {
 	document.getElementById("username").select();
