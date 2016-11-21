@@ -23,6 +23,8 @@ public abstract class Agent {
 	private int damage;
 	private int projectileSpeed;
 
+	private double angle;
+	
 	private Point position;
 	private Vector2D velocity;
 
@@ -92,6 +94,14 @@ public abstract class Agent {
 
 	public final int getProjectileSpeed() {
 		return projectileSpeed;
+	}
+	
+	public void setAngle(double angle) {
+		this.angle = angle;
+	}
+	
+	public final double getAngle() {
+		return angle;
 	}
 
 	public final Point getPosition() {

@@ -63,6 +63,8 @@ public class PlayerAgent extends Agent {
 				double angle = event.getAngle();
 				firingVector = new Vector2D(1, angle);
 			}
+			
+			setAngle(event.getAngle());
 		}
 
 		//calculate acceleration vector
