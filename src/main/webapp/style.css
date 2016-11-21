@@ -154,7 +154,7 @@ ul#instructions li {
 
 #messages {
 	height: 130px;
-	word-break: break-all;
+	word-wrap: normal;
 	overflow-x: hidden;
 	overflow-y: scroll;
 	background: #131411;

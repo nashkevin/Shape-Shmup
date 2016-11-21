@@ -151,6 +151,10 @@ public class WebServer {
 		return nameToSession.keySet();
 	}
 
+	Environment getEnvironment() {
+		return environment;
+	}
+
 	/** When a client closes their connection. */
 	@OnClose
 	public void onClose(Session session) {

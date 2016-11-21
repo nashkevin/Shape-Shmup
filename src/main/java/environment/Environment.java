@@ -11,6 +11,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.Random;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,6 +29,8 @@ public class Environment {
 	private static final int NPC_PLAYER_RATIO = 5;
 	/** The frame rate, in Hz */
 	private static final int FRAME_RATE = 30;
+	/** A random number generator **/
+	private static final Random random = new Random();
 	
 	private boolean gameplayOccurring = true;
 	private boolean verbose = true;
@@ -107,8 +110,27 @@ public class Environment {
 		return player;
 	}
 
+	public PlayerAgent spawnPlayer(Point point) {
+		PlayerAgent player = new PlayerAgent(this, point, "Player" +
+			String.format("%04d", random.nextInt(10000)));
+		activePlayerAgents.add(player);
+		if (verbose) {
+			System.out.println("Player (" + player.getID() + ") was spawned.");
+		}
+		return player;
+	}
+
 	public Scout spawnScout() {
 		return spawnScout(1);
+	}
+
+	public Scout spawnScout(Point point) {
+		Scout agent = new Scout(this, point, 1);
+		activeNPCAgents.add(agent);
+		if (verbose) {
+			System.out.println("Level 1 scout (" + agent.getID() + ") was spawned.");
+		}
+		return agent;
 	}
 
 	public Scout spawnScout(int level) {

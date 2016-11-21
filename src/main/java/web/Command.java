@@ -1,16 +1,18 @@
 package main.java.web;
 
+import main.java.agent.PlayerAgent;
+import main.java.environment.Environment;
+
+import java.awt.Point;
+
 import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
-
-import java.awt.Point;
-
-import main.java.agent.PlayerAgent;
 
 
 /** Manages commands that a player can perform by typing in the chat window. */
@@ -207,6 +209,25 @@ public enum Command {
 					server.unicast("Player '" + targetName + "' not found.", sourceSession);
 			}
 		},
+	KILL ("kill",
+			null,
+			"Kills a player.<br>Syntax: /kill username"
+		) {
+			@Override
+			protected void perform(String[] args, Session sourceSession, WebServer server) {
+				if (args.length != 2) {
+					throw new IllegalArgumentException();
+				}
+
+				String targetName = args[1];
+				PlayerAgent target = server.getPlayerAgentByName(targetName);
+				if (target != null) {
+					target.applyDamage(target.getMaxHealth());
+				} else {
+					server.unicast("Player '" + targetName + "' not found.", sourceSession);
+				}
+			}
+		},
 	PLAYERS ("players",
 			new String[] {"who"},
 			"Lists the usernames of everyone playing.<br>Syntax: /players"
@@ -292,6 +313,34 @@ public enum Command {
 						sb.append(args[i] + " ");
 					sb.append("</b></i>");
 					server.broadcast(sb.toString());
+				}
+			}
+		},
+	SPAWN ("spawn",
+			new String[] {"create"},
+			("Spawns a game object at your location or a given location." +
+				"<br>Syntax: /spawn (Player|Scout) [x y]")
+		) {
+			@Override
+			protected void perform(String[] args, Session session, WebServer server) {
+				PlayerAgent caller = server.getPlayerAgentBySession(session);
+				int x = (int) caller.getPosition().getX();
+				int y = (int) caller.getPosition().getY();
+				if (args.length != 2 && args.length != 4) {
+					throw new IllegalArgumentException();
+				} else if (args.length == 4) {
+					try {
+						x = Integer.parseInt(args[2]);
+						y = Integer.parseInt(args[3]);
+					}
+					catch (NumberFormatException ex) {
+						server.unicast("Invalid coordinates", session);
+					}
+				}
+				if (args[1].equalsIgnoreCase("player")) {
+					server.getEnvironment().spawnPlayer(new Point(x, y));
+				} else if (args[1].equalsIgnoreCase("scout")) {
+					server.getEnvironment().spawnScout(new Point(x, y));
 				}
 			}
 		},
