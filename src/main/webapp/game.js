@@ -26,6 +26,10 @@ bgTile.position.set(0, 0);
 bgTile.tilePosition.set(0, 0);
 stage.addChild(bgTile);
 
+// Coordinates of the player (used to calculate background tile position).
+var playerX = getGameWidth() / 2;
+var playerY = getGameHeight() / 2;
+
 var pingStartTime;
 
 var isSpeedDecaying = false;
@@ -197,6 +201,14 @@ function updateStage(json) {
 	}
 
 	//TODO iterate over NPC agents and projectiles.
+
+	// Update the background tile position based on how far the player moved.
+	var bgOffsetX = thisPlayer.x - playerX;
+	var bgOffsetY = thisPlayer.y - playerY;
+	playerX = thisPlayer.x;
+	playerY = thisPlayer.y;
+	bgTile.tilePosition.x -= bgOffsetX;
+	bgTile.tilePosition.y += bgOffsetY;
 
 	renderer.render(stage);
 }
