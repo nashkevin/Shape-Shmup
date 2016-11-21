@@ -107,15 +107,20 @@ public class Environment {
 		return player;
 	}
 
-	public void spawnScout(){
-		Scout agent = new Scout(this, randomNPCSpawn(), 1);
-		activeNPCAgents.add(agent);
-		if (verbose) {
-			System.out.println("Level 1 scout (" + agent.getID() + ") was spawned.");
-		}
+	public Scout spawnScout() {
+		return spawnScout(1);
 	}
 
-	public void spawnProjectile(Projectile p){
+	public Scout spawnScout(int level) {
+		Scout agent = new Scout(this, randomNPCSpawn(), level);
+		activeNPCAgents.add(agent);
+		if (verbose) {
+			System.out.println("Level " + level + " scout (" + agent.getID() + ") was spawned.");
+		}
+		return agent;
+	}
+
+	public void addProjectile(Projectile p) {
 		activeProjectiles.add(p);
 		if (verbose) {
 			System.out.println("Projectile was spawned.");
@@ -162,7 +167,7 @@ public class Environment {
 		return nearestPlayer;
 	}
 
-	public ArrayList<Agent> checkCollision(Projectile p){
+	public ArrayList<Agent> checkCollision(Projectile p) {
 		ArrayList<Agent> collisions = new ArrayList<Agent>();
 		for (Agent a : getActivePlayerAgents()) {
 			if (p.getPosition().equals(a.getPosition()) && a.getTeam() != p.getOwner().getTeam())
@@ -175,18 +180,18 @@ public class Environment {
 		return collisions;
 	}
 
-	private Point randomPlayerSpawn(){
+	private Point randomPlayerSpawn() {
 		double angle = Math.random() * 2 * Math.PI;
 		return polarToCartesian(angle, getRadius());
 	}
 
-	private Point randomNPCSpawn(){
+	private Point randomNPCSpawn() {
 		double angle = Math.random() * 2 * Math.PI;
 		double distance = Math.random() * getRadius();
 		return polarToCartesian(angle, distance);
 	}
 
-	private void update(){
+	private void update() {
 		for(PlayerAgent agent : getActivePlayerAgents())
 			agent.update();
 		for(NPCAgent agent : getActiveNPCAgents())

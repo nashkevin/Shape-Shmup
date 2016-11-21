@@ -9,11 +9,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-/*****************************************************************************
- * To-do:                                                                    *
- *   Notify environment of spawned projectile                                *
- *****************************************************************************/
-
 public class ProjectileFactory {
 	
 	private transient Environment environment;
@@ -130,6 +125,9 @@ public class ProjectileFactory {
 
 	public Projectile fireProjectile() {
 		Vector2D shotVector = new Vector2D(speed, owner.getRotation());
-		return new Projectile(environment, owner, owner.getPosition(), shotVector, damage);
+		Projectile projectile = new Projectile(environment, owner,
+			owner.getPosition(), shotVector, damage);
+		environment.addProjectile(this);
+		return projectile;
 	}
 }

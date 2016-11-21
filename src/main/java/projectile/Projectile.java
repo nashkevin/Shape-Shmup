@@ -1,15 +1,16 @@
 package main.java.projectile;
 
-import main.java.environment.Environment;
-
 import main.java.agent.Agent;
-import main.java.agent.test.EnvironmentMock;
+import main.java.environment.Environment;
 
 import java.awt.Point;
 import main.java.misc.Vector2D;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 /*****************************************************************************
  * To-do:                                                                    *
@@ -19,11 +20,15 @@ import java.util.Random;
 
 public class Projectile {
 
+	private final long TIME_TO_LIVE = 4000;
+
 	private transient Environment environment;
 	private Agent owner;
 	private Point position;
 	private Vector2D velocity;
 	private int damage;
+
+	private Timer timer = new Timer();
 
 	public Projectile(
 		Environment environment, Agent owner, Point position,
@@ -34,6 +39,15 @@ public class Projectile {
 		this.position = position;
 		this.velocity = velocity;
 		this.damage = damage;
+
+		// despawn when TIME_TO_LIVE is up
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				despawn(); // despawn the projectile
+				timer.cancel(); // terminate the timer
+			}
+		}, TIME_TO_LIVE);
 	}
 
 	protected final Environment getEnvironment() {
@@ -69,9 +83,10 @@ public class Projectile {
 	}
 
 	protected final void onCollision(List<Agent> agents) {
-		if (agents != null && !agents.isEmpty()) {
-			Agent firstHit = agents.get(0);
-			firstHit.applyDamage(damage);
+		if (agents != null) {
+			for (Agent agent : agents) {
+				agent.applyDamage(damage);
+			}
 		}
 	}
 }
