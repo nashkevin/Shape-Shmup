@@ -62,6 +62,7 @@ public class GameThread {
 		Collection<Projectile> projectiles = new ArrayList<>(environment.getActiveProjectiles());
 
 		GameState state = new GameState(playerAgents, npcAgents, projectiles);
+		
 		server.broadcast(gson.toJson(state));
 	}
 
