@@ -12,13 +12,14 @@ import java.util.LinkedList;
 
 /*****************************************************************************
  * To-do:                                                                    *
- *   Port over code to handle update and player input                        *
- *   Set rotation variable according to input                                *
  *   Implement points gain and levelling up system                           *
  *   Implement levelling up to increase stats                                *
  *****************************************************************************/
 
 public class PlayerAgent extends Agent {
+
+	/** PlayerAgent's speed will not exceed its haste times this multiple */
+	private int MAX_SPEED_MULTIPLE = 5;
 
 	private String name = "An Unnamed Hero";
 	private int level = 1;
@@ -37,7 +38,7 @@ public class PlayerAgent extends Agent {
 			Agent.Team.RED,
 			5,
 			100,
-			10
+			20
 		);
 
 		this.name = name;
@@ -68,6 +69,69 @@ public class PlayerAgent extends Agent {
 
 	@Override
 	public void update() {
-		;
+		/** number of inputs for the left direction */
+		int countLeft = 0;
+		/** number of inputs for the right direction */
+		int countRight = 0;
+		/** number of inputs for the up direction */
+		int countUp = 0;
+		/** number of inputs for the down direction */
+		int countDown = 0;
+
+		/** combined horizontal inputs */
+		int horizontalDrive = 0;
+		/** combined vertical inputs */
+		int verticalDrive = 0;
+
+		if (eventInbox.isEmpty()) {
+			return; // don't change state of the agent if there are no inputs to be queued
+		}
+		while (!eventInbox.isEmpty()) {
+			ClientInput event = eventInbox.poll();
+			
+			if (event.getAngle() != null) {
+				setRotation(event.getAngle());
+			}
+
+			if (event.isLeft()) {
+				countLeft++;
+			}
+			if (event.isRight()) {
+				countRight++;
+			}
+			if (event.isUp()) {
+				countUp++;
+			}
+			if (event.isDown()) {
+				countDown++;
+			}
+			
+			if (event.isFiring()) {
+				getGun.fireProjectile();
+			}
+
+			horizontalDrive = countRight - countLeft;
+			verticalDrive = countUp - countDown;
+
+			if (event.isMoving()) {
+				double x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
+				double y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
+
+				x += horizontalDrive * getHaste() * Math.cos(getRotation());
+				y += verticalDrive * getHaste() * Math.sin(getRotation());
+
+				getVelocity.setAngle(Math.atan2(y, x));
+
+				getVelocity.setMagnitude(Math.sqrt(x * x + y * y));
+				if (getVelocity().getMagnitude() >= getHaste() * MAX_SPEED_MULTIPLE) {
+					getVelocity.setMagnitude(getHaste() * MAX_SPEED_MULTIPLE);
+				}
+
+				x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
+				y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
+				
+				getPosition().translate(x, y);
+			}
+		}
 	}
 }

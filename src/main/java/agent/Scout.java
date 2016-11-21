@@ -7,11 +7,6 @@ import java.awt.Point;
 import java.lang.Math;
 
 
-/*****************************************************************************
- * To-do:                                                                    *
- *  Nothing here...                                                          *
- *****************************************************************************/
-
 public class Scout extends NPCAgent {
 
 	public Scout(Environment environment, Point position, int level) {
@@ -22,8 +17,8 @@ public class Scout extends NPCAgent {
 				Math.toRadians(10), 1000, 0.5),
 			1 + Math.log(level),
 			1 + level / 2,
-			5,
-			100
+			10,
+			1000
 		);
 		this.getGun().setOwner(this);
 	}

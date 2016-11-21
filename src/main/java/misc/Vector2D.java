@@ -22,9 +22,17 @@ public final class Vector2D {
 	public double getMagnitude() {
 		return magnitude;
 	}
+
+	public void setMagnitude(double magnitude) {
+		this.magnitude = magnitude;
+	}
 	
 	public double getAngle() {
 		return angle;
+	}
+
+	public void setAngle(double angle) {
+		this.angle = angle;
 	}
 
 	public static Vector2D normalize(Vector2D input) {

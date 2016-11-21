@@ -8,11 +8,6 @@ import java.awt.Point;
 import java.util.UUID;
 
 
-/*****************************************************************************
- * To-do:                                                                    *
- *   Nothing in this one...                                                  *
- *****************************************************************************/
-
 public abstract class Agent {
 	
 	public static enum Team {
@@ -21,6 +16,7 @@ public abstract class Agent {
 
 	private UUID id = UUID.randomUUID();
 	private double rotation = 0;
+	private Vector2D velocity = new Vector2D(0.0, 0.0);
 	private transient Environment environment;
 	private Point position;
 	private Team team;
@@ -28,17 +24,21 @@ public abstract class Agent {
 
 	private ProjectileFactory gun;
 
-	/** gameplay attributes */
+	/* Gameplay Attributes */
+	/** current health value, reaching zero will trigger despawning */
 	private int health;
+	/** the maximum value that health can reach */
 	private int maxHealth;
-	private int speed;
-	private int firingDelay; // must wait this duration (in ms) before firing
+	/** how speedy the Agent is, affects acceleration and max speed */
+	private int haste;
+	/** Agent must wait this duration (in milliseconds) before firing */
+	private int firingDelay;
 
 	private boolean isReadyToFire;
 
 	public Agent(
 		Environment environment, Point position, ProjectileFactory gun,
-		Team team, double size, int health, int speed
+		Team team, double size, int health, int haste
 	) {
 		this.environment = environment;
 		this.position = new Point(position);
@@ -46,7 +46,7 @@ public abstract class Agent {
 		this.size = size;
 		this.health = health;
 		this.maxHealth = health;
-		this.speed = speed;
+		this.haste = haste;
 		this.gun = gun;
 	}
 
@@ -63,6 +63,14 @@ public abstract class Agent {
 
 	public final void setRotation(double rotation) {
 		this.rotation = rotation;
+	}
+
+	public final Vector2D getVelocity() {
+		return velocity;
+	}
+
+	public final void setVelocity(Vector2D velocity) {
+		this.velocity = velocity;
 	}
 
 	protected final Environment getEnvironment() {
@@ -128,12 +136,12 @@ public abstract class Agent {
 		this.health = (health > maxHealth) ? maxHealth : health;
 	}
 
-	public final int getSpeed() {
-		return speed;
+	public final int getHaste() {
+		return haste;
 	}
 
-	public final void setSpeed(int speed) {
-		this.speed = speed;
+	public final void setHaste(int haste) {
+		this.haste = haste;
 	}
 	/******************************
 	 * end of getters and setters *
@@ -150,6 +158,16 @@ public abstract class Agent {
 	public final double getAngleTo(Agent other) {
 		return Math.atan2(other.getPosition().getY() - this.getPosition().getY(),
 			other.getPosition().getX() - this.getPosition().getX());
+	}
+
+	public final double getAngleTo(Point p) {
+		return Math.atan2(p.getY() - this.getPosition().getY(),
+			p.getX() - this.getPosition().getX());
+	}
+
+	public final double getAngleTo(double x, double y) {
+		return Math.atan2(y - this.getPosition().getY(),
+			x - this.getPosition().getX());
 	}
 
 	public abstract void update();

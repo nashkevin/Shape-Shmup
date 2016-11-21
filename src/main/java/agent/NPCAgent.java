@@ -6,15 +6,16 @@ import main.java.projectile.ProjectileFactory;
 import java.awt.Point;
 
 
-/*****************************************************************************
- * To-do:                                                                    *
- *   Add AI for movement                                                     *
- *****************************************************************************/
-
 public abstract class NPCAgent extends Agent {
 
 	private Agent target;
+	/** NPCAgent will notice PlayerAgents within this range */
 	private double aggroRange;
+	/** NPCAgent will try to maintain this distance from its target */
+	private double DESIRED_SPACING = 300;
+	/** NPCAgent's speed will not exceed its haste times this multiple */
+	private int MAX_SPEED_MULTIPLE = 5;
+
 
 	public NPCAgent(
 		Environment environment, Point position, ProjectileFactory gun,
@@ -48,11 +49,7 @@ public abstract class NPCAgent extends Agent {
 		}
 		// if finding new target was successful
 		if (target != null) {
-			// update to face the target
-			setRotation(getAngleTo(target));
-			
-			// To-do: move closer to target, if necessary
-
+			approachPoint(target.getPosition());
 			getGun().fireProjectile();
 		}
 	}
@@ -60,6 +57,34 @@ public abstract class NPCAgent extends Agent {
 	@Override
 	public final void despawn() {
 		getEnvironment().despawnNPCAgent(this);
+	}
+
+	private void approachPoint(Point p) {
+		double angleToPoint = getAngleTo(p);		
+
+		// update to face the point
+		setRotation(angleToPoint);
+
+		// if the NPCAgent is too far away from its target
+		if (getPosition().distance(p) > DESIRED_SPACING) {
+			double x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
+			double y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
+
+			x += getHaste() * Math.cos(angleToPoint);
+			y += getHaste() * Math.sin(angleToPoint);
+
+			getVelocity.setAngle(Math.atan2(y, x));
+
+			getVelocity.setMagnitude(Math.sqrt(x * x + y * y));
+			if (getVelocity().getMagnitude() >= getHaste() * MAX_SPEED_MULTIPLE) {
+				getVelocity.setMagnitude(getHaste() * MAX_SPEED_MULTIPLE);
+			}
+
+			x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
+			y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
+			
+			getPosition().translate(x, y);
+		}
 	}
 
 	private Agent findNewTarget() {
