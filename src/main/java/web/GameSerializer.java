@@ -22,7 +22,7 @@ import main.java.environment.Environment;
 import main.java.projectile.Projectile;
 
 
-public class GameThread {
+public class GameSerializer {
 	
 	private static final int FRAME_RATE = 30;
 
@@ -34,7 +34,7 @@ public class GameThread {
 
 	private Timer timer = new Timer("GameThread Timer");
 
-	public GameThread(WebServer server, Environment environment) {
+	public GameSerializer(WebServer server, Environment environment) {
 		this.server = server;
 		this.environment = environment;
 
