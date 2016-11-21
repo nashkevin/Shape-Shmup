@@ -32,7 +32,7 @@ public class GameThread {
 
 	private Gson gson;
 
-	private Timer timer = new Timer();
+	private Timer timer = new Timer("GameThread Timer");
 
 	public GameThread(WebServer server, Environment environment) {
 		this.server = server;
