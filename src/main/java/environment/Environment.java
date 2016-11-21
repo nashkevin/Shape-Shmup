@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /** TODOs
@@ -19,21 +21,36 @@ import java.util.Set;
 	Change check collision to use range instead of exact coords
 	Limit update frequency
 */
-public class Environment extends Thread {
+public class Environment {
 	/** Radius of the environment, in pixels. Value is arbitrarily chosen. */
 	private static final double RADIUS = 50000;
+	/** The ideal ratio of NPCAgents to PlayerAgents */
 	private static final int NPC_PLAYER_RATIO = 5;
+	/** The frame rate, in Hz */
+	private static final int FRAME_RATE = 30;
 	
 	private boolean gameplayOccurring = true;
 
 	private Set<PlayerAgent> activePlayerAgents;
 	private Set<NPCAgent> activeNPCAgents;
 	private Set<Projectile> activeProjectiles;
+
+	private Timer timer = new Timer();
 	
 	public Environment() {
 		activePlayerAgents = Collections.newSetFromMap(new ConcurrentHashMap<PlayerAgent, Boolean>());
 		activeNPCAgents = Collections.newSetFromMap(new ConcurrentHashMap<NPCAgent, Boolean>());
 		activeProjectiles = Collections.newSetFromMap(new ConcurrentHashMap<Projectile, Boolean>());
+
+		// call update at FRAME_RATE
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if (gameplayOccurring) {
+					update();
+				}
+			}
+		}, 0, 1000 / FRAME_RATE);
 	}
 
 	public double getRadius(){

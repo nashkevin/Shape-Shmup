@@ -81,12 +81,12 @@ public abstract class Agent {
 		return (position == null) ? null : new Point(position);
 	}
 
-	public final void setPosition(int x, int y) {
-		this.position.setLocation(x, y);
+	public final void setPosition(Point p) {
+		setPosition((int) p.getX(), (int) p.getY());
 	}
 
-	public final void setPosition(Point p) {
-		this.position.setLocation(p);
+	public final void setPosition(int x, int y) {
+		position.setLocation(x, y);
 	}
 
 	public final ProjectileFactory getGun() {
@@ -105,7 +105,6 @@ public abstract class Agent {
 		this.team = team;
 	}
 
-
 	public final double getSize() {
 		return size;
 	}
@@ -123,6 +122,10 @@ public abstract class Agent {
 
 		// if given health exceeds maxHealth, increase to maxHealth
 		this.health = (health > maxHealth) ? maxHealth : health;
+
+		if (health <= 0) {
+			despawn();
+		}
 	}
 
 	public final int getMaxHealth() {
@@ -130,6 +133,9 @@ public abstract class Agent {
 	}
 
 	public final void setMaxHealth(int maxHealth) {
+		if (maxHealth <= 0) {
+			throw new IllegalArgumentException("maxHealth must have a positive value");
+		}
 		this.maxHealth = maxHealth;
 
 		// if current health exceeds maxHealth, reduce to maxHealth

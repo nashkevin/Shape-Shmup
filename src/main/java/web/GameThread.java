@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+
 import main.java.agent.Agent;
 import main.java.agent.NPCAgent;
 import main.java.agent.PlayerAgent;
@@ -19,15 +22,17 @@ import main.java.environment.Environment;
 import main.java.projectile.Projectile;
 
 
-public class GameThread extends Thread {
+public class GameThread {
 	
-	private static final int FRAME_RATE = 20;
+	private static final int FRAME_RATE = 30;
 
 	private WebServer server;
 	private Environment environment;
 	private boolean gameplayOccurring = true;
 
 	private Gson gson;
+
+	private Timer timer = new Timer();
 
 	public GameThread(WebServer server, Environment environment) {
 		this.server = server;
@@ -38,25 +43,26 @@ public class GameThread extends Thread {
 				.registerTypeAdapter(PlayerAgent.class, new AgentSerializer())
 				.registerTypeAdapter(NPCAgent.class, new AgentSerializer())
 				.create();
+
+		// call update at FRAME_RATE
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if (gameplayOccurring) {
+					broadcastGameState();
+				}
+			}
+		}, 0, 1000 / FRAME_RATE);
 	}
 
-	@Override
-	public void run() {
-		while (gameplayOccurring) {
-			// Clone all collections to avoid concurrent modification woes.
-			Collection<PlayerAgent> playerAgents = new ArrayList<>(environment.getActivePlayerAgents());
-			Collection<NPCAgent> npcAgents = new ArrayList<>(environment.getActiveNPCAgents());
-			Collection<Projectile> projectiles = new ArrayList<>(environment.getActiveProjectiles());
+	public void broadcastGameState() {
+		// Clone all collections to avoid concurrent modification woes.
+		Collection<PlayerAgent> playerAgents = new ArrayList<>(environment.getActivePlayerAgents());
+		Collection<NPCAgent> npcAgents = new ArrayList<>(environment.getActiveNPCAgents());
+		Collection<Projectile> projectiles = new ArrayList<>(environment.getActiveProjectiles());
 
-			GameState state = new GameState(playerAgents, npcAgents, projectiles);
-			server.broadcast(gson.toJson(state));
-
-			try {
-				sleep(1000 / FRAME_RATE);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		GameState state = new GameState(playerAgents, npcAgents, projectiles);
+		server.broadcast(gson.toJson(state));
 	}
 
 	public boolean isGameplayOccurring() {

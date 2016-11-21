@@ -34,8 +34,6 @@ public class WebServer {
 	public WebServer() {
 		environment = new Environment();
 		gameThread = new GameThread(this, environment);
-		gameThread.start();
-		environment.start();
 	}
 
 	/** When a new client makes a connection to the server. */

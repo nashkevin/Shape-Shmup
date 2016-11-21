@@ -10,7 +10,61 @@ import org.junit.Test;
 import org.junit.Assert;
 
 public class AgentTest {
-	private static final double ERROR_MARGIN = 0.001;
+	private static final double ERROR_MARGIN = 0.0001;
+
+	/** Tests that getPosition() returns a defensive copy */
+	@Test
+	public void testGetPosition() {
+		Environment environment = new Environment();
+		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
+		Point point = agent.getPosition();
+		point.translate(1, 1); // moves the point in both x and y directions
+
+		// Moving the point should not have moved the agent
+		Assert.assertNotEquals(point, agent.getPosition());
+	}
+
+	/** Tests that setHealth() does not set health above maxHealth */
+	@Test
+	public void testSetHealth() {
+		Environment environment = new Environment();
+		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
+		agent.setMaxHealth(100);
+		agent.setHealth(999);
+
+		Assert.assertEquals(100, agent.getHealth()); // should not be 999
+	}
+
+	/** Tests that reducing maxHealth also reduces health if above maxHealth */
+	@Test
+	public void testSetMaxHealth() {
+		Environment environment = new Environment();
+		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
+		agent.setMaxHealth(100);
+		agent.setHealth(100);
+		agent.setMaxHealth(50);
+
+		Assert.assertEquals(50, agent.getHealth()); // should not be 100
+	}
+
+	/** Tests that maxHealth cannot be set to a non-positive value */
+	@Test(expected = IllegalArgumentException.class)
+	public void testSetMaxHealthInvalid() {
+		Environment environment = new Environment();
+		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
+		agent.setMaxHealth(0);
+	}
+
+	@Test
+	public void testApplyDamage() {
+		Environment environment = new Environment();
+		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
+		int initialHealth = 100;
+		agent.setHealth(initialHealth);
+		agent.applyDamage(5);
+
+		Assert.assertEquals(95, agent.getHealth());
+	}
 
 	@Test
 	public void testGetAngleTo() {
