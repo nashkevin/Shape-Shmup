@@ -30,14 +30,21 @@ public class Environment {
 	private static final int FRAME_RATE = 30;
 	
 	private boolean gameplayOccurring = true;
+	private boolean verbose = true;
 
 	private Set<PlayerAgent> activePlayerAgents;
 	private Set<NPCAgent> activeNPCAgents;
 	private Set<Projectile> activeProjectiles;
 
 	private Timer timer = new Timer();
-	
+
 	public Environment() {
+		this(true);
+	}
+	
+	public Environment(boolean verbose) {
+		this.verbose = verbose;
+
 		activePlayerAgents = Collections.newSetFromMap(new ConcurrentHashMap<PlayerAgent, Boolean>());
 		activeNPCAgents = Collections.newSetFromMap(new ConcurrentHashMap<NPCAgent, Boolean>());
 		activeProjectiles = Collections.newSetFromMap(new ConcurrentHashMap<Projectile, Boolean>());
@@ -71,36 +78,48 @@ public class Environment {
 
 	public void despawnNPCAgent(NPCAgent agent) {
 		activeNPCAgents.remove(agent);
-		System.out.println(agent.getID() + " npc was despawned.");
+		if (verbose) {
+			System.out.println(agent.getID() + " npc was despawned.");
+		}
 	}
 
 	public void despawnPlayerAgent(PlayerAgent agent) {
 		activePlayerAgents.remove(agent);
-		System.out.println(agent.getID() + " player was despawned.");
+		if (verbose) {
+			System.out.println(agent.getID() + " player was despawned.");
+		}
 	}
 
 	public void despawnProjectile(Projectile projectile) {
 		activeProjectiles.remove(projectile);
-		System.out.println("Projectile was despawned.");
+		if (verbose) {
+			System.out.println("Projectile was despawned.");
+		}
 	}
 
 	/** Spawns a playable character entity. */
 	public PlayerAgent spawnPlayer(String name) {
 		PlayerAgent player = new PlayerAgent(this, randomPlayerSpawn(), name);
 		activePlayerAgents.add(player);
-		System.out.println("Player (" + player.getID() + ") was spawned.");
+		if (verbose) {
+			System.out.println("Player (" + player.getID() + ") was spawned.");
+		}
 		return player;
 	}
 
 	public void spawnScout(){
 		Scout agent = new Scout(this, randomNPCSpawn(), 1);
 		activeNPCAgents.add(agent);
-		System.out.println("Level 1 scout (" + agent.getID() + ") was spawned.");
+		if (verbose) {
+			System.out.println("Level 1 scout (" + agent.getID() + ") was spawned.");
+		}
 	}
 
 	public void spawnProjectile(Projectile p){
 		activeProjectiles.add(p);
-		System.out.println("Projectile was spawned.");
+		if (verbose) {
+			System.out.println("Projectile was spawned.");
+		}
 	}
 
 	public static Point polarToCartesian(double angle, double radius) {

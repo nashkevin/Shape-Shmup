@@ -15,7 +15,7 @@ public class AgentTest {
 	/** Tests that getPosition() returns a defensive copy */
 	@Test
 	public void testGetPosition() {
-		Environment environment = new Environment();
+		Environment environment = new Environment(false);
 		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
 		Point point = agent.getPosition();
 		point.translate(1, 1); // moves the point in both x and y directions
@@ -27,7 +27,7 @@ public class AgentTest {
 	/** Tests that setHealth() does not set health above maxHealth */
 	@Test
 	public void testSetHealth() {
-		Environment environment = new Environment();
+		Environment environment = new Envionment(false);
 		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
 		agent.setMaxHealth(100);
 		agent.setHealth(999);
@@ -38,7 +38,7 @@ public class AgentTest {
 	/** Tests that reducing maxHealth also reduces health if above maxHealth */
 	@Test
 	public void testSetMaxHealth() {
-		Environment environment = new Environment();
+		Environment environment = new Envionment(false);
 		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
 		agent.setMaxHealth(100);
 		agent.setHealth(100);
@@ -50,14 +50,14 @@ public class AgentTest {
 	/** Tests that maxHealth cannot be set to a non-positive value */
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetMaxHealthInvalid() {
-		Environment environment = new Environment();
+		Environment environment = new Envionment(false);
 		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
 		agent.setMaxHealth(0);
 	}
 
 	@Test
 	public void testApplyDamage() {
-		Environment environment = new Environment();
+		Environment environment = new Envionment(false);
 		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
 		int initialHealth = 100;
 		agent.setHealth(initialHealth);
@@ -68,7 +68,7 @@ public class AgentTest {
 
 	@Test
 	public void testGetAngleTo() {
-		Environment environment = new Environment();
+		Environment environment = new Envionment(false);
 		Agent agent1 = new PlayerAgent(environment, new Point(0, 0), "Agent1");
 		Agent agent2 = new PlayerAgent(environment, new Point(0, 5), "Agent2");
 
