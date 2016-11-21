@@ -12,8 +12,7 @@
 /** Variables related to server-client connection */
 const INPUT_RATE = 20; // maximum number of inputs per second
 var webSocket;
-var username;
-var playerAgentID;
+var playerAgentID;  // ID referring to this player in the serialized game state
 var clientInput = {};  // represents the current input of the player
 var messages = document.getElementById("messages");
 
@@ -167,19 +166,23 @@ function trackAngle(e) {
 
 //3. Utility Methods
 
+// Adds text as a new line to the chat area.
 function addMessageToChat(text) {
 	messages.innerHTML += "<br/>" + text;
 	messages.scrollTop = messages.scrollHeight;
 }
 
+// Gets the height available for the game canvas.
 function getGameHeight() {
 	return window.innerHeight - document.getElementById("chat").clientHeight;
 }
 
+// Gets the width available for the game canvas.
 function getGameWidth() {
 	return window.innerWidth;
 }
 
+// Stop movement of the player agent.
 function stopAllMovement() {
 	delete clientInput.up;
 	delete clientInput.left;
@@ -202,6 +205,7 @@ function coordinateToAngle(x, y) {
 
 //4. Network Communication
 
+// Receives a JSON object and updates the screen or does whatever else as necessary.
 function parseJson(json) {
 	if (json.pregame) {
 		// Set the ID of the corresponding player agent on the server end
@@ -212,10 +216,12 @@ function parseJson(json) {
 	}
 }
 
+// Returns a boolean of whether or not the client is connected to the game server.
 function connectedToGame() {
 	return (typeof webSocket !== "undefined" && webSocket.readyState === webSocket.OPEN);
 }
 
+// Connects to the WebSocket.
 function joinGame() {
 	// Ensures only one connection is open at a time
 	if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
@@ -234,9 +240,10 @@ function joinGame() {
 		addMessageToChat(e.data);
 	};
 
-	/** Handle received messages */
+	/** Handle messages that are received from the server */
 	webSocket.onmessage = function(e) {
 		try {
+			// First try parsing it as JSON.
 			var json = JSON.parse(e.data);
 			parseJson(json);
 		} catch (error) { // Display non-JSON messages to the chat area
@@ -259,11 +266,11 @@ function joinGame() {
 		addMessageToChat("Connection closed");
 	};
 
-	/** TODO: describe */
-	function completeConnection() {
+	/** Wait until the connection is established and submit the chosen username. */
+	function submitUsername() {
 		var state = webSocket.readyState;
 		if (state === webSocket.CONNECTING) {
-			setTimeout(completeConnection, 250);
+			setTimeout(submitUsername, 250);
 		} else if (state === webSocket.OPEN) {
 			// Once connection is established
 
@@ -281,7 +288,7 @@ function joinGame() {
 			alert("The connection to the server was closed before it could be established.");
 		}
 	}
-	completeConnection();
+	submitUsername();
 }
 
 /** Sends the client's input to the server. Runs each frame. */
@@ -302,7 +309,7 @@ function sendFrameInput() {
 	}
 }
 
-// Sends the value of the text input to the server
+// Sends the value of the text input to the server.
 function sendChatMessage() {
 	var text = document.getElementById("messageInput").value;
 	document.getElementById("messageInput").value = "";
@@ -324,6 +331,8 @@ function closeSocket() {
 
 
 //5. Animation
+
+/** Updates entities on the screen, using a JSON object. */
 function updateStage(json) {
 	var playerAgents = json.playerAgents;
 	var npcAgents = json.npcAgents;
@@ -377,6 +386,7 @@ function setScreenCoordinates(entity, thisPlayer) {
 	entity.screen_y = getGameHeight() / 2 + y_offset;
 }
 
+/** Create or update a player agent on screen. */
 function drawPlayer(playerObject) {
 	if (!gameEntities[playerObject.id]) {
 		createPlayer(playerObject);
@@ -384,6 +394,7 @@ function drawPlayer(playerObject) {
 	return updatePlayer(playerObject);
 }
 
+/** Create a new player agent on screen. */
 function createPlayer(playerObject) {
 	// Create the container, which contains all components of the player avatar
 	var playerContainer = new PIXI.Container();
@@ -410,7 +421,6 @@ function createPlayer(playerObject) {
 
 	// Create the player's username tag
 	var playerName = new PIXI.Text(playerObject.name, {
-		fontFamily: "Arial",
 		fontSize: 12 + (16 - playerObject.name.length),
 		align: "center",
 		fill: "#F8F8F2",
@@ -465,7 +475,7 @@ function createPlayer(playerObject) {
 	return playerContainer;
 }
 
-/** TODO: describe  */
+/** Update the position and rotation of the player agent. */
 function updatePlayer(playerObject) {
 	var playerContainer = gameEntities[playerObject.id];
 	playerContainer.position.set(playerObject.screen_x, playerObject.screen_y);
