@@ -77,7 +77,7 @@ public class Projectile {
 		double oldY = position.getY();
 
 		double newX = oldX + (velocity.getMagnitude() * Math.cos(velocity.getAngle()));
-		double newY = oldY + (velocity.getMagnitude() * Math.sin(velocity.getAngle()));
+		double newY = oldY + (velocity.getMagnitude() * -Math.sin(velocity.getAngle()));
 
 		position.setLocation(newX, newY);
 

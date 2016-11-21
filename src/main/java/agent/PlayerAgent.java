@@ -143,6 +143,7 @@ public class PlayerAgent extends Agent {
 
 		x += getPosition().getX();
 		y += getPosition().getY();
+
 		setPosition((int)(x + 0.5), (int)(y + 0.5));
 	}
 

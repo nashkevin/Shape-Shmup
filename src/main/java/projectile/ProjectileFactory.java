@@ -7,7 +7,7 @@ import main.java.projectile.Projectile;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
+import java.util.Random;
 
 public class ProjectileFactory {
 	
@@ -23,6 +23,8 @@ public class ProjectileFactory {
 
 	private boolean ready;
 
+	/** A random number generator **/
+	private static final Random random = new Random();
 	private Timer timer = new Timer("ProjectileFactory Timer");
 
 	public ProjectileFactory(Environment environment, Agent owner, int damage,
@@ -124,7 +126,8 @@ public class ProjectileFactory {
 	 ******************************/
 
 	public Projectile fireProjectile() {
-		Vector2D shotVector = new Vector2D(speed, owner.getAngle());
+		double offset = random.nextDouble() * spread * 2 - spread;
+		Vector2D shotVector = new Vector2D(speed, owner.getAngle() + offset);
 		Projectile projectile = new Projectile(environment, owner,
 			owner.getPosition(), shotVector, damage);
 		environment.addProjectile(projectile);
