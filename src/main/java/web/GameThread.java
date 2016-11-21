@@ -42,6 +42,7 @@ public class GameThread {
 				.registerTypeAdapter(Agent.class, new AgentSerializer())
 				.registerTypeAdapter(PlayerAgent.class, new PlayerAgentSerializer())
 				.registerTypeHierarchyAdapter(NPCAgent.class, new AgentSerializer())
+				.registerTypeAdapter(Projectile.class, new ProjectileSerializer())
 				.create();
 
 		// call update at FRAME_RATE
@@ -99,6 +100,18 @@ public class GameThread {
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));
 			element.add("angle", new JsonPrimitive(src.getAngle()));
+			return element;
+		}
+	}
+	
+	public static class ProjectileSerializer implements JsonSerializer<Projectile> {
+		@Override
+		public JsonElement serialize(Projectile src, Type typeOfSrc, JsonSerializationContext context) {
+			JsonObject element = new JsonObject();
+			element.add("id", new JsonPrimitive(src.getID().toString()));
+			Point point = src.getPosition();
+			element.add("x", new JsonPrimitive(point.getX()));
+			element.add("y", new JsonPrimitive(point.getY()));
 			return element;
 		}
 	}
