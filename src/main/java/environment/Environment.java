@@ -1,23 +1,23 @@
 package main.java.environment;
 
+import main.java.agent.Agent;
+import main.java.agent.NPCAgent;
+import main.java.agent.PlayerAgent;
+import main.java.agent.Scout;
+
+import main.java.projectile.Projectile;
+
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;
-import java.util.UUID;
-
-import main.java.agent.Agent;
-import main.java.agent.NPCAgent;
-import main.java.agent.PlayerAgent;
-import main.java.agent.TestEnemyAgent;
-
-import main.java.projectile.Projectile;
 
 
 /** TODOs
 	Fix constructor calls for NPC and Player agents for integration
-	Change check collision to use a set distance
+	Change check collision to use range instead of exact coords
+	Limit update frequency
 */
 public class Environment extends Thread {
 	/** Radius of the environment, in pixels. Value is arbitrarily chosen. */
@@ -26,6 +26,11 @@ public class Environment extends Thread {
 	
 	private boolean gameplayOccurring = true;
 	
+<<<<<<< HEAD
+=======
+	private static final int NPC_PLAYER_RATIO = 5;
+	private double radius;
+>>>>>>> ExtremeAgentOverhaul
 	private Set<PlayerAgent> activePlayerAgents;
 	private Set<NPCAgent> activeNPCAgents;
 	private Set<Projectile> activeProjectiles;
@@ -36,50 +41,54 @@ public class Environment extends Thread {
 		activeProjectiles = Collections.newSetFromMap(new ConcurrentHashMap<Projectile, Boolean>());
 	}
 
+<<<<<<< HEAD
 	public double getRadius(){
 		return RADIUS;
+=======
+	public double getRadius() {
+		return this.radius;
+>>>>>>> ExtremeAgentOverhaul
 	}
 
-	public Set<PlayerAgent> getActivePlayerAgents(){
+	public Set<PlayerAgent> getActivePlayerAgents() {
 		return this.activePlayerAgents;
 	}
 
-	public Set<NPCAgent> getActiveNPCAgents(){
+	public Set<NPCAgent> getActiveNPCAgents() {
 		return this.activeNPCAgents;
 	}
 
-	public Set<Projectile> getActiveProjectiles(){
+	public Set<Projectile> getActiveProjectiles() {
 		return this.activeProjectiles;
 	}
 
-	public void despawnNPCAgent(NPCAgent agent){
+	public void despawnNPCAgent(NPCAgent agent) {
 		activeNPCAgents.remove(agent);
 		System.out.println(agent.getID() + " npc was despawned.");
 	}
 
-	public void despawnPlayerAgent(PlayerAgent agent){
+	public void despawnPlayerAgent(PlayerAgent agent) {
 		activePlayerAgents.remove(agent);
 		System.out.println(agent.getID() + " player was despawned.");
 	}
 
-	public void despawnProjectile(Projectile projectile){
+	public void despawnProjectile(Projectile projectile) {
 		activeProjectiles.remove(projectile);
 		System.out.println("Projectile was despawned.");
 	}
 
 	/** Spawns a playable character entity. */
 	public PlayerAgent spawnPlayer(String name) {
-		UUID id = UUID.randomUUID();
-		PlayerAgent player = new PlayerAgent(name, id, this, randomPlayerSpawn(), 0, 0, 0, 0, 0, 0/*TODO insert appropriate constructor variables*/);
+		PlayerAgent player = new PlayerAgent(this, randomPlayerSpawn(), name);
 		activePlayerAgents.add(player);
-		System.out.println(player.getID() + " player was spawned.");
+		System.out.println("Player (" + player.getID() + ") was spawned.");
 		return player;
 	}
 
-	public void spawnNPC(){
-		NPCAgent agent = new TestEnemyAgent(UUID.randomUUID(), this, randomNPCSpawn(), 0/*this level won't be necessary eventually*/);
+	public void spawnScout(){
+		Scout agent = new Scout(this, randomNPCSpawn(), 1);
 		activeNPCAgents.add(agent);
-		System.out.println(agent.getID() + " npc was spawned.");
+		System.out.println("Level 1 scout (" + agent.getID() + ") was spawned.");
 	}
 
 	public void spawnProjectile(Projectile p){
@@ -87,7 +96,7 @@ public class Environment extends Thread {
 		System.out.println("Projectile was spawned.");
 	}
 
-	public static Point polarToCartesian(double angle, double radius){
+	public static Point polarToCartesian(double angle, double radius) {
 		Point p = new Point();
 		double x = Math.cos(angle) * radius;
 		double y = Math.sin(angle) * radius;
@@ -96,7 +105,7 @@ public class Environment extends Thread {
 	}
 
 	//Returns an array where the first value is the angle and the second is the radius
-	public static double[] cartesianToPolar(Point p){
+	public static double[] cartesianToPolar(Point p) {
 		double[] polar = new double[2];
 		polar[0] = Math.atan2(p.getY(), p.getX());
 		polar[1] = checkRadius(p);
@@ -107,14 +116,34 @@ public class Environment extends Thread {
 		return Math.sqrt(Math.abs(p.getX()) * Math.abs(p.getX()) + Math.abs(p.getY()) * Math.abs(p.getY()));
 	}
 
+	/** returns the PlayerAgent nearest to the given Agent */
+	public PlayerAgent getNearestPlayer(Agent source) {
+		return getNearestPlayer(source, Double.MAX_VALUE);
+	}
+
+	/** returns the PlayerAgent nearest to the given Agent,
+	 *  if there is one within the given range */
+	public PlayerAgent getNearestPlayer(Agent source, double range) {
+		PlayerAgent nearestPlayer = null;
+		double minDistance = range;
+		for (PlayerAgent player : activePlayerAgents) {
+			double distance = player.getPosition().distance(source.getPosition());
+			if (distance <= minDistance && !source.equals(player)) {
+				minDistance = distance;
+				nearestPlayer = player;
+			}
+		}
+		return nearestPlayer;
+	}
+
 	public ArrayList<Agent> checkCollision(Projectile p){
 		ArrayList<Agent> collisions = new ArrayList<Agent>();
-		for (Agent a : getActivePlayerAgents()){
-			if (p.getPosition() == a.getPosition() && a.getTeam() != p.getOwner().getTeam())
+		for (Agent a : getActivePlayerAgents()) {
+			if (p.getPosition().equals(a.getPosition()) && a.getTeam() != p.getOwner().getTeam())
 				collisions.add(a);
 		}
-		for (Agent a : getActiveNPCAgents()){
-			if (p.getPosition() == a.getPosition() && a.getTeam() != p.getOwner().getTeam())
+		for (Agent a : getActiveNPCAgents()) {
+			if (p.getPosition().equals(a.getPosition()) && a.getTeam() != p.getOwner().getTeam())
 				collisions.add(a);
 		}
 		return collisions;
@@ -138,8 +167,8 @@ public class Environment extends Thread {
 			agent.update();
 		for(Projectile p : getActiveProjectiles())
 			p.update();
-		while(getActiveNPCAgents().size() < (NPCTOPLAYERRATIO * getActivePlayerAgents().size()))
-			spawnNPC();
+		while(getActiveNPCAgents().size() < (NPC_PLAYER_RATIO * getActivePlayerAgents().size()))
+			spawnScout();
 	}
 
 	public void run() {

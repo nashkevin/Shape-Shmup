@@ -11,12 +11,21 @@ import main.java.misc.Vector2D;
 import java.util.List;
 import java.util.Random;
 
-public abstract class Projectile {
-	private transient Environment env;
+/*****************************************************************************
+ * To-do:                                                                    *
+ *   Award shooter points when collision results in kill                     *
+ *   Check that onCollision() actually works                                 *
+ *****************************************************************************/
+
+public class Projectile {
+
+	private transient Environment environment;
 	private Agent owner;
 	private Point position;
 	private Vector2D velocity;
+	private int damage;
 
+<<<<<<< HEAD
 	public Projectile(Environment env, Agent owner, Point position,
 		Vector2D velocity) {
 		
@@ -30,13 +39,21 @@ public abstract class Projectile {
 		//	throw new Exception("Cannot have null velocity.");
 		
 		this.env = env;
+=======
+	public Projectile(
+		Environment environment, Agent owner, Point position,
+		Vector2D velocity, int damage
+	) {	
+		this.environment = environment;
+>>>>>>> ExtremeAgentOverhaul
 		this.owner = owner;
 		this.position = position;
 		this.velocity = velocity;
+		this.damage = damage;
 	}
 
 	protected final Environment getEnvironment() {
-		return env;
+		return environment;
 	}
 
 	public final Agent getOwner() {
@@ -60,13 +77,14 @@ public abstract class Projectile {
 
 		position.setLocation(newX, newY);
 
-		onCollision(env.checkCollision(this));
+		onCollision(environment.checkCollision(this));
 	}
 
 	public final void despawn() {
-		env.despawnProjectile(this);
+		environment.despawnProjectile(this);
 	}
 
+<<<<<<< HEAD
 	protected abstract void onCollision(List<Agent> agents);
 	
 	public static final class ProjectileTester {
@@ -91,6 +109,12 @@ public abstract class Projectile {
 		
 		public static final Environment call_getEnvironment() {
 			return testInstance.getEnvironment();
+=======
+	protected final void onCollision(List<Agent> agents) {
+		if (agents != null && !agents.isEmpty()) {
+			Agent firstHit = agents.get(0);
+			firstHit.applyDamage(damage);
+>>>>>>> ExtremeAgentOverhaul
 		}
 	}
 }

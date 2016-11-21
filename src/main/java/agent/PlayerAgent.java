@@ -1,51 +1,98 @@
 package main.java.agent;
-import main.java.agent.test.AgentTestImp;
-import main.java.agent.test.EnvironmentMock;
-import main.java.agent.test.PlayerAgentTestImp;
+
 import main.java.environment.Environment;
-
-import java.awt.Point;
-
-import main.java.misc.Vector2D;
 import main.java.projectile.ProjectileFactory;
 import main.java.web.ClientInput;
 
+import java.awt.Point;
+
 import java.util.Queue;
 import java.util.LinkedList;
-import java.util.Random;
-import java.util.UUID;
+
+
+/*****************************************************************************
+ * To-do:                                                                    *
+ *   Implement points gain and levelling up system                           *
+ *   Implement levelling up to increase stats                                *
+ *****************************************************************************/
+
 public class PlayerAgent extends Agent {
 
-	private String name;
+	/** PlayerAgent's speed will not exceed its haste times this multiple */
+	private int MAX_SPEED_MULTIPLE = 5;
+
+	private String name = "An Unnamed Hero";
+	private int level = 1;
+	private int points = 0;
 
 	Queue<ClientInput> eventInbox; 
 
-	public PlayerAgent(String name, UUID id, Environment env, Point position, int level, int team, int health, int damage, int projectileSpeed, int baseMovementSpeed) {
-		super(id, env, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
+	public PlayerAgent(
+		Environment environment, Point position, String name
+	) {
+		super(
+			environment,
+			position,
+			new ProjectileFactory(environment, null, 1, 10,
+				Math.toRadians(5.0), 750, 1.0),
+			Agent.Team.RED,
+			5,
+			100,
+			20
+		);
+
 		this.name = name;
 		this.eventInbox = new LinkedList<ClientInput>();
+
+		this.getGun().setOwner(this);
+	}
+
+	public final String getName() {
+		return name;
+	}
+
+	public final void setName(String name) {
+		this.name = name;
 	}
 
 	public final void despawn() {
 		getEnvironment().despawnPlayerAgent(this);
 	}
-	/***************************************************************
-	 * TODO: make preparations given angle rather than coordinates *
-	 ***************************************************************/
-	protected void preUpdateCall() {
-		final Point ORIGIN = new Point(); // (0, 0), used for reference in calculating vectors
+	
+	public void addPlayerEvent(ClientInput event) {
+		eventInbox.add(event);
+	}
+
+	public Queue<ClientInput> getPlayerEvents() {
+		return new LinkedList<ClientInput>(eventInbox);
+	}
+
+	@Override
+	public void update() {
+		/** number of inputs for the left direction */
 		int countLeft = 0;
+		/** number of inputs for the right direction */
 		int countRight = 0;
+		/** number of inputs for the up direction */
 		int countUp = 0;
+		/** number of inputs for the down direction */
 		int countDown = 0;
-		Vector2D firingVector = null;
+
+		/** combined horizontal inputs */
+		int horizontalDrive = 0;
+		/** combined vertical inputs */
+		int verticalDrive = 0;
 
 		if (eventInbox.isEmpty()) {
-			return; //don't change state of the agent if there are no inputs to be queued
+			return; // don't change state of the agent if there are no inputs to be queued
 		}
 		while (!eventInbox.isEmpty()) {
 			ClientInput event = eventInbox.poll();
 			
+			if (event.getAngle() != null) {
+				setRotation(event.getAngle());
+			}
+
 			if (event.isLeft()) {
 				countLeft++;
 			}
@@ -60,54 +107,22 @@ public class PlayerAgent extends Agent {
 			}
 			
 			if (event.isFiring()) {
-				double angle = event.getAngle();
-				firingVector = new Vector2D(1, angle);
+				getGun.fireProjectile();
 			}
-		}
 
-		//calculate acceleration vector
-		int horizontalDistance = countRight - countLeft;
-		int verticalDistance = countUp - countDown;
+			horizontalDrive = countRight - countLeft;
+			verticalDrive = countUp - countDown;
 
-		Point accelerationPoint = new Point(horizontalDistance, verticalDistance);
+			if (event.isMoving()) {
+				double x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
+				double y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
 
-		double accelerationAngle = calculateAngle(ORIGIN, accelerationPoint);
-		double accelerationMagnitude = calculateMagnitude(ORIGIN, accelerationPoint);
+				x += horizontalDrive * getHaste() * Math.cos(getRotation());
+				y += verticalDrive * getHaste() * Math.sin(getRotation());
 
-		Vector2D accelVector = new Vector2D(accelerationMagnitude, accelerationAngle);
-		
-		//set vectors
-		setAcceleration(accelVector);
-		setFiringVector(firingVector);
-	}
+				getVelocity.setAngle(Math.atan2(y, x));
 
-	private static double calculateAngle(Point p1, Point p2) {
-		double verticalDistance = p2.y - p1.y;
-		double horizontalDistance = p2.x - p1.x;
-		return Math.atan2(verticalDistance, horizontalDistance);
-	}
-
-	private static double calculateMagnitude(Point p1, Point p2) {
-		double verticalDistance = p2.y - p1.y;
-		double horizontalDistance = p2.x - p1.x;
-		return Math.sqrt(verticalDistance * verticalDistance + horizontalDistance * horizontalDistance);
-	}
-
-	public void addPlayerEvent(ClientInput event) {
-		eventInbox.add(event);
-	}
-
-	public Queue<ClientInput> getPlayerEvents() {
-		return new LinkedList<ClientInput>(eventInbox);
-	}
-
-
-	public static final class PlayerAgentTester {
-		private static PlayerAgent testInstance;
-
-		public static void generateTestInstance() {
-			Random random = new Random();
-
+<<<<<<< HEAD
 			String name = "tester";
 			UUID id = UUID.randomUUID();
 			Environment env = new EnvironmentMock();
@@ -127,13 +142,18 @@ public class PlayerAgent extends Agent {
 		public static PlayerAgent getTestInstance() {
 			return testInstance;
 		}
+=======
+				getVelocity.setMagnitude(Math.sqrt(x * x + y * y));
+				if (getVelocity().getMagnitude() >= getHaste() * MAX_SPEED_MULTIPLE) {
+					getVelocity.setMagnitude(getHaste() * MAX_SPEED_MULTIPLE);
+				}
+>>>>>>> ExtremeAgentOverhaul
 
-		public static void call_preUpdateCall() {
-			testInstance.preUpdateCall();
-		}
-
-		public static void call_addPlayerEvent(ClientInput event) {
-			testInstance.addPlayerEvent(event);
+				x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
+				y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
+				
+				getPosition().translate(x, y);
+			}
 		}
 	}
 }
