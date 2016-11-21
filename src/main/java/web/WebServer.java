@@ -29,7 +29,7 @@ public class WebServer {
 	private static final Map<String, Session> nameToSession =
 		Collections.synchronizedMap(new HashMap<>());
 	private static Environment environment;
-	private static GameThread gameThread;
+	private static GameSerializer gameThread;
 
 	private boolean verbose = true;
 
@@ -48,7 +48,7 @@ public class WebServer {
 		if (environment == null) {
 			// The GameThread needs a reference to any one WebServer so that it can broadcast.
 			environment = new Environment(verbose);
-			gameThread = new GameThread(this, environment);
+			gameThread = new GameSerializer(this, environment);
 		}
 	}
 

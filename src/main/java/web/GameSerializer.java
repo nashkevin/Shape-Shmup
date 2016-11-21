@@ -22,7 +22,7 @@ import main.java.environment.Environment;
 import main.java.projectile.Projectile;
 
 
-public class GameThread {
+public class GameSerializer {
 	
 	private static final int FRAME_RATE = 30;
 
@@ -34,7 +34,7 @@ public class GameThread {
 
 	private Timer timer = new Timer("GameThread Timer");
 
-	public GameThread(WebServer server, Environment environment) {
+	public GameSerializer(WebServer server, Environment environment) {
 		this.server = server;
 		this.environment = environment;
 
@@ -81,6 +81,7 @@ public class GameThread {
 			JsonObject element = new JsonObject();
 			element.add("id", new JsonPrimitive(src.getID().toString()));
 			element.add("health", new JsonPrimitive(src.getHealth()));
+			element.add("maxHealth", new JsonPrimitive(src.getMaxHealth()));
 			Point point = src.getPosition();
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));
@@ -96,6 +97,7 @@ public class GameThread {
 			element.add("id", new JsonPrimitive(src.getID().toString()));
 			element.add("name", new JsonPrimitive(src.getName()));
 			element.add("health", new JsonPrimitive(src.getHealth()));
+			element.add("maxHealth", new JsonPrimitive(src.getMaxHealth()));
 			Point point = src.getPosition();
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));
