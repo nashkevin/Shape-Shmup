@@ -81,6 +81,7 @@ public class GameThread {
 			JsonObject element = new JsonObject();
 			element.add("id", new JsonPrimitive(src.getID().toString()));
 			element.add("health", new JsonPrimitive(src.getHealth()));
+			element.add("maxHealth", new JsonPrimitive(src.getMaxHealth()));
 			Point point = src.getPosition();
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));
@@ -96,6 +97,7 @@ public class GameThread {
 			element.add("id", new JsonPrimitive(src.getID().toString()));
 			element.add("name", new JsonPrimitive(src.getName()));
 			element.add("health", new JsonPrimitive(src.getHealth()));
+			element.add("maxHealth", new JsonPrimitive(src.getMaxHealth()));
 			Point point = src.getPosition();
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));

@@ -95,7 +95,7 @@ function joinGame() {
 			// Change the view from welcome screen to the main game screen
 			document.getElementById("pregame").classList.add("hidden");
 			document.getElementById("game").classList.remove("hidden");
-			
+
 			resize();
 			sendFrameInput();
 		} else {
@@ -440,7 +440,9 @@ function updatePlayer(playerObject) {
 	var playerSprite = playerContainer.getChildAt(0);
 	playerSprite.rotation = playerObject.angle + Math.PI;
 	var healthForeground = playerContainer.getChildAt(3);
-	healthForeground.scale = playerObject.health / playerObject.maxHealth;
+	var healthPercent = playerObject.health / playerObject.maxHealth;
+	healthForeground.scale = new PIXI.Point(healthPercent, 1);
+
 	return playerContainer;
 }
 
