@@ -360,8 +360,12 @@ function updateStage(json) {
 	for (var i = 0; i < playerAgents.length; i++) {
 		setScreenCoordinates(playerAgents[i], thisPlayer);
 		var player = drawPlayer(playerAgents[i]);
-		// If the player was included in the JSON, they should remain visible.
-		player.visible = true;
+
+		if (isOnScreen(player)) {
+			// If the player was included in the JSON and is on screen,
+			// they should remain visible.
+			player.visible = true;
+		}
 	}
 
 	//TODO iterate over NPC agents and projectiles.
@@ -486,4 +490,14 @@ function updatePlayer(playerObject) {
 	healthForeground.scale = new PIXI.Point(healthPercent, 1);
 
 	return playerContainer;
+}
+
+function isOnScreen(pixiObject) {
+	var leftBorder = pixiObject.x - pixiObject.width / 2;
+	var rightBorder = pixiObject.x + pixiObject.width / 2;
+	var topBorder = pixiObject.y - pixiObject.height / 2;
+	var bottomBorder = pixiObject.y + pixiObject.height / 2;
+
+	return rightBorder > 0 && leftBorder < getGameWidth() &&
+			bottomBorder > 0 && topBorder < getGameHeight();
 }
