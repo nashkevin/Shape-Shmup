@@ -25,7 +25,7 @@ public class PlayerAgent extends Agent {
 	private int level = 1;
 	private int points = 0;
 
-	Queue<ClientInput> eventInbox; 
+	Queue<ClientInput> eventInbox;
 
 	public PlayerAgent(
 		Environment environment, Point position, String name
@@ -59,7 +59,7 @@ public class PlayerAgent extends Agent {
 	public final void despawn() {
 		getEnvironment().despawnPlayerAgent(this);
 	}
-	
+
 	public void addPlayerEvent(ClientInput event) {
 		eventInbox.add(event);
 	}
@@ -89,9 +89,9 @@ public class PlayerAgent extends Agent {
 		}
 		while (!eventInbox.isEmpty()) {
 			ClientInput event = eventInbox.poll();
-			
+
 			if (event.getAngle() != null) {
-				setRotation(event.getAngle());
+				setAngle(event.getAngle());
 			}
 
 			if (event.isLeft()) {
@@ -106,7 +106,7 @@ public class PlayerAgent extends Agent {
 			if (event.isDown()) {
 				countDown++;
 			}
-			
+
 			if (event.isFiring()) {
 				getGun().fireProjectile();
 			}
@@ -118,8 +118,8 @@ public class PlayerAgent extends Agent {
 				double x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
 				double y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
 
-				x += horizontalDrive * getHaste() * Math.cos(getRotation());
-				y += verticalDrive * getHaste() * Math.sin(getRotation());
+				x += horizontalDrive * getHaste() * Math.cos(getAngle());
+				y += verticalDrive * getHaste() * Math.sin(getAngle());
 
 				getVelocity().setAngle(Math.atan2(y, x));
 
@@ -130,7 +130,7 @@ public class PlayerAgent extends Agent {
 
 				x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
 				y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
-				
+
 				getPosition().translate((int)(x + 0.5), (int)(y + 0.5));
 			}
 		}

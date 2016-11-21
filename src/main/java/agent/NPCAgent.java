@@ -63,7 +63,7 @@ public abstract class NPCAgent extends Agent {
 		double angleToPoint = getAngleTo(p);		
 
 		// update to face the point
-		setRotation(angleToPoint);
+		setAngle(angleToPoint);
 
 		// if the NPCAgent is too far away from its target
 		if (getPosition().distance(p) > DESIRED_SPACING) {

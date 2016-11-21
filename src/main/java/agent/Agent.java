@@ -9,13 +9,13 @@ import java.util.UUID;
 
 
 public abstract class Agent {
-	
+
 	public static enum Team {
 		ENEMY, RED, BLUE
 	}
 
 	private UUID id = UUID.randomUUID();
-	private double rotation = 0;
+	private double angle = 0;
 	private Vector2D velocity = new Vector2D(0.0, 0.0);
 	private transient Environment environment;
 	private Point position;
@@ -57,12 +57,12 @@ public abstract class Agent {
 		return id;
 	}
 
-	public final double getRotation() {
-		return rotation;
+	public final double getAngle() {
+		return angle;
 	}
 
-	public final void setRotation(double rotation) {
-		this.rotation = rotation;
+	public final void setAngle(double angle) {
+		this.angle = angle;
 	}
 
 	public final Vector2D getVelocity() {
@@ -95,7 +95,7 @@ public abstract class Agent {
 
 	public final void setGun(ProjectileFactory gun) {
 		this.gun = gun;
-	}	
+	}
 
 	public final Team getTeam() {
 		return team;

@@ -40,8 +40,8 @@ public class GameThread {
 
 		gson = new GsonBuilder()
 				.registerTypeAdapter(Agent.class, new AgentSerializer())
-				.registerTypeAdapter(PlayerAgent.class, new AgentSerializer())
-				.registerTypeAdapter(NPCAgent.class, new AgentSerializer())
+				.registerTypeAdapter(PlayerAgent.class, new PlayerAgentSerializer())
+				.registerTypeHierarchyAdapter(NPCAgent.class, new AgentSerializer())
 				.create();
 
 		// call update at FRAME_RATE
@@ -82,6 +82,22 @@ public class GameThread {
 			Point point = src.getPosition();
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));
+			element.add("angle", new JsonPrimitive(src.getAngle()));
+			return element;
+		}
+	}
+	
+	public static class PlayerAgentSerializer implements JsonSerializer<PlayerAgent> {
+		@Override
+		public JsonElement serialize(PlayerAgent src, Type typeOfSrc, JsonSerializationContext context) {
+			JsonObject element = new JsonObject();
+			element.add("id", new JsonPrimitive(src.getID().toString()));
+			element.add("name", new JsonPrimitive(src.getName()));
+			element.add("health", new JsonPrimitive(src.getHealth()));
+			Point point = src.getPosition();
+			element.add("x", new JsonPrimitive(point.getX()));
+			element.add("y", new JsonPrimitive(point.getY()));
+			element.add("angle", new JsonPrimitive(src.getAngle()));
 			return element;
 		}
 	}

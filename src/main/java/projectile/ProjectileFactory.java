@@ -129,7 +129,7 @@ public class ProjectileFactory {
 	 ******************************/
 
 	public Projectile fireProjectile() {
-		Vector2D shotVector = new Vector2D(speed, owner.getRotation());
+		Vector2D shotVector = new Vector2D(speed, owner.getAngle());
 		return new Projectile(environment, owner, owner.getPosition(), shotVector, damage);
 	}
 }

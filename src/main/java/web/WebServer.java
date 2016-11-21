@@ -39,8 +39,17 @@ public class WebServer {
 
 	public WebServer(boolean verbose) {
 		this.verbose = verbose;
-		environment = new Environment(verbose);
-		gameThread = new GameThread(this, environment);
+		startGame();
+	}
+
+	/** The WebServer is instantiated once for each client, but we should
+	  * only instantiate one GameThread. */
+	private synchronized void startGame() {
+		if (environment == null) {
+			// The GameThread needs a reference to any one WebServer so that it can broadcast.
+			environment = new Environment(verbose);
+			gameThread = new GameThread(this, environment);
+		}
 	}
 
 	/** When a new client makes a connection to the server. */
@@ -54,7 +63,7 @@ public class WebServer {
 			sessionToName.put(session, null);
 		}
 	}
-	
+
 	/** When a client sends a message to the server. */
 	@OnMessage
 	public void onMessage(String message, Session session) {
@@ -76,6 +85,9 @@ public class WebServer {
 			synchronized(sessionToPlayerAgent) {
 				sessionToPlayerAgent.put(session, agent);
 			}
+
+			// Send the character's ID to the client.
+ 			unicast("{\"pregame\":true, \"id\": \"" + agent.getID() + "\"}", session);
 			broadcast(input.getName() + " joined the game.");
 		}
 
@@ -155,13 +167,6 @@ public class WebServer {
 		String name = sessionToName.remove(session);
 		if (name != null) {
 			nameToSession.remove(name);
-		}
-
-		synchronized(sessionToName) {
-			if (sessionToName.size() == 0) {
-				gameThread.setGameplayOccurring(false);
-				environment.setGameplayOccurring(false);
-			}
 		}
 	}
 }

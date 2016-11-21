@@ -197,11 +197,6 @@ public class Environment {
 			spawnScout();
 	}
 
-	public void run() {
-		while(gameplayOccurring)
-			update();
-	}
-
 	public boolean isGameplayOccurring() {
 		return gameplayOccurring;
 	}
