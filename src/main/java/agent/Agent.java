@@ -156,13 +156,11 @@ public abstract class Agent {
 	}
 
 	public final double getAngleTo(Agent other) {
-		return Math.atan2(other.getPosition().getY() - this.getPosition().getY(),
-			other.getPosition().getX() - this.getPosition().getX());
+		return getAngleTo(other.getPosition());
 	}
 
 	public final double getAngleTo(Point p) {
-		return Math.atan2(p.getY() - this.getPosition().getY(),
-			p.getX() - this.getPosition().getX());
+		return getAngleTo(p.getX(), p.getY());
 	}
 
 	public final double getAngleTo(double x, double y) {
