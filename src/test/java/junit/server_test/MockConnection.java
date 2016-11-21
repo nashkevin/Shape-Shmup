@@ -43,9 +43,11 @@ public class MockConnection {
 	}
 	
 	public boolean receivedMessage(String string) {
-		for (String listItem : output) {
-			if (listItem.contains(string)) {
-				return true;
+		synchronized(output) {
+			for (String listItem : output) {
+				if (listItem.contains(string)) {
+					return true;
+				}
 			}
 		}
 		return false;
