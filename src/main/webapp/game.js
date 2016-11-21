@@ -205,7 +205,7 @@ function updateStage(json) {
 thisPlayer is used as the center of the screen. */
 function setScreenCoordinates(entity, thisPlayer) {
 	var x_offset = entity.x - thisPlayer.x;
-	var y_offset = entity.y - thisPlayer.y;
+	var y_offset = -(entity.y - thisPlayer.y);
 	entity.screen_x = getGameWidth() / 2 + x_offset;
 	entity.screen_y = getGameHeight() / 2 + y_offset;
 }
