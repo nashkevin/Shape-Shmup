@@ -36,7 +36,7 @@ public class Environment {
 	private Set<NPCAgent> activeNPCAgents;
 	private Set<Projectile> activeProjectiles;
 
-	private Timer timer = new Timer();
+	private Timer timer = new Timer("Environment Timer");
 
 	public Environment() {
 		this(true);

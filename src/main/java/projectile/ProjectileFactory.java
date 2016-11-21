@@ -23,7 +23,7 @@ public class ProjectileFactory {
 
 	private boolean ready;
 
-	private Timer timer = new Timer();
+	private Timer timer = new Timer("ProjectileFactory Timer");
 
 	public ProjectileFactory(Environment environment, Agent owner, int damage,
 		int speed, double spread, int firingDelay, double size
@@ -127,7 +127,7 @@ public class ProjectileFactory {
 		Vector2D shotVector = new Vector2D(speed, owner.getRotation());
 		Projectile projectile = new Projectile(environment, owner,
 			owner.getPosition(), shotVector, damage);
-		environment.addProjectile(this);
+		environment.addProjectile(projectile);
 		return projectile;
 	}
 }

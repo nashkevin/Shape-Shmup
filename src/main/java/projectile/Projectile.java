@@ -28,7 +28,7 @@ public class Projectile {
 	private Vector2D velocity;
 	private int damage;
 
-	private Timer timer = new Timer();
+	private Timer timer = new Timer("Projectile Timer");
 
 	public Projectile(
 		Environment environment, Agent owner, Point position,

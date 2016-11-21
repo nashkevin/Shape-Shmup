@@ -5,6 +5,8 @@ import main.java.agent.NPCAgent;
 import main.java.agent.PlayerAgent;
 import main.java.agent.Scout;
 import main.java.environment.Environment;
+import main.java.misc.Vector2D;
+import main.java.projectile.Projectile;
 
 import java.awt.Point;
 import java.lang.Math;
@@ -45,6 +47,30 @@ public class EnvironmentTest {
 		environment.despawnNPCAgent(npc2);
 		environment.despawnNPCAgent(npc3);
 		int despawnedCount = environment.getActiveNPCAgents().size();
+
+		Assert.assertNotEquals(initialCount, spawnedCount);
+		Assert.assertEquals(initialCount, despawnedCount);
+	}
+
+	/** Tests that Projectiles can be added to the environment */
+	@Test
+	public void testAddDespawnProjectlie() {
+		Environment environment = new Environment(false);
+		int initialCount = environment.getActiveProjectiles().size();
+		Projectile projectile1 = new Projectile(environment, null,
+			new Point(), new Vector2D(0.0, 0.0), 1);
+		environment.addProjectile(projectile1);
+		Projectile projectile2 = new Projectile(environment, null,
+			new Point(), new Vector2D(0.0, 0.0), 1);
+		environment.addProjectile(projectile2);
+		Projectile projectile3 = new Projectile(environment, null,
+			new Point(), new Vector2D(0.0, 0.0), 1);
+		environment.addProjectile(projectile3);
+		int spawnedCount = environment.getActiveProjectiles().size();
+		environment.despawnProjectile(projectile1);
+		environment.despawnProjectile(projectile2);
+		environment.despawnProjectile(projectile3);
+		int despawnedCount = environment.getActiveProjectiles().size();
 
 		Assert.assertNotEquals(initialCount, spawnedCount);
 		Assert.assertEquals(initialCount, despawnedCount);
