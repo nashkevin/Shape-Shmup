@@ -1,24 +1,27 @@
+/** Variables related to server-client connection */
 const INPUT_RATE = 20; // maximum number of inputs per second
-var SPEED_CAP = 100;   // maximum speed a player can travel
 var webSocket;
 var username;
 var playerAgentID;
 var clientInput = {};  // represents the current input of the player
 var messages = document.getElementById("messages");
 
-// Contains game objects (e.g. player agents) drawn on the screen, indexed by UUID.
+/** Contains game objects drawn on the screen, indexed by UUID */
 var gameEntities = {};
 
 var canvas = document.getElementById("gameCanvas");
 
+/** EventListeners for mouse interaction with the canvas */
 canvas.addEventListener("mousedown", startFiring);
 document.addEventListener("mouseup", stopFiring);
 canvas.addEventListener("mousemove", trackAngle);
 
+/** Renderer setup */
 var renderer = PIXI.autoDetectRenderer(getGameWidth(), getGameHeight(), {view: canvas});
 renderer.backgroundColor = 0x272822;
 renderer.autoResize = true;
 
+/** Stage and background setup */
 var stage = new PIXI.Container();
 var bg = new PIXI.Texture.fromImage("images/background.png");
 var bgTile = new PIXI.extras.TilingSprite(bg, 1920, 1080);
@@ -26,16 +29,13 @@ bgTile.position.set(0, 0);
 bgTile.tilePosition.set(0, 0);
 stage.addChild(bgTile);
 
-// Coordinates of the player (used to calculate background tile position).
+/** Coordinates of the player (used to calculate background tile position) */
 var playerX = getGameWidth() / 2;
 var playerY = getGameHeight() / 2;
 
+/** Timestamp initialized when a ping request is given */
 var pingStartTime;
 
-var isSpeedDecaying = false;
-var decaySpeedID;
-var isAccelerating = false;
-var accelerateID;
 
 function joinGame() {
 	// Ensures only one connection is open at a time
@@ -47,7 +47,7 @@ function joinGame() {
 	var url = "ws://" + window.location.host + "/socket";
 	webSocket = new WebSocket(url);
 
-	// Binds functions to the listeners for the websocket.
+	/** Binds functions to the listeners for the websocket */
 	webSocket.onopen = function(e) {
 		if (e.data === undefined){
 			return;
@@ -55,14 +55,15 @@ function joinGame() {
 		addMessageToChat(e.data);
 	};
 
+	/** Handle received messages */
 	webSocket.onmessage = function(e) {
 		try {
 			var json = JSON.parse(e.data);
 			parseJson(json);
 		} catch (error) { // Display non-JSON messages to the chat area
-			// if the server is responding to a ping request
+			// If input is invalid JSON, treat it as plain text.
 			if (error instanceof SyntaxError) {
-				// If input is invalid JSON, treat it as plain text.
+				// If the server is responding to a ping request
 				if (e.data === "PONG") {
 					addMessageToChat(Date.now() - pingStartTime + " ms");
 				} else {
@@ -74,21 +75,27 @@ function joinGame() {
 		}
 	};
 
+	/** Handle closing the connection */
 	webSocket.onclose = function(e) {
 		addMessageToChat("Connection closed");
 	};
 
+	/** TODO: describe */
 	function completeConnection() {
 		var state = webSocket.readyState;
 		if (state === webSocket.CONNECTING) {
 			setTimeout(completeConnection, 250);
 		} else if (state === webSocket.OPEN) {
 			// Once connection is established
+
+			// Send username to the server
 			username = document.getElementById("username").value.trim();
 			webSocket.send(JSON.stringify({ 'name': username }));
 
+			// Change the view from welcome screen to the main game screen
 			document.getElementById("pregame").classList.add("hidden");
 			document.getElementById("game").classList.remove("hidden");
+			
 			resize();
 			sendFrameInput();
 		} else {
@@ -98,7 +105,7 @@ function joinGame() {
 	completeConnection();
 }
 
-// Sends the client's input to the server. Runs each frame.
+/** Sends the client's input to the server. Runs each frame. */
 function sendFrameInput() {
 	if (connectedToGame()) {
 		// Schedule the next frame.
@@ -174,9 +181,9 @@ function updateStage(json) {
 	var npcAgents = json.npcAgents;
 	var projectiles = json.projectiles;
 
-	// Get the player agent corresponding to this client.
+	// Get the player agent corresponding to this client
 	var thisPlayer = null;
-	for (var i=0; i<playerAgents.length; i++) {
+	for (var i = 0; i < playerAgents.length; i++) {
 		var agent = playerAgents[i];
 		if (agent.id === playerAgentID) {
 			thisPlayer = agent;
@@ -193,7 +200,7 @@ function updateStage(json) {
 	}
 
 	// Iterate through player agents
-	for (var i=0; i<playerAgents.length; i++) {
+	for (var i = 0; i < playerAgents.length; i++) {
 		setScreenCoordinates(playerAgents[i], thisPlayer);
 		var player = drawPlayer(playerAgents[i]);
 		// If the player was included in the JSON, they should remain visible.
@@ -346,10 +353,10 @@ function drawPlayer(playerObject) {
 }
 
 function createPlayer(playerObject) {
-	// Create the container, which will contain all parts of the player.
+	// Create the container, which contains all components of the player avatar
 	var playerContainer = new PIXI.Container();
 
-	// Create the shape, which will be used as the graphic for the sprite.
+	// Create the primitive shape that will be used as the texture for the sprite
 	var playerShape = new PIXI.Graphics();
 	playerShape.lineStyle(4, 0x87B56C, 1)
 	playerShape.beginFill(0xD6EAD5);
@@ -361,7 +368,7 @@ function createPlayer(playerObject) {
 	]);
 	playerShape.endFill();
 
-	// Create the sprite, which is the shape itself that represents the player.
+	// Create the sprite that represents the player itself
 	var playerSprite = new PIXI.Sprite(renderer.generateTexture(playerShape));
 	playerSprite.anchor.set(2/3, 0.5);
 	playerSprite.pivot.set(2/3, 0.5);
@@ -369,7 +376,7 @@ function createPlayer(playerObject) {
 
 	playerContainer.addChild(playerSprite);
 
-	// Create the text, which will display the player's name.
+	// Create the player's username tag
 	var playerName = new PIXI.Text(playerObject.name, {
 		fontFamily: "Arial",
 		fontSize: 12 + (16 - playerObject.name.length),
@@ -383,9 +390,38 @@ function createPlayer(playerObject) {
 	});
 	playerName.anchor.set(0.5, 0.5);
 	playerName.position = playerSprite.position;
+	playerName.position.x += 4;
 	playerName.position.y += 50;
 
 	playerContainer.addChild(playerName);
+
+	// Create the health bar background (red)
+	var healthBackgroundShape = new PIXI.Graphics();
+	healthBackgroundShape.lineStyle(2, 0xCC0000, 1);
+	healthBackgroundShape.moveTo(0, 0);
+	healthBackgroundShape.lineTo(50, 0);
+	var healthBackground = new PIXI.Sprite(renderer.generateTexture(healthBackgroundShape));
+	healthBackground.anchor.set(0, 0);
+	healthBackground.pivot.set(0, 0);
+	healthBackground.position = playerSprite.position;
+	healthBackground.position.x -= 25;
+	healthBackground.position.y -= 45;
+
+	playerContainer.addChild(healthBackground);
+
+	// Create the health bar foreground (green)
+	var healthForegroundShape = new PIXI.Graphics();
+	healthForegroundShape.lineStyle(2, 0x00CC00, 1);
+	healthForegroundShape.moveTo(0, 0);
+	healthForegroundShape.lineTo(50, 0);
+	var healthForeground = new PIXI.Sprite(renderer.generateTexture(healthForegroundShape));
+	healthForeground.anchor.set(0, 0);
+	healthForeground.pivot.set(0, 0);
+	healthForeground.position = playerSprite.position;
+	healthForeground.position.x -= 25;
+	healthForeground.position.y -= 45;
+
+	playerContainer.addChild(healthForeground);
 
 	var containerX = 0;
 	var containerY = 0;
@@ -397,18 +433,23 @@ function createPlayer(playerObject) {
 	return playerContainer;
 }
 
+/** TODO: describe  */
 function updatePlayer(playerObject) {
 	var playerContainer = gameEntities[playerObject.id];
 	playerContainer.position.set(playerObject.screen_x, playerObject.screen_y);
 	var playerSprite = playerContainer.getChildAt(0);
 	playerSprite.rotation = playerObject.angle + Math.PI;
+	var healthForeground = playerContainer.getChildAt(3);
+	healthForeground.scale = playerObject.health / playerObject.maxHealth;
 	return playerContainer;
 }
 
+/** Page selects the username entry form automatically */
 window.onload = function() {
 	document.getElementById("username").select();
 }
 
+/** Prevent accidental right clicks from interrupting gameplay */
 document.oncontextmenu = function() {
 	return false;
 }
