@@ -325,6 +325,7 @@ public enum Command {
 	private String command;
 	private String[] aliases;
 	private String helpText;
+
 	/**
 	 * @param command the primary way to call the command.
 	 * @param aliases alternative ways to call the command (can be null).

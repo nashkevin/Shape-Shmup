@@ -13,7 +13,7 @@ public class CommandsTest {
 
 	@BeforeClass
 	public static void beforeClass() {
-		server = new WebServer();
+		server = new WebServer(false);
 	}
 	
 	@Test

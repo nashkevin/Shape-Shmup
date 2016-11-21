@@ -10,7 +10,7 @@ public class ServerTest {
 
 	@BeforeClass
 	public static void beforeClass() {
-		server = new WebServer();
+		server = new WebServer(false);
 	}
 	
 	@Test

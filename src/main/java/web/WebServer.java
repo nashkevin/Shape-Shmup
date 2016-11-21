@@ -31,15 +31,24 @@ public class WebServer {
 	private static Environment environment;
 	private static GameThread gameThread;
 
+	private boolean verbose = true;
+
 	public WebServer() {
-		environment = new Environment();
+		this(true);
+	}
+
+	public WebServer(boolean verbose) {
+		this.verbose = verbose;
+		environment = new Environment(verbose);
 		gameThread = new GameThread(this, environment);
 	}
 
 	/** When a new client makes a connection to the server. */
 	@OnOpen
 	public void onOpen(Session session) {
-		System.out.println(session.getId() + " has opened a connection.");
+		if (verbose) {
+			System.out.println(session.getId() + " has opened a connection.");
+		}
 		session.getAsyncRemote().sendText("Connection established");
 		synchronized(sessionToName) {
 			sessionToName.put(session, null);
@@ -49,8 +58,9 @@ public class WebServer {
 	/** When a client sends a message to the server. */
 	@OnMessage
 	public void onMessage(String message, Session session) {
-		System.out.println("Message from " + session.getId() + ": " + message);
-
+		if (verbose) {
+			System.out.println("Message from " + session.getId() + ": " + message);
+		}
 		Gson g = new Gson();
 		ClientInput input = g.fromJson(message, ClientInput.class);
 
@@ -132,7 +142,9 @@ public class WebServer {
 	/** When a client closes their connection. */
 	@OnClose
 	public void onClose(Session session) {
-		System.out.println("Session " + session.getId() + " has ended.");
+		if (verbose) {
+			System.out.println("Session " + session.getId() + " has ended.");
+		}
 		broadcast(getNameBySession(session) + " left the game.");
 		PlayerAgent agent = sessionToPlayerAgent.remove(session);
 
