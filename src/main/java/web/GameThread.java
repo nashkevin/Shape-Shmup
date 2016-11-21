@@ -93,6 +93,7 @@ public class GameThread extends Thread {
 			Point point = src.getPosition();
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));
+			element.add("angle", new JsonPrimitive(src.getAngle()));
 			return element;
 		}
 	}
