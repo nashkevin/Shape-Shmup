@@ -368,7 +368,19 @@ function updateStage(json) {
 		}
 	}
 
-	//TODO iterate over NPC agents and projectiles.
+	//TODO iterate over NPC agents
+
+	// Iterate through projectiles
+	for (var i = 0; i < projectiles.length; i++) {
+		setScreenCoordinates(projectiles[i], thisPlayer);
+		var projectile = drawProjectile(projectiles[i]);
+
+		if (isOnScreen(projectile)) {
+			// If the projectile was included in the JSON and is on screen,
+			// it should remain visible.
+			projectile.visible = true;
+		}
+	}
 
 	// Update the background tile position based on how far the player moved.
 	var bgOffsetX = thisPlayer.x - playerX;
@@ -469,10 +481,7 @@ function createPlayer(playerObject) {
 
 	playerContainer.addChild(healthForeground);
 
-	var containerX = 0;
-	var containerY = 0;
-
-	playerContainer.position.set(containerX, containerY);
+	playerContainer.position.set(0, 0);
 	stage.addChild(playerContainer);
 
 	gameEntities[playerObject.id] = playerContainer;
@@ -490,6 +499,44 @@ function updatePlayer(playerObject) {
 	healthForeground.scale = new PIXI.Point(healthPercent, 1);
 
 	return playerContainer;
+}
+
+/** Create or update a projectile on screen. */
+function drawProjectile(projectileObject) {
+	if (!gameEntities[projectileObject.id]) {
+		createProjectile(projectileObject);
+	}
+	return updateProjectile(projectileObject);
+}
+
+/** Create a new projectile on screen. */
+function createProjectile(projectileObject) {
+	// Create the primitive shape that will be used as the texture for the sprite
+	var projectileShape = new PIXI.Graphics();
+	projectileShape.lineStyle(4, 0x87B56C, 1)
+	projectileShape.beginFill(0xD6EAD5);
+	projectileShape.drawCircle(0, 0, 7); // x, y, r (x and y will be set later)
+	projectileShape.endFill();
+
+	// Create the sprite that represents the player itself
+	var projectileSprite = new PIXI.Sprite(renderer.generateTexture(projectileShape));
+	projectileSprite.anchor.set(2/3, 0.5);
+	projectileSprite.pivot.set(2/3, 0.5);
+	projectileSprite.position.set(0, 0);
+
+	projectileSprite.position.set(0, 0);
+	stage.addChild(projectileSprite);
+
+	gameEntities[projectileObject.id] = projectileSprite;
+	return projectileSprite;
+}
+
+/** Update the position and rotation of the player agent. */
+function updateProjectile(projectileObject) {
+	var projectileSprite = gameEntities[projectileObject.id];
+	projectileSprite.position.set(projectileObject.screen_x, projectileObject.screen_y);
+
+	return projectileSprite;
 }
 
 function isOnScreen(pixiObject) {
