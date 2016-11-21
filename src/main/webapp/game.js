@@ -1,3 +1,14 @@
+/* Table of Contents
+
+//1. Constants, variables, etc.
+//2. Event Listeners
+//3. Utility Methods
+//4. Network Communication
+//5. Animation
+*/
+
+//1. Constants, variables, etc.
+
 /** Variables related to server-client connection */
 const INPUT_RATE = 20; // maximum number of inputs per second
 var webSocket;
@@ -11,10 +22,12 @@ var gameEntities = {};
 
 var canvas = document.getElementById("gameCanvas");
 
-/** EventListeners for mouse interaction with the canvas */
-canvas.addEventListener("mousedown", startFiring);
-document.addEventListener("mouseup", stopFiring);
-canvas.addEventListener("mousemove", trackAngle);
+/** Coordinates of the player (used to calculate background tile position) */
+var playerX = getGameWidth() / 2;
+var playerY = getGameHeight() / 2;
+
+/** Timestamp initialized when a ping request is given */
+var pingStartTime;
 
 /** Renderer setup */
 var renderer = PIXI.autoDetectRenderer(getGameWidth(), getGameHeight(), {view: canvas});
@@ -29,13 +42,179 @@ bgTile.position.set(0, 0);
 bgTile.tilePosition.set(0, 0);
 stage.addChild(bgTile);
 
-/** Coordinates of the player (used to calculate background tile position) */
-var playerX = getGameWidth() / 2;
-var playerY = getGameHeight() / 2;
 
-/** Timestamp initialized when a ping request is given */
-var pingStartTime;
+//2. Event Listeners
 
+/** Page selects the username entry form automatically */
+window.onload = function() {
+	document.getElementById("username").select();
+}
+
+/** Prevent accidental right clicks from interrupting gameplay */
+document.oncontextmenu = function() {
+	return false;
+}
+
+function resize() {
+	renderer.resize(getGameWidth(), getGameHeight());
+	renderer.render(stage);
+}
+window.onresize = resize;
+
+
+// Key down listener
+window.onkeydown = function(e) {
+	// Ignore key events within text input
+	var currentTag = e.target.tagName.toLowerCase();
+	if (currentTag == "input" || currentTag == "textarea") {
+		return;
+	}
+
+	if (connectedToGame()) {
+		var code = e.keyCode ? e.keyCode : e.which;
+		switch (code) {
+			case 87: case 38:  // 'w' or up
+				e.preventDefault();
+				clientInput.up = true;
+				delete clientInput.down;
+				break;
+			case 65: case 37: // 'a' or left
+				e.preventDefault();
+				clientInput.left = true;
+				delete clientInput.right;
+				break;
+			case 83: case 40: // 's' or down
+				e.preventDefault();
+				clientInput.down = true;
+				delete clientInput.up;
+				break;
+			case 68: case 39: // 'd' or right
+				e.preventDefault();
+				clientInput.right = true;
+				delete clientInput.left;
+				break;
+			case 13:          // enter
+				e.preventDefault();
+				document.getElementById("messageInput").focus();
+				stopAllMovement();
+				break;
+			case 191:         // forward slash
+				e.preventDefault();
+				document.getElementById("messageInput").focus();
+				document.getElementById("messageInput").value = "/";
+				stopAllMovement();
+				break;
+		}
+	}
+};
+
+// Key up listener
+window.onkeyup = function(e) {
+	// Ignore key events within text input
+	var currentTag = e.target.tagName.toLowerCase();
+	if (currentTag == "input" || currentTag == "textarea") {
+		return;
+	}
+
+	if (connectedToGame()) {
+		var code = e.keyCode ? e.keyCode : e.which;
+		switch (code) {
+			case 87: case 38:  // 'w' or up
+				e.preventDefault();
+				delete clientInput.up;
+				break;
+			case 65: case 37: // 'a' or left
+				e.preventDefault();
+				delete clientInput.left;
+				break;
+			case 83: case 40: // 's' or down
+				e.preventDefault();
+				delete clientInput.down;
+				break;
+			case 68: case 39: // 'd' or right
+				e.preventDefault();
+				delete clientInput.right;
+				break;
+		}
+	}
+};
+
+/** EventListeners for mouse interaction with the canvas */
+canvas.addEventListener("mousedown", startFiring);
+document.addEventListener("mouseup", stopFiring);
+canvas.addEventListener("mousemove", trackAngle);
+
+// Action when the user fires a projectile by clicking with the mouse
+function startFiring(e) {
+	this.focus(); // Move focus to the game canvas
+	if (e.button == 0 && connectedToGame()) {
+		clientInput.isFiring = true;
+		trackAngle(e);
+	}
+}
+
+function stopFiring(e) {
+	delete clientInput.isFiring;
+	delete clientInput.angle;
+}
+
+function trackAngle(e) {
+	if (connectedToGame()) {
+		clientInput.angle = coordinateToAngle(e.clientX, e.clientY);
+	}
+}
+
+
+//3. Utility Methods
+
+function addMessageToChat(text) {
+	messages.innerHTML += "<br/>" + text;
+	messages.scrollTop = messages.scrollHeight;
+}
+
+function getGameHeight() {
+	return window.innerHeight - document.getElementById("chat").clientHeight;
+}
+
+function getGameWidth() {
+	return window.innerWidth;
+}
+
+function stopAllMovement() {
+	delete clientInput.up;
+	delete clientInput.left;
+	delete clientInput.down;
+	delete clientInput.right;
+}
+
+/* Returns angle in radians with the following conventions
+ *     N: -pi/2     *
+ *     E:     0     *
+ *     S:  pi/2     *
+ *     W:    pi     */
+function coordinateToAngle(x, y) {
+	var x_origin = renderer.width / 2;
+	var y_origin = renderer.height / 2;
+
+	return Math.atan2(y - y_origin, x - x_origin);
+}
+
+
+//4. Network Communication
+
+function parseJson(json) {
+	if (json.pregame) {
+		// Set the ID of the corresponding player agent on the server end
+		// so this client knows which agent it is when updating the screen.
+		playerAgentID = json.id;
+	} else {
+		updateStage(json);
+	}
+}
+
+function connectedToGame() {
+	return (typeof webSocket !== "undefined" && webSocket.readyState === webSocket.OPEN);
+}
 
 function joinGame() {
 	// Ensures only one connection is open at a time
@@ -143,39 +322,8 @@ function closeSocket() {
 	window.location.reload();
 }
 
-function addMessageToChat(text) {
-	messages.innerHTML += "<br/>" + text;
-	messages.scrollTop = messages.scrollHeight;
-}
 
-function getGameHeight() {
-	return window.innerHeight - document.getElementById("chat").clientHeight;
-}
-
-function getGameWidth() {
-	return window.innerWidth;
-}
-
-function resize() {
-	renderer.resize(getGameWidth(), getGameHeight());
-	renderer.render(stage);
-}
-window.onresize = resize;
-
-function connectedToGame() {
-	return (typeof webSocket !== "undefined" && webSocket.readyState === webSocket.OPEN);
-}
-
-function parseJson(json) {
-	if (json.pregame) {
-		// Set the ID of the corresponding player agent on the server end
-		// so this client knows which agent it is when updating the screen.
-		playerAgentID = json.id;
-	} else {
-		updateStage(json);
-	}
-}
-
+//5. Animation
 function updateStage(json) {
 	var playerAgents = json.playerAgents;
 	var npcAgents = json.npcAgents;
@@ -227,122 +375,6 @@ function setScreenCoordinates(entity, thisPlayer) {
 	var y_offset = -(entity.y - thisPlayer.y);
 	entity.screen_x = getGameWidth() / 2 + x_offset;
 	entity.screen_y = getGameHeight() / 2 + y_offset;
-}
-
-// Key down listener
-window.onkeydown = function(e) {
-	// Ignore key events within text input
-	var currentTag = e.target.tagName.toLowerCase();
-	if (currentTag == "input" || currentTag == "textarea") {
-		return;
-	}
-
-	if (connectedToGame()) {
-		var code = e.keyCode ? e.keyCode : e.which;
-		switch (code) {
-			case 87: case 38:  // 'w' or up
-				e.preventDefault();
-				clientInput.up = true;
-				delete clientInput.down;
-				break;
-			case 65: case 37: // 'a' or left
-				e.preventDefault();
-				clientInput.left = true;
-				delete clientInput.right;
-				break;
-			case 83: case 40: // 's' or down
-				e.preventDefault();
-				clientInput.down = true;
-				delete clientInput.up;
-				break;
-			case 68: case 39: // 'd' or right
-				e.preventDefault();
-				clientInput.right = true;
-				delete clientInput.left;
-				break;
-			case 13:          // enter
-				e.preventDefault();
-				document.getElementById("messageInput").focus();
-				stopAllMovement();
-				break;
-			case 191:         // forward slash
-				e.preventDefault();
-				document.getElementById("messageInput").focus();
-				document.getElementById("messageInput").value = "/";
-				stopAllMovement();
-				break;
-		}
-	}
-};
-
-// Key up listener
-window.onkeyup = function(e) {
-	// Ignore key events within text input
-	var currentTag = e.target.tagName.toLowerCase();
-	if (currentTag == "input" || currentTag == "textarea") {
-		return;
-	}
-
-	if (connectedToGame()) {
-		var code = e.keyCode ? e.keyCode : e.which;
-		switch (code) {
-			case 87: case 38:  // 'w' or up
-				e.preventDefault();
-				delete clientInput.up;
-				break;
-			case 65: case 37: // 'a' or left
-				e.preventDefault();
-				delete clientInput.left;
-				break;
-			case 83: case 40: // 's' or down
-				e.preventDefault();
-				delete clientInput.down;
-				break;
-			case 68: case 39: // 'd' or right
-				e.preventDefault();
-				delete clientInput.right;
-				break;
-		}
-	}
-};
-
-function stopAllMovement() {
-	delete clientInput.up;
-	delete clientInput.left;
-	delete clientInput.down;
-	delete clientInput.right;
-}
-
-// Action when the user fires a projectile by clicking with the mouse
-function startFiring(e) {
-	this.focus(); // Move focus to the game canvas
-	if (e.button == 0 && connectedToGame()) {
-		clientInput.isFiring = true;
-		trackAngle(e);
-	}
-}
-
-function stopFiring(e) {
-	delete clientInput.isFiring;
-	delete clientInput.angle;
-}
-
-function trackAngle(e) {
-	if (connectedToGame()) {
-		clientInput.angle = coordinateToAngle(e.clientX, e.clientY);
-	}
-}
-
-/* Returns angle in radians with the following conventions
- *     N: -pi/2     *
- *     E:     0     *
- *     S:  pi/2     *
- *     W:    pi     */
-function coordinateToAngle(x, y) {
-	var x_origin = renderer.width / 2;
-	var y_origin = renderer.height / 2;
-
-	return Math.atan2(y - y_origin, x - x_origin);
 }
 
 function drawPlayer(playerObject) {
@@ -444,14 +476,4 @@ function updatePlayer(playerObject) {
 	healthForeground.scale = new PIXI.Point(healthPercent, 1);
 
 	return playerContainer;
-}
-
-/** Page selects the username entry form automatically */
-window.onload = function() {
-	document.getElementById("username").select();
-}
-
-/** Prevent accidental right clicks from interrupting gameplay */
-document.oncontextmenu = function() {
-	return false;
 }
