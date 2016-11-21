@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 
 /*****************************************************************************
@@ -22,6 +23,7 @@ public class Projectile {
 
 	private final long TIME_TO_LIVE = 4000;
 
+	private UUID id = UUID.randomUUID();
 	private transient Environment environment;
 	private Agent owner;
 	private Point position;
@@ -48,6 +50,10 @@ public class Projectile {
 				timer.cancel(); // terminate the timer
 			}
 		}, TIME_TO_LIVE);
+	}
+	
+	public final UUID getID() {
+		return id;
 	}
 
 	protected final Environment getEnvironment() {
