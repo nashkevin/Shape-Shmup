@@ -17,7 +17,7 @@ public class Scout extends NPCAgent {
 				Math.toRadians(10), 1000, 0.5),
 			1 + Math.log(level),
 			1 + level / 2,
-			10,
+			1,
 			1000
 		);
 		this.getGun().setOwner(this);

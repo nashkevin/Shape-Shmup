@@ -38,7 +38,7 @@ public class PlayerAgent extends Agent {
 			Agent.Team.RED,
 			5,
 			100,
-			20
+			1
 		);
 
 		this.name = name;
@@ -80,13 +80,10 @@ public class PlayerAgent extends Agent {
 		int countDown = 0;
 
 		/** combined horizontal inputs */
-		int horizontalDrive = 0;
+		int horizontalInput = 0;
 		/** combined vertical inputs */
-		int verticalDrive = 0;
+		int verticalInput = 0;
 
-		if (eventInbox.isEmpty()) {
-			return; // don't change state of the agent if there are no inputs to be queued
-		}
 		while (!eventInbox.isEmpty()) {
 			ClientInput event = eventInbox.poll();
 			
@@ -111,28 +108,57 @@ public class PlayerAgent extends Agent {
 				getGun().fireProjectile();
 			}
 
-			horizontalDrive = countRight - countLeft;
-			verticalDrive = countUp - countDown;
+			horizontalInput = countRight - countLeft;
+			verticalInput = countUp - countDown;
 
-			if (event.isMoving()) {
-				double x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
-				double y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
-
-				x += horizontalDrive * getHaste() * Math.cos(getRotation());
-				y += verticalDrive * getHaste() * Math.sin(getRotation());
-
-				getVelocity().setAngle(Math.atan2(y, x));
-
-				getVelocity().setMagnitude(Math.sqrt(x * x + y * y));
-				if (getVelocity().getMagnitude() >= getHaste() * MAX_SPEED_MULTIPLE) {
-					getVelocity().setMagnitude(getHaste() * MAX_SPEED_MULTIPLE);
-				}
-
-				x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
-				y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
-				
-				getPosition().translate((int)(x + 0.5), (int)(y + 0.5));
+			if (verticalInput != 0 || horizontalInput != 0) {
+				move(Math.atan2(verticalInput, horizontalInput));
+			} else {
+				move();
 			}
+		}
+	}
+
+	private void move(double inputAngle) {
+		// x component of velocity
+		double x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
+		// y component of velocity
+		double y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
+
+		// increase velocity componentwise by haste
+		x += getHaste() * Math.cos(inputAngle);
+		y += getHaste() * Math.sin(inputAngle);
+
+		// update velocity angle following the above increase
+		getVelocity().setAngle(Math.atan2(y, x));
+
+		getVelocity().setMagnitude(Math.sqrt(x * x + y * y));
+
+		if (getVelocity().getMagnitude() >= getHaste() * MAX_SPEED_MULTIPLE) {
+			getVelocity().setMagnitude(getHaste() * MAX_SPEED_MULTIPLE);
+		}
+
+		x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
+		y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
+
+		x += getPosition().getX();
+		y += getPosition().getY();
+		setPosition((int)(x + 0.5), (int)(y + 0.5));
+	}
+
+	private void move() {
+		if (getVelocity().getMagnitude() > 0.0) {
+			getVelocity().setMagnitude(getVelocity().getMagnitude() - getHaste());
+
+			double x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
+			double y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
+			
+			x += getPosition().getX();
+			y += getPosition().getY();
+
+			setPosition((int)(x + 0.5), (int)(y + 0.5));
+		} else {
+			getVelocity().setMagnitude(0.0);
 		}
 	}
 }

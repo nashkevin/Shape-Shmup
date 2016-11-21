@@ -19,9 +19,9 @@ public abstract class NPCAgent extends Agent {
 
 	public NPCAgent(
 		Environment environment, Point position, ProjectileFactory gun,
-		double size, int health, int speed, double aggroRange
+		double size, int health, int haste, double aggroRange
 	) {
-		super(environment, position, gun, Agent.Team.ENEMY, size, health, speed);
+		super(environment, position, gun, Agent.Team.ENEMY, size, health, haste);
 		this.aggroRange = aggroRange;
 	}
 
