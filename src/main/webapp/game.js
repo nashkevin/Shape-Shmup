@@ -388,6 +388,8 @@ function createPlayer(playerObject) {
 function updatePlayer(playerObject) {
 	var playerContainer = gameEntities[playerObject.id];
 	playerContainer.position.set(playerObject.screen_x, playerObject.screen_y);
+	var playerSprite = playerContainer.getChildAt(0);
+	playerSprite.rotation = playerObject.angle + Math.PI;
 	return playerContainer;
 }
 
