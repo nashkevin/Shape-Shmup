@@ -169,4 +169,7 @@ public abstract class Agent {
 		return Math.atan2(y - this.getPosition().getY(),
 			x - this.getPosition().getX());
 	}
+
+	public abstract void despawn();
+	public abstract void update();
 }

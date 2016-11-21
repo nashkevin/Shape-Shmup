@@ -14,7 +14,7 @@ public class ClientInput {
 	private boolean left = false;
 	private boolean right = false;
 	private boolean isFiring = false;	
-	private double angle = 0;
+	private Double angle;
 
 	
 	public ClientInput() {
@@ -85,7 +85,7 @@ public class ClientInput {
 		this.angle = angle;
 	}
 
-	public double getAngle() {
+	public Double getAngle() {
 		return angle;
 	}
 }

@@ -22,15 +22,10 @@ import java.util.Set;
 public class Environment extends Thread {
 	/** Radius of the environment, in pixels. Value is arbitrarily chosen. */
 	private static final double RADIUS = 50000;
-	private static final int NPCTOPLAYERRATIO = 5;
+	private static final int NPC_PLAYER_RATIO = 5;
 	
 	private boolean gameplayOccurring = true;
-	
-<<<<<<< HEAD
-=======
-	private static final int NPC_PLAYER_RATIO = 5;
-	private double radius;
->>>>>>> ExtremeAgentOverhaul
+
 	private Set<PlayerAgent> activePlayerAgents;
 	private Set<NPCAgent> activeNPCAgents;
 	private Set<Projectile> activeProjectiles;
@@ -41,13 +36,8 @@ public class Environment extends Thread {
 		activeProjectiles = Collections.newSetFromMap(new ConcurrentHashMap<Projectile, Boolean>());
 	}
 
-<<<<<<< HEAD
 	public double getRadius(){
 		return RADIUS;
-=======
-	public double getRadius() {
-		return this.radius;
->>>>>>> ExtremeAgentOverhaul
 	}
 
 	public Set<PlayerAgent> getActivePlayerAgents() {

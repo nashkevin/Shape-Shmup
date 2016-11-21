@@ -73,17 +73,17 @@ public abstract class NPCAgent extends Agent {
 			x += getHaste() * Math.cos(angleToPoint);
 			y += getHaste() * Math.sin(angleToPoint);
 
-			getVelocity.setAngle(Math.atan2(y, x));
+			getVelocity().setAngle(Math.atan2(y, x));
 
-			getVelocity.setMagnitude(Math.sqrt(x * x + y * y));
+			getVelocity().setMagnitude(Math.sqrt(x * x + y * y));
 			if (getVelocity().getMagnitude() >= getHaste() * MAX_SPEED_MULTIPLE) {
-				getVelocity.setMagnitude(getHaste() * MAX_SPEED_MULTIPLE);
+				getVelocity().setMagnitude(getHaste() * MAX_SPEED_MULTIPLE);
 			}
 
 			x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
 			y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
 			
-			getPosition().translate(x, y);
+			getPosition().translate((int)(x + 0.5), (int)(y + 0.5));
 		}
 	}
 

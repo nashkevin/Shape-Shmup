@@ -55,6 +55,7 @@ public class PlayerAgent extends Agent {
 		this.name = name;
 	}
 
+	@Override
 	public final void despawn() {
 		getEnvironment().despawnPlayerAgent(this);
 	}
@@ -107,7 +108,7 @@ public class PlayerAgent extends Agent {
 			}
 			
 			if (event.isFiring()) {
-				getGun.fireProjectile();
+				getGun().fireProjectile();
 			}
 
 			horizontalDrive = countRight - countLeft;
@@ -120,39 +121,17 @@ public class PlayerAgent extends Agent {
 				x += horizontalDrive * getHaste() * Math.cos(getRotation());
 				y += verticalDrive * getHaste() * Math.sin(getRotation());
 
-				getVelocity.setAngle(Math.atan2(y, x));
+				getVelocity().setAngle(Math.atan2(y, x));
 
-<<<<<<< HEAD
-			String name = "tester";
-			UUID id = UUID.randomUUID();
-			Environment env = new EnvironmentMock();
-			Point position = new Point();
-			position.setLocation(random.nextDouble(), random.nextDouble());
-			int level = random.nextInt(10);
-			int team = random.nextInt(5);
-			int health = random.nextInt(490) + 10;
-			int damage = random.nextInt(500) + 1;
-			int projectileSpeed = random.nextInt(100) + 1;
-			int baseMovementSpeed = random.nextInt(100) + 1;
-			
-			//TODO: make player test agent implementation class
-			testInstance = new PlayerAgentTestImp(name, id, env, position, level, team, health, damage, projectileSpeed, baseMovementSpeed);
-		}
-
-		public static PlayerAgent getTestInstance() {
-			return testInstance;
-		}
-=======
-				getVelocity.setMagnitude(Math.sqrt(x * x + y * y));
+				getVelocity().setMagnitude(Math.sqrt(x * x + y * y));
 				if (getVelocity().getMagnitude() >= getHaste() * MAX_SPEED_MULTIPLE) {
-					getVelocity.setMagnitude(getHaste() * MAX_SPEED_MULTIPLE);
+					getVelocity().setMagnitude(getHaste() * MAX_SPEED_MULTIPLE);
 				}
->>>>>>> ExtremeAgentOverhaul
 
 				x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
 				y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
 				
-				getPosition().translate(x, y);
+				getPosition().translate((int)(x + 0.5), (int)(y + 0.5));
 			}
 		}
 	}
