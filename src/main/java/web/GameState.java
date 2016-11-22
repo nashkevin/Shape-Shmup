@@ -15,12 +15,20 @@ public class GameState {
 	private Collection<PlayerAgent> playerAgents;
 	private Collection<NPCAgent> npcAgents;
 	private Collection<Projectile> projectiles;
+	
+	private Collection<PlayerAgent> despawnedPlayerAgents;
+	private Collection<NPCAgent> despawnedNPCAgents;
+	private Collection<Projectile> despawnedProjectiles;
 
-	public GameState(Collection<PlayerAgent> playerAgents, Collection<NPCAgent> npcAgents, 
-			Collection<Projectile> projectiles) {
+	public GameState(Collection<PlayerAgent> playerAgents, Collection<NPCAgent> npcAgents,
+			Collection<Projectile> projectiles, Collection<PlayerAgent> despawnedPlayerAgents,
+			Collection<NPCAgent> despawnedNPCAgents, Collection<Projectile> despawnedProjectiles) {
 		this.playerAgents = playerAgents;
 		this.npcAgents = npcAgents;
 		this.projectiles = projectiles;
+		this.despawnedPlayerAgents = despawnedPlayerAgents;
+		this.despawnedNPCAgents = despawnedNPCAgents;
+		this.despawnedProjectiles = despawnedProjectiles;
 	}
 
 	public Collection<PlayerAgent> getPlayerAgents() {
@@ -40,5 +48,23 @@ public class GameState {
 	}
 	public void setProjectiles(Collection<Projectile> projectiles) {
 		this.projectiles = projectiles;
+	}
+	public Collection<PlayerAgent> getDespawnedPlayerAgents() {
+		return despawnedPlayerAgents;
+	}
+	public void setDespawnedPlayerAgents(Collection<PlayerAgent> despawnedPlayerAgents) {
+		this.despawnedPlayerAgents = despawnedPlayerAgents;
+	}
+	public Collection<NPCAgent> getDespawnedNPCAgents() {
+		return despawnedNPCAgents;
+	}
+	public void setDespawnedNPCAgents(Collection<NPCAgent> despawnedNPCAgents) {
+		this.despawnedNPCAgents = despawnedNPCAgents;
+	}
+	public Collection<Projectile> getDespawnedProjectiles() {
+		return despawnedProjectiles;
+	}
+	public void setDespawnedProjectiles(Collection<Projectile> despawnedProjectiles) {
+		this.despawnedProjectiles = despawnedProjectiles;
 	}
 }

@@ -62,7 +62,12 @@ public class GameSerializer {
 		Collection<NPCAgent> npcAgents = new ArrayList<>(environment.getActiveNPCAgents());
 		Collection<Projectile> projectiles = new ArrayList<>(environment.getActiveProjectiles());
 
-		GameState state = new GameState(playerAgents, npcAgents, projectiles);
+		Collection<PlayerAgent> despawnedPlayers = environment.getRecentlyDespawnedPlayerAgents();
+		Collection<NPCAgent> despawnedNPCs = environment.getRecentlyDespawnedNPCAgents();
+		Collection<Projectile> despawnedProjectiles = environment.getRecentlyDespawnedProjectiles();
+
+		GameState state = new GameState(playerAgents, npcAgents, projectiles,
+				despawnedPlayers, despawnedNPCs, despawnedProjectiles);
 		
 		server.broadcast(gson.toJson(state));
 	}
