@@ -3,13 +3,14 @@ package main.java.agent;
 import main.java.environment.Environment;
 import main.java.projectile.ProjectileFactory;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
+
 import java.lang.Math;
 
 
 public class Scout extends NPCAgent {
 
-	public Scout(Environment environment, Point position, int level) {
+	public Scout(Environment environment, Point2D.Double position, int level) {
 		super(
 			environment,
 			position,

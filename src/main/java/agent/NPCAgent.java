@@ -3,7 +3,7 @@ package main.java.agent;
 import main.java.environment.Environment;
 import main.java.projectile.ProjectileFactory;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
 
 
 public abstract class NPCAgent extends Agent {
@@ -18,7 +18,7 @@ public abstract class NPCAgent extends Agent {
 
 
 	public NPCAgent(
-		Environment environment, Point position, ProjectileFactory gun,
+		Environment environment, Point2D.Double position, ProjectileFactory gun,
 		double size, int health, int haste, double aggroRange
 	) {
 		super(environment, position, gun, Agent.Team.ENEMY, size, health, haste);
@@ -59,7 +59,7 @@ public abstract class NPCAgent extends Agent {
 		getEnvironment().despawnNPCAgent(this);
 	}
 
-	private void approachPoint(Point p) {
+	private void approachPoint(Point2D.Double p) {
 		double angleToPoint = getAngleTo(p);		
 
 		// update to face the point
@@ -83,7 +83,8 @@ public abstract class NPCAgent extends Agent {
 			x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
 			y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
 			
-			getPosition().translate((int)(x + 0.5), (int)(y + 0.5));
+			getPosition().x += x;
+			getPosition().y += y;
 		}
 	}
 

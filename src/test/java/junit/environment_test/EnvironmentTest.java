@@ -8,8 +8,10 @@ import main.java.environment.Environment;
 import main.java.misc.Vector2D;
 import main.java.projectile.Projectile;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
+
 import java.lang.Math;
+
 import org.junit.Test;
 import org.junit.Assert;
 
@@ -58,13 +60,13 @@ public class EnvironmentTest {
 		Environment environment = new Environment(false);
 		int initialCount = environment.getActiveProjectiles().size();
 		Projectile projectile1 = new Projectile(environment, null,
-			new Point(), new Vector2D(0.0, 0.0), 1);
+			new Point2D.Double(), new Vector2D(0.0, 0.0), 1);
 		environment.addProjectile(projectile1);
 		Projectile projectile2 = new Projectile(environment, null,
-			new Point(), new Vector2D(0.0, 0.0), 1);
+			new Point2D.Double(), new Vector2D(0.0, 0.0), 1);
 		environment.addProjectile(projectile2);
 		Projectile projectile3 = new Projectile(environment, null,
-			new Point(), new Vector2D(0.0, 0.0), 1);
+			new Point2D.Double(), new Vector2D(0.0, 0.0), 1);
 		environment.addProjectile(projectile3);
 		int spawnedCount = environment.getActiveProjectiles().size();
 		environment.despawnProjectile(projectile1);
@@ -78,7 +80,7 @@ public class EnvironmentTest {
 
 	@Test
 	public void testCheckRadius() {
-		Point p = new Point(0, 0);
+		Point2D.Double p = new Point2D.Double(0, 0);
 		Assert.assertEquals(0.0, Environment.checkRadius(p), ERROR_MARGIN);
 		p.setLocation(3, 4);
 		Assert.assertEquals(5.0, Environment.checkRadius(p), ERROR_MARGIN);
@@ -88,17 +90,47 @@ public class EnvironmentTest {
 
 	@Test
 	public void testPolarToCartesian() {
-		Assert.assertEquals(new Point(0, 0), Environment.polarToCartesian(0, 0));
-		Assert.assertEquals(new Point(0, 1), Environment.polarToCartesian(Math.PI / 2, 1));
-		Assert.assertEquals(new Point(-2, 0), Environment.polarToCartesian(Math.PI, 2));
-		Assert.assertEquals(new Point(4, 3), Environment.polarToCartesian(Math.asin(0.6), 5));
+		Point2D.Double p1 = new Point2D.Double(0, 0);
+		Point2D.Double p2 = Environment.polarToCartesian(0, 0);
+		Assert.assertEquals(p1.getX(), p2.getX(), ERROR_MARGIN);
+		Assert.assertEquals(p1.getY(), p2.getY(), ERROR_MARGIN);
+
+		p1 = new Point2D.Double(0, 1);
+		p2 = Environment.polarToCartesian(Math.PI / 2, 1);
+		Assert.assertEquals(p1.getX(), p2.getX(), ERROR_MARGIN);
+		Assert.assertEquals(p1.getY(), p2.getY(), ERROR_MARGIN);
+
+		p1 = new Point2D.Double(-2, 0);
+		p2 = Environment.polarToCartesian(Math.PI, 2);
+		Assert.assertEquals(p1.getX(), p2.getX(), ERROR_MARGIN);
+		Assert.assertEquals(p1.getY(), p2.getY(), ERROR_MARGIN);
+
+		p1 = new Point2D.Double(4, 3);
+		p2 = Environment.polarToCartesian(Math.asin(0.6) , 5);
+		Assert.assertEquals(p1.getX(), p2.getX(), ERROR_MARGIN);
+		Assert.assertEquals(p1.getY(), p2.getY(), ERROR_MARGIN);
 	}
 
 	@Test
 	public void testCartesianToPolar() {
-		Assert.assertArrayEquals(new double[] {0, 0}, Environment.cartesianToPolar(new Point(0, 0)), ERROR_MARGIN);
-		Assert.assertArrayEquals(new double[] {Math.PI / 2, 1}, Environment.cartesianToPolar(new Point(0, 1)), ERROR_MARGIN);
-		Assert.assertArrayEquals(new double[] {Math.PI, 2}, Environment.cartesianToPolar(new Point(-2, 0)), ERROR_MARGIN);
-		Assert.assertArrayEquals(new double[] {Math.asin(0.6), 5}, Environment.cartesianToPolar(new Point(4, 3)), ERROR_MARGIN);
+		Point2D.Double p1 = new Point2D.Double(0, 0);
+		Point2D.Double p2 = Environment.cartesianToPolar(new Point2D.Double(0, 0));
+		Assert.assertEquals(p1.getX(), p2.getX(), ERROR_MARGIN);
+		Assert.assertEquals(p1.getY(), p2.getY(), ERROR_MARGIN);
+
+		p1 = new Point2D.Double(Math.PI / 2, 1);
+		p2 = Environment.cartesianToPolar(new Point2D.Double(0, 1));
+		Assert.assertEquals(p1.getX(), p2.getX(), ERROR_MARGIN);
+		Assert.assertEquals(p1.getY(), p2.getY(), ERROR_MARGIN);
+
+		p1 = new Point2D.Double(Math.PI, 2);
+		p2 = Environment.cartesianToPolar(new Point2D.Double(-2, 0));
+		Assert.assertEquals(p1.getX(), p2.getX(), ERROR_MARGIN);
+		Assert.assertEquals(p1.getY(), p2.getY(), ERROR_MARGIN);
+
+		p1 = new Point2D.Double(Math.asin(0.6), 5);
+		p2 = Environment.cartesianToPolar(new Point2D.Double(4, 3));
+		Assert.assertEquals(p1.getX(), p2.getX(), ERROR_MARGIN);
+		Assert.assertEquals(p1.getY(), p2.getY(), ERROR_MARGIN);
 	}
 }

@@ -4,7 +4,7 @@ import main.java.agent.Agent;
 import main.java.agent.PlayerAgent;
 import main.java.environment.Environment;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.lang.Math;
 import org.junit.Test;
 import org.junit.Assert;
@@ -16,9 +16,9 @@ public class AgentTest {
 	@Test
 	public void testGetPosition() {
 		Environment environment = new Environment(false);
-		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
-		Point point = agent.getPosition();
-		point.translate(1, 1); // moves the point in both x and y directions
+		Agent agent = new PlayerAgent(environment, new Point2D.Double(0, 0), "Agent");
+		Point2D.Double point = agent.getPosition();
+		point.setLocation(1, 1); // moves the point in both x and y directions
 
 		// Moving the point should not have moved the agent
 		Assert.assertNotEquals(point, agent.getPosition());
@@ -28,7 +28,7 @@ public class AgentTest {
 	@Test
 	public void testSetHealth() {
 		Environment environment = new Environment(false);
-		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
+		Agent agent = new PlayerAgent(environment, new Point2D.Double(0, 0), "Agent");
 		agent.setMaxHealth(100);
 		agent.setHealth(999);
 
@@ -39,7 +39,7 @@ public class AgentTest {
 	@Test
 	public void testSetMaxHealth() {
 		Environment environment = new Environment(false);
-		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
+		Agent agent = new PlayerAgent(environment, new Point2D.Double(0, 0), "Agent");
 		agent.setMaxHealth(100);
 		agent.setHealth(100);
 		agent.setMaxHealth(50);
@@ -51,14 +51,14 @@ public class AgentTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetMaxHealthInvalid() {
 		Environment environment = new Environment(false);
-		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
+		Agent agent = new PlayerAgent(environment, new Point2D.Double(0, 0), "Agent");
 		agent.setMaxHealth(0);
 	}
 
 	@Test
 	public void testApplyDamage() {
 		Environment environment = new Environment(false);
-		Agent agent = new PlayerAgent(environment, new Point(0, 0), "Agent");
+		Agent agent = new PlayerAgent(environment, new Point2D.Double(0, 0), "Agent");
 		int initialHealth = 100;
 		agent.setHealth(initialHealth);
 		agent.applyDamage(5);
@@ -69,11 +69,11 @@ public class AgentTest {
 	@Test
 	public void testGetAngleTo() {
 		Environment environment = new Environment(false);
-		Agent agent1 = new PlayerAgent(environment, new Point(0, 0), "Agent1");
-		Agent agent2 = new PlayerAgent(environment, new Point(0, 5), "Agent2");
+		Agent agent1 = new PlayerAgent(environment, new Point2D.Double(0, 0), "Agent1");
+		Agent agent2 = new PlayerAgent(environment, new Point2D.Double(0, 5), "Agent2");
 
 		Assert.assertEquals(Math.PI / 2, agent1.getAngleTo(agent2), ERROR_MARGIN);
-		Assert.assertEquals(Math.PI / 2, agent1.getAngleTo(new Point(0, 1)), ERROR_MARGIN);
+		Assert.assertEquals(Math.PI / 2, agent1.getAngleTo(new Point2D.Double(0, 1)), ERROR_MARGIN);
 		Assert.assertEquals(Math.PI / 2, agent1.getAngleTo(0, 10), ERROR_MARGIN);
 	}
 }

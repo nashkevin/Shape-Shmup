@@ -4,7 +4,7 @@ import main.java.environment.Environment;
 import main.java.misc.Vector2D;
 import main.java.projectile.ProjectileFactory;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.UUID;
 
 
@@ -18,7 +18,7 @@ public abstract class Agent {
 	private double angle = 0;
 	private Vector2D velocity = new Vector2D(0.0, 0.0);
 	private transient Environment environment;
-	private Point position;
+	private Point2D.Double position;
 	private Team team;
 	private double size;
 
@@ -37,11 +37,11 @@ public abstract class Agent {
 	private boolean isReadyToFire;
 
 	public Agent(
-		Environment environment, Point position, ProjectileFactory gun,
+		Environment environment, Point2D.Double position, ProjectileFactory gun,
 		Team team, double size, int health, int haste
 	) {
 		this.environment = environment;
-		this.position = new Point(position);
+		this.position = (Point2D.Double) position.clone();
 		this.team = team;
 		this.size = size;
 		this.health = health;
@@ -77,15 +77,15 @@ public abstract class Agent {
 		return environment;
 	}
 
-	public final Point getPosition() {
-		return (position == null) ? null : new Point(position);
+	public final Point2D.Double getPosition() {
+		return (position == null) ? null : (Point2D.Double) position.clone();
 	}
 
-	public final void setPosition(Point p) {
-		setPosition((int) p.getX(), (int) p.getY());
+	public final void setPosition(Point2D.Double p) {
+		setPosition(p.getX(), p.getY());
 	}
 
-	public final void setPosition(int x, int y) {
+	public final void setPosition(double x, double y) {
 		position.setLocation(x, y);
 	}
 
@@ -165,7 +165,7 @@ public abstract class Agent {
 		return getAngleTo(other.getPosition());
 	}
 
-	public final double getAngleTo(Point p) {
+	public final double getAngleTo(Point2D.Double p) {
 		return getAngleTo(p.getX(), p.getY());
 	}
 

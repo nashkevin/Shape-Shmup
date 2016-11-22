@@ -3,7 +3,7 @@ package main.java.projectile;
 import main.java.agent.Agent;
 import main.java.environment.Environment;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
 import main.java.misc.Vector2D;
 
 import java.util.List;
@@ -26,14 +26,14 @@ public class Projectile {
 	private UUID id = UUID.randomUUID();
 	private transient Environment environment;
 	private Agent owner;
-	private Point position;
+	private Point2D.Double position;
 	private Vector2D velocity;
 	private int damage;
 
 	private Timer timer = new Timer("Projectile Timer");
 
 	public Projectile(
-		Environment environment, Agent owner, Point position,
+		Environment environment, Agent owner, Point2D.Double position,
 		Vector2D velocity, int damage
 	) {	
 		this.environment = environment;
@@ -64,8 +64,8 @@ public class Projectile {
 		return owner;
 	}
 
-	public final Point getPosition() {
-		return new Point(position);
+	public final Point2D.Double getPosition() {
+		return (Point2D.Double) position.clone();
 	}
 	
 	public final Vector2D getVelocity() {

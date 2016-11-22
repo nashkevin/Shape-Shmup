@@ -3,7 +3,7 @@ package main.java.web;
 import main.java.agent.PlayerAgent;
 import main.java.environment.Environment;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
 
 import java.io.IOException;
 
@@ -338,9 +338,9 @@ public enum Command {
 					}
 				}
 				if (args[1].equalsIgnoreCase("player")) {
-					server.getEnvironment().spawnPlayer(new Point(x, y));
+					server.getEnvironment().spawnPlayer(new Point2D.Double(x, y));
 				} else if (args[1].equalsIgnoreCase("scout")) {
-					server.getEnvironment().spawnScout(new Point(x, y));
+					server.getEnvironment().spawnScout(new Point2D.Double(x, y));
 				}
 			}
 		},
@@ -351,7 +351,7 @@ public enum Command {
 		) {
 			@Override
 			protected void perform(String[] args, Session session, WebServer server) {
-				Point position = new Point();
+				Point2D.Double position = new Point2D.Double();
 				if (args.length == 1) {
 					position = server.getPlayerAgentBySession(session).getPosition();
 					server.unicast("(" + position.getX() + ", " + position.getY() + ")", session);

@@ -4,7 +4,7 @@ import main.java.environment.Environment;
 import main.java.projectile.ProjectileFactory;
 import main.java.web.ClientInput;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
 
 import java.util.Queue;
 import java.util.LinkedList;
@@ -28,7 +28,7 @@ public class PlayerAgent extends Agent {
 	Queue<ClientInput> eventInbox; 
 
 	public PlayerAgent(
-		Environment environment, Point position, String name
+		Environment environment, Point2D.Double position, String name
 	) {
 		super(
 			environment,

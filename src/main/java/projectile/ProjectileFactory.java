@@ -47,9 +47,9 @@ public class ProjectileFactory {
 		}, 0, firingDelay);
 	}
 
-	/******************************
+	/********************************
 	 * start of getters and setters *
-	 ******************************/
+	 ********************************/
 	public final Agent getOwner() {
 		return owner;
 	}

@@ -7,7 +7,8 @@ import main.java.agent.Scout;
 
 import main.java.projectile.Projectile;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
@@ -110,7 +111,7 @@ public class Environment {
 		return player;
 	}
 
-	public PlayerAgent spawnPlayer(Point point) {
+	public PlayerAgent spawnPlayer(Point2D.Double point) {
 		PlayerAgent player = new PlayerAgent(this, point, "Player" +
 			String.format("%04d", random.nextInt(10000)));
 		activePlayerAgents.add(player);
@@ -124,7 +125,7 @@ public class Environment {
 		return spawnScout(1);
 	}
 
-	public Scout spawnScout(Point point) {
+	public Scout spawnScout(Point2D.Double point) {
 		Scout agent = new Scout(this, point, 1);
 		activeNPCAgents.add(agent);
 		if (verbose) {
@@ -149,23 +150,23 @@ public class Environment {
 		}
 	}
 
-	public static Point polarToCartesian(double angle, double radius) {
-		Point p = new Point();
+	public static Point2D.Double polarToCartesian(double angle, double radius) {
+		Point2D.Double p = new Point2D.Double();
 		double x = Math.cos(angle) * radius;
 		double y = Math.sin(angle) * radius;
 		p.setLocation(x, y);
 		return p;
 	}
 
-	//Returns an array where the first value is the angle and the second is the radius
-	public static double[] cartesianToPolar(Point p) {
-		double[] polar = new double[2];
-		polar[0] = Math.atan2(p.getY(), p.getX());
-		polar[1] = checkRadius(p);
+	/** Returns a point where the first value is the angle and the second is the radius */
+	public static Point2D.Double cartesianToPolar(Point2D.Double p) {
+		Point2D.Double polar = new Point2D.Double();
+		polar.x = Math.atan2(p.getY(), p.getX());
+		polar.y = checkRadius(p);
 		return polar;
 	}
 
-	public static double checkRadius(Point p){
+	public static double checkRadius(Point2D.Double p){
 		return Math.sqrt(Math.abs(p.getX()) * Math.abs(p.getX()) + Math.abs(p.getY()) * Math.abs(p.getY()));
 	}
 
@@ -202,12 +203,12 @@ public class Environment {
 		return collisions;
 	}
 
-	private Point randomPlayerSpawn() {
+	private Point2D.Double randomPlayerSpawn() {
 		double angle = Math.random() * 2 * Math.PI;
 		return polarToCartesian(angle, getRadius());
 	}
 
-	private Point randomNPCSpawn() {
+	private Point2D.Double randomNPCSpawn() {
 		double angle = Math.random() * 2 * Math.PI;
 		double distance = Math.random() * getRadius();
 		return polarToCartesian(angle, distance);

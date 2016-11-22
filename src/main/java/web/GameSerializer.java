@@ -1,6 +1,6 @@
 package main.java.web;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,7 +82,7 @@ public class GameSerializer {
 			element.add("id", new JsonPrimitive(src.getID().toString()));
 			element.add("health", new JsonPrimitive(src.getHealth()));
 			element.add("maxHealth", new JsonPrimitive(src.getMaxHealth()));
-			Point point = src.getPosition();
+			Point2D.Double point = src.getPosition();
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));
 			element.add("angle", new JsonPrimitive(src.getAngle()));
@@ -98,7 +98,7 @@ public class GameSerializer {
 			element.add("name", new JsonPrimitive(src.getName()));
 			element.add("health", new JsonPrimitive(src.getHealth()));
 			element.add("maxHealth", new JsonPrimitive(src.getMaxHealth()));
-			Point point = src.getPosition();
+			Point2D.Double point = src.getPosition();
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));
 			element.add("angle", new JsonPrimitive(src.getAngle()));
@@ -111,7 +111,7 @@ public class GameSerializer {
 		public JsonElement serialize(Projectile src, Type typeOfSrc, JsonSerializationContext context) {
 			JsonObject element = new JsonObject();
 			element.add("id", new JsonPrimitive(src.getID().toString()));
-			Point point = src.getPosition();
+			Point2D.Double point = src.getPosition();
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));
 			return element;
