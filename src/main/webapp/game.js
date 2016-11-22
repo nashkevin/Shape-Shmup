@@ -368,7 +368,17 @@ function updateStage(json) {
 		}
 	}
 
-	//TODO iterate over NPC agents
+	// Iterate through NPC agents
+	for (var i = 0; i < npcAgents.length; i++) {
+		setScreenCoordinates(npcAgents[i], thisPlayer);
+		var npcAgent = drawNpc(npcAgents[i]);
+
+		if (isOnScreen(npcAgent)) {
+			// If the projectile was included in the JSON and is on screen,
+			// it should remain visible.
+			npcAgent.visible = true;
+		}
+	}
 
 	// Iterate through projectiles
 	for (var i = 0; i < projectiles.length; i++) {
@@ -499,6 +509,92 @@ function updatePlayer(playerObject) {
 	healthForeground.scale = new PIXI.Point(healthPercent, 1);
 
 	return playerContainer;
+}
+
+
+
+
+
+
+/** Create or update an NPC agent on screen. */
+function drawNpc(npcObject) {
+	if (!gameEntities[npcObject.id]) {
+		createNpc(npcObject);
+	}
+	return updateNpc(npcObject);
+}
+
+/** Create a new NPC agent on screen. */
+function createNpc(npcObject) {
+	// Create the container, which contains all components of the NPC avatar
+	var npcContainer = new PIXI.Container();
+
+	// Create the primitive shape that will be used as the texture for the sprite
+	var npcShape = new PIXI.Graphics();
+	npcShape.lineStyle(4, 0xE0A12E, 1)
+	npcShape.beginFill(0xFCE7CC);
+	npcShape.drawPolygon([
+		0,  25,
+		50, 50,
+		50, 0,
+		0,  25
+	]);
+	npcShape.endFill();
+
+	// Create the sprite that represents the NPC itself
+	var npcSprite = new PIXI.Sprite(renderer.generateTexture(npcShape));
+	npcSprite.anchor.set(2/3, 0.5);
+	npcSprite.pivot.set(2/3, 0.5);
+	npcSprite.position.set(0, 0);
+
+	npcContainer.addChild(npcSprite);
+
+	// Create the health bar background (red)
+	var healthBackgroundShape = new PIXI.Graphics();
+	healthBackgroundShape.lineStyle(2, 0xCC0000, 1);
+	healthBackgroundShape.moveTo(0, 0);
+	healthBackgroundShape.lineTo(50, 0);
+	var healthBackground = new PIXI.Sprite(renderer.generateTexture(healthBackgroundShape));
+	healthBackground.anchor.set(0, 0);
+	healthBackground.pivot.set(0, 0);
+	healthBackground.position = npcSprite.position;
+	healthBackground.position.x -= 25;
+	healthBackground.position.y -= 45;
+
+	npcContainer.addChild(healthBackground);
+
+	// Create the health bar foreground (green)
+	var healthForegroundShape = new PIXI.Graphics();
+	healthForegroundShape.lineStyle(2, 0x00CC00, 1);
+	healthForegroundShape.moveTo(0, 0);
+	healthForegroundShape.lineTo(50, 0);
+	var healthForeground = new PIXI.Sprite(renderer.generateTexture(healthForegroundShape));
+	healthForeground.anchor.set(0, 0);
+	healthForeground.pivot.set(0, 0);
+	healthForeground.position = npcSprite.position;
+	healthForeground.position.x -= 25;
+	healthForeground.position.y -= 45;
+
+	npcContainer.addChild(healthForeground);
+
+	npcContainer.position.set(0, 0);
+	stage.addChild(npcContainer);
+
+	gameEntities[npcObject.id] = npcContainer;
+	return npcContainer;
+}
+
+/** Update the position and rotation of the NPC agent. */
+function updateNpc(npcObject) {
+	var npcContainer = gameEntities[npcObject.id];
+	npcContainer.position.set(npcObject.screen_x, npcObject.screen_y);
+	var npcSprite = npcContainer.getChildAt(0);
+	npcSprite.rotation = npcObject.angle + Math.PI;
+	var healthForeground = npcContainer.getChildAt(2);
+	var healthPercent = npcObject.health / npcObject.maxHealth;
+	healthForeground.scale = new PIXI.Point(healthPercent, 1);
+
+	return npcContainer;
 }
 
 /** Create or update a projectile on screen. */
