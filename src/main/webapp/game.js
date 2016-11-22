@@ -351,6 +351,10 @@ function closeSocket() {
 	window.location.reload();
 }
 
+function gameOver() {
+	//TODO implement
+}
+
 
 //5. Animation
 
@@ -359,6 +363,10 @@ function updateStage(json) {
 	var playerAgents = json.playerAgents;
 	var npcAgents = json.npcAgents;
 	var projectiles = json.projectiles;
+
+	var despawnedPlayerAgents = json.despawnedPlayerAgents;
+	var despawnedNPCAgents = json.despawnedNPCAgents;
+	var despawnedProjectiles = json.despawnedProjectiles;
 
 	// Get the player agent corresponding to this client
 	var thisPlayer = null;
@@ -369,13 +377,27 @@ function updateStage(json) {
 			break;
 		}
 	}
-	if (thisPlayer === null) {
-		return;
+
+	// Iterate through despawned player agents
+	for (var i = 0; i < despawnedPlayerAgents.length; i++) {
+		var player = gameEntities[despawnedPlayerAgents[i].id];
+		player.visible = false; //TODO animate disappearance
+
+		if (despawnedPlayerAgents[i].id === playerAgentID) {
+			gameOver();
+		}
 	}
 
-	// Mark all game entities as invisible (in case they should be despawned).
-	for (var id in gameEntities) {
-	    gameEntities[id].visible = false;
+	// Iterate through despawned NPC agents
+	for (var i = 0; i < despawnedNPCAgents.length; i++) {
+		var npc = gameEntities[despawnedNPCAgents[i].id];
+		npc.visible = false; //TODO animate disappearance
+	}
+
+	// Iterate through despawned projectiles
+	for (var i = 0; i < despawnedProjectiles.length; i++) {
+		var projectile = gameEntities[despawnedProjectiles[i].id];
+		projectile.visible = false;
 	}
 
 	// Iterate through player agents
@@ -383,11 +405,7 @@ function updateStage(json) {
 		setScreenCoordinates(playerAgents[i], thisPlayer);
 		var player = drawPlayer(playerAgents[i]);
 
-		if (isOnScreen(player)) {
-			// If the player was included in the JSON and is on screen,
-			// they should remain visible.
-			player.visible = true;
-		}
+		player.visible = isOnScreen(player);
 	}
 
 	// Iterate through NPC agents
@@ -395,11 +413,7 @@ function updateStage(json) {
 		setScreenCoordinates(npcAgents[i], thisPlayer);
 		var npcAgent = drawNpc(npcAgents[i]);
 
-		if (isOnScreen(npcAgent)) {
-			// If the projectile was included in the JSON and is on screen,
-			// it should remain visible.
-			npcAgent.visible = true;
-		}
+		npcAgent.visible = isOnScreen(npcAgent);
 	}
 
 	// Iterate through projectiles
@@ -407,11 +421,7 @@ function updateStage(json) {
 		setScreenCoordinates(projectiles[i], thisPlayer);
 		var projectile = drawProjectile(projectiles[i]);
 
-		if (isOnScreen(projectile)) {
-			// If the projectile was included in the JSON and is on screen,
-			// it should remain visible.
-			projectile.visible = true;
-		}
+		projectile.visible = isOnScreen(projectile);
 	}
 
 	// Update the background tile position based on how far the player moved.

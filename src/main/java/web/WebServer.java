@@ -134,9 +134,11 @@ public class WebServer {
 		if (sourceName != null && !sourceName.isEmpty()) {
 			message = "<strong>" + sourceName + "</strong>: " + message;
 		}
-		for (Session s : sessionToName.keySet()) {
-			if (s.isOpen()) {
-				s.getAsyncRemote().sendText(message);
+		synchronized(sessionToName) {
+			for (Session s : sessionToName.keySet()) {
+				if (s.isOpen()) {
+					s.getAsyncRemote().sendText(message);
+				}
 			}
 		}
 	}
