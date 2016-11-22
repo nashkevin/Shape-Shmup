@@ -1,5 +1,7 @@
 package main.java.web;
 
+import java.awt.geom.Point2D;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +32,10 @@ public class WebServer {
 		Collections.synchronizedMap(new HashMap<>());
 	/** The chosen name in lowercase and without spaces, mapped to session. */
 	private static final Map<String, Session> shortNameToSession =
-			Collections.synchronizedMap(new HashMap<>());
+		Collections.synchronizedMap(new HashMap<>());
+	/** The name in lowercase and without spaces of each spoofed player, mapped to PlayerAgent. */
+	private static final Map<String, PlayerAgent> shortNameToSpoofedAgent =
+		Collections.synchronizedMap(new HashMap<>());
 	private static Environment environment;
 	private static GameSerializer gameThread;
 
@@ -165,12 +170,22 @@ public class WebServer {
 		return sessionToPlayerAgent.get(shortNameToSession.get(shortenName(username)));
 	}
 
+	PlayerAgent getSpoofedAgentByName(String username) {
+		return shortNameToSpoofedAgent.get(shortenName(username));
+	}
+
 	Set<String> getNames() {
 		return nameToSession.keySet();
 	}
 
 	Environment getEnvironment() {
 		return environment;
+	}
+
+	/** Spawns a fake player */
+	void spoofPlayer(Point2D.Double point) {
+		PlayerAgent spoofedPlayer = environment.spawnPlayer(point);
+		shortNameToSpoofedAgent.put(shortenName(spoofedPlayer.getName()), spoofedPlayer);
 	}
 
 	/** When a client closes their connection. */

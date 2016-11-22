@@ -221,10 +221,15 @@ public enum Command {
 
 				String targetName = args[1];
 				PlayerAgent target = server.getPlayerAgentByShortName(targetName);
-				if (target != null) {
-					target.applyDamage(target.getMaxHealth());
+				if (target == null) {
+					target = server.getSpoofedAgentByName(targetName);
+					if (target == null) {
+						server.unicast("Player '" + targetName + "' not found.", sourceSession);
+					} else {
+						target.applyDamage(target.getMaxHealth());
+					}
 				} else {
-					server.unicast("Player '" + targetName + "' not found.", sourceSession);
+					target.applyDamage(target.getMaxHealth());
 				}
 			}
 		},
@@ -338,7 +343,7 @@ public enum Command {
 					}
 				}
 				if (args[1].equalsIgnoreCase("player")) {
-					server.getEnvironment().spawnPlayer(new Point2D.Double(x, y));
+					server.spoofPlayer(new Point2D.Double(x, y));
 				} else if (args[1].equalsIgnoreCase("scout")) {
 					server.getEnvironment().spawnScout(new Point2D.Double(x, y));
 				}

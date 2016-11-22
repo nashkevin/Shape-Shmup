@@ -197,13 +197,13 @@ public class Environment {
 		ArrayList<Agent> collisions = new ArrayList<Agent>();
 		for (Agent a : getActivePlayerAgents()) {
 			if (a.getTeam() != p.getOwner().getTeam() &&
-				a.getPosition().distance(p.getPosition()) < 35) {
+				a.getPosition().distance(p.getPosition()) < 35 * a.getSize()) {
 				collisions.add(a);
 			}
 		}
 		for (Agent a : getActiveNPCAgents()) {
 			if (a.getTeam() != p.getOwner().getTeam() &&
-				a.getPosition().distance(p.getPosition()) < 35) {
+				a.getPosition().distance(p.getPosition()) < 35 * a.getSize()) {
 				collisions.add(a);
 			}
 		}
