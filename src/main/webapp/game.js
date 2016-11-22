@@ -506,7 +506,7 @@ function updatePlayer(playerObject) {
 	playerSprite.rotation = playerObject.angle + Math.PI;
 	var healthForeground = playerContainer.getChildAt(3);
 	var healthPercent = playerObject.health / playerObject.maxHealth;
-	healthForeground.scale = new PIXI.Point(healthPercent, 1);
+	healthForeground.scale.set(healthPercent, 1);
 
 	return playerContainer;
 }
@@ -546,6 +546,7 @@ function createNpc(npcObject) {
 	npcSprite.anchor.set(2/3, 0.5);
 	npcSprite.pivot.set(2/3, 0.5);
 	npcSprite.position.set(0, 0);
+	npcSprite.scale.set(npcObject.size);
 
 	npcContainer.addChild(npcSprite);
 
@@ -559,7 +560,7 @@ function createNpc(npcObject) {
 	healthBackground.pivot.set(0, 0);
 	healthBackground.position = npcSprite.position;
 	healthBackground.position.x -= 25;
-	healthBackground.position.y -= 45;
+	healthBackground.position.y -= 45 * npcObject.size;
 
 	npcContainer.addChild(healthBackground);
 
@@ -573,11 +574,12 @@ function createNpc(npcObject) {
 	healthForeground.pivot.set(0, 0);
 	healthForeground.position = npcSprite.position;
 	healthForeground.position.x -= 25;
-	healthForeground.position.y -= 45;
+	healthForeground.position.y -= 45 * npcObject.size;
 
 	npcContainer.addChild(healthForeground);
 
 	npcContainer.position.set(0, 0);
+
 	stage.addChild(npcContainer);
 
 	gameEntities[npcObject.id] = npcContainer;
@@ -592,7 +594,7 @@ function updateNpc(npcObject) {
 	npcSprite.rotation = npcObject.angle + Math.PI;
 	var healthForeground = npcContainer.getChildAt(2);
 	var healthPercent = npcObject.health / npcObject.maxHealth;
-	healthForeground.scale = new PIXI.Point(healthPercent, 1);
+	healthForeground.scale.set(healthPercent, 1);
 
 	return npcContainer;
 }
@@ -616,8 +618,8 @@ function createProjectile(projectileObject) {
 
 	// Create the sprite that represents the player itself
 	var projectileSprite = new PIXI.Sprite(renderer.generateTexture(projectileShape));
-	projectileSprite.anchor.set(2/3, 0.5);
-	projectileSprite.pivot.set(2/3, 0.5);
+	projectileSprite.anchor.set(0.5, 0.5);
+	projectileSprite.pivot.set(0.5, 0.5);
 	projectileSprite.position.set(0, 0);
 
 	projectileSprite.position.set(0, 0);

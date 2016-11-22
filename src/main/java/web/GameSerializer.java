@@ -80,6 +80,7 @@ public class GameSerializer {
 		public JsonElement serialize(Agent src, Type typeOfSrc, JsonSerializationContext context) {
 			JsonObject element = new JsonObject();
 			element.add("id", new JsonPrimitive(src.getID().toString()));
+			element.add("size", new JsonPrimitive(src.getSize()));
 			element.add("health", new JsonPrimitive(src.getHealth()));
 			element.add("maxHealth", new JsonPrimitive(src.getMaxHealth()));
 			Point2D.Double point = src.getPosition();

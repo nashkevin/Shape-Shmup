@@ -16,7 +16,7 @@ public class Scout extends NPCAgent {
 			position,
 			new ProjectileFactory(environment, null, 1 + level / 3, 5,
 				Math.toRadians(10), 1000, 0.5),
-			1 + Math.log(level),
+			0.5 + Math.log(level),
 			1 + level / 2,
 			1,
 			1000
