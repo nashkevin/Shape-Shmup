@@ -92,6 +92,7 @@ public class Projectile {
 		if (agents != null) {
 			for (Agent agent : agents) {
 				agent.applyDamage(damage);
+				getOwner.awardPoints(damage);
 				despawn();
 				return;
 			}

@@ -24,8 +24,9 @@ public class PlayerAgent extends Agent {
 	private String name = "An Unnamed Hero";
 	private int level = 1;
 	private int points = 0;
+	private int pointsUntilLevelUp;
 
-	Queue<ClientInput> eventInbox; 
+	Queue<ClientInput> eventInbox;
 
 	public PlayerAgent(
 		Environment environment, Point2D.Double position, String name
@@ -42,6 +43,7 @@ public class PlayerAgent extends Agent {
 		);
 
 		this.name = name;
+		this.pointsUntilLevelUp = levelToPoints(level + 1);
 		this.eventInbox = new LinkedList<ClientInput>();
 
 		this.getGun().setOwner(this);
@@ -54,6 +56,37 @@ public class PlayerAgent extends Agent {
 	public final void setName(String name) {
 		this.name = name;
 	}
+
+	public void awardPoints(int pointsAwarded) {
+		if (pointsAwarded >= pointsUntilLevelUp) {
+			this.points = pointsAwarded - pointsUntilLevelUp;
+			level++; // Level up!
+			upgrade(level);
+			while (this.points > levelToPoints(level)) {
+				this.points -= levelToPoints(level);
+				level++;
+				upgrade(level);
+			}
+			pointsUntilLevelUp = levelToPoints(level) - this.points;
+		} else {
+			this.points += pointsAwarded;
+		}
+	}
+
+	private void upgrade(int level) {
+		// To-do: modify attributes based on level
+	}
+
+	/** Returns the number of points needed to reach the given level */
+	public static int levelToPoints(int level) {
+		return level * level + 100;
+	}
+
+	/** Returns the level that would be reached by earning
+	 *  the given number of points */
+	public static int pointsToLevel(int points) {
+		return (points < 100) ? 0 : (int)Math.sqrt(points - 100);
+	}	
 
 	@Override
 	public final void despawn() {
