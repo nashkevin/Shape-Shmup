@@ -25,9 +25,9 @@ import java.util.TimerTask;
 */
 public class Environment {
 	/** Radius of the environment, in pixels. Value is arbitrarily chosen. */
-	private static final double RADIUS = 50000;
+	private static final double RADIUS = 10000;
 	/** The ideal ratio of NPCAgents to PlayerAgents */
-	private static final int NPC_PLAYER_RATIO = 5;
+	private static final int NPC_PLAYER_RATIO = 20;
 	/** The frame rate, in Hz */
 	private static final int FRAME_RATE = 30;
 	/** A random number generator **/
@@ -82,6 +82,7 @@ public class Environment {
 
 	public void despawnNPCAgent(NPCAgent agent) {
 		activeNPCAgents.remove(agent);
+		// agent = null;
 		if (verbose) {
 			System.out.println(agent.getID() + " npc was despawned.");
 		}
@@ -89,6 +90,7 @@ public class Environment {
 
 	public void despawnPlayerAgent(PlayerAgent agent) {
 		activePlayerAgents.remove(agent);
+		// agent = null;
 		if (verbose) {
 			System.out.println("\"" + agent.getName() + "\" was despawned.");
 		}
@@ -96,6 +98,7 @@ public class Environment {
 
 	public void despawnProjectile(Projectile projectile) {
 		activeProjectiles.remove(projectile);
+		// projectile = null;
 		if (verbose) {
 			System.out.println("Projectile was despawned.");
 		}
@@ -193,12 +196,16 @@ public class Environment {
 	public ArrayList<Agent> checkCollision(Projectile p) {
 		ArrayList<Agent> collisions = new ArrayList<Agent>();
 		for (Agent a : getActivePlayerAgents()) {
-			if (p.getPosition().equals(a.getPosition()) && a.getTeam() != p.getOwner().getTeam())
+			if (a.getTeam() != p.getOwner().getTeam() &&
+				a.getPosition().distance(p.getPosition()) < 35) {
 				collisions.add(a);
+			}
 		}
 		for (Agent a : getActiveNPCAgents()) {
-			if (p.getPosition().equals(a.getPosition()) && a.getTeam() != p.getOwner().getTeam())
+			if (a.getTeam() != p.getOwner().getTeam() &&
+				a.getPosition().distance(p.getPosition()) < 35) {
 				collisions.add(a);
+			}
 		}
 		return collisions;
 	}

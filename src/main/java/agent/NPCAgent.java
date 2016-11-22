@@ -63,7 +63,7 @@ public abstract class NPCAgent extends Agent {
 		double angleToPoint = getAngleTo(p);		
 
 		// update to face the point
-		setAngle(angleToPoint);
+		setAngle(-angleToPoint);
 
 		// if the NPCAgent is too far away from its target
 		if (getPosition().distance(p) > DESIRED_SPACING) {
@@ -81,7 +81,7 @@ public abstract class NPCAgent extends Agent {
 			}
 
 			x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
-			y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
+			y = getVelocity().getMagnitude() * -Math.sin(getVelocity().getAngle());
 			
 			getPosition().x += x;
 			getPosition().y += y;
