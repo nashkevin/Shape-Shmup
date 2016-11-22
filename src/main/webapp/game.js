@@ -351,6 +351,10 @@ function closeSocket() {
 	window.location.reload();
 }
 
+function gameOver() {
+	//TODO implement
+}
+
 
 //5. Animation
 
@@ -373,20 +377,21 @@ function updateStage(json) {
 			break;
 		}
 	}
-	if (thisPlayer === null) {
-		return;
-	}
 
 	// Iterate through despawned player agents
 	for (var i = 0; i < despawnedPlayerAgents.length; i++) {
 		var player = gameEntities[despawnedPlayerAgents[i].id];
-		player.visible = false;
+		player.visible = false; //TODO animate disappearance
+
+		if (despawnedPlayerAgents[i].id === playerAgentID) {
+			gameOver();
+		}
 	}
 
 	// Iterate through despawned NPC agents
 	for (var i = 0; i < despawnedNPCAgents.length; i++) {
 		var npc = gameEntities[despawnedNPCAgents[i].id];
-		npc.visible = false;
+		npc.visible = false; //TODO animate disappearance
 	}
 
 	// Iterate through despawned projectiles
