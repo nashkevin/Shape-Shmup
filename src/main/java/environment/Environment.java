@@ -134,7 +134,6 @@ public class Environment {
 		if (verbose) {
 			System.out.println("Level " + level + " scout (" +
 				agent.getID() + ") was spawned.");
-			System.out.println("[LEVEL " + level + " SCOUT]\n" + agent.toString());
 		}
 		return agent;
 	}
