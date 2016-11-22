@@ -553,7 +553,7 @@ function createNpc(npcObject) {
 
 	// Create the primitive shape that will be used as the texture for the sprite
 	var npcShape = new PIXI.Graphics();
-	npcShape.lineStyle(4, 0xE0A12E, 1)
+	npcShape.lineStyle(4 * (1 / npcObject.size), 0xE0A12E, 1)
 	npcShape.beginFill(0xFCE7CC);
 	npcShape.drawPolygon([
 		0,  25,

@@ -36,7 +36,7 @@ public class PlayerAgent extends Agent {
 			new ProjectileFactory(environment, null, 1, 10,
 				Math.toRadians(5.0), 750, 1.0),
 			Agent.Team.RED,
-			5,
+			1,
 			100,
 			1
 		);

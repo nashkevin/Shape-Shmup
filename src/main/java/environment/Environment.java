@@ -98,10 +98,6 @@ public class Environment {
 
 	public void despawnProjectile(Projectile projectile) {
 		activeProjectiles.remove(projectile);
-		// projectile = null;
-		if (verbose) {
-			System.out.println("Projectile was despawned.");
-		}
 	}
 
 	/** Spawns a playable character entity. */
@@ -125,14 +121,19 @@ public class Environment {
 	}
 
 	public Scout spawnScout() {
-		return spawnScout(1);
+		// Randomly pick level from 1 to 15
+		int level = random.nextInt(15) + 1;
+		return spawnScout(level);
 	}
 
 	public Scout spawnScout(Point2D.Double point) {
-		Scout agent = new Scout(this, point, 1);
+		// Randomly pick level from 1 to 100
+		int level = random.nextInt(100) + 1;
+		Scout agent = new Scout(this, point, random.nextInt(20));
 		activeNPCAgents.add(agent);
 		if (verbose) {
-			System.out.println("Level 1 scout (" + agent.getID() + ") was spawned.");
+			System.out.println("Level " + level + " scout (" +
+				agent.getID() + ") was spawned.");
 		}
 		return agent;
 	}
@@ -141,16 +142,14 @@ public class Environment {
 		Scout agent = new Scout(this, randomNPCSpawn(), level);
 		activeNPCAgents.add(agent);
 		if (verbose) {
-			System.out.println("Level " + level + " scout (" + agent.getID() + ") was spawned.");
+			System.out.println("Level " + level + " scout (" +
+				agent.getID() + ") was spawned.");
 		}
 		return agent;
 	}
 
 	public void addProjectile(Projectile p) {
 		activeProjectiles.add(p);
-		if (verbose) {
-			System.out.println("Projectile was spawned.");
-		}
 	}
 
 	public static Point2D.Double polarToCartesian(double angle, double radius) {
