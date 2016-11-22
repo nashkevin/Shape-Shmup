@@ -210,7 +210,12 @@ function parseJson(json) {
 	if (json.pregame) {
 		// Set the ID of the corresponding player agent on the server end
 		// so this client knows which agent it is when updating the screen.
-		playerAgentID = json.id;
+		if (json.id) {
+			playerAgentID = json.id;
+			startGamePlay();
+		} else if (json.duplicateName) {
+			alert("That name is already in use! Please choose another one.");
+		}
 	} else {
 		updateStage(json);
 	}
@@ -221,11 +226,33 @@ function connectedToGame() {
 	return (typeof webSocket !== "undefined" && webSocket.readyState === webSocket.OPEN);
 }
 
+/** Wait until the connection is established and submit the chosen username. */
+function submitUsername() {
+	var state = webSocket.readyState;
+	if (state === webSocket.CONNECTING) {
+		setTimeout(submitUsername, 250);
+	} else if (state === webSocket.OPEN) {
+		// Once connection is established
+
+		// Send username to the server
+		username = document.getElementById("username").value.trim();
+		webSocket.send(JSON.stringify({ 'name': username }));
+	} else {
+		alert("The connection to the server was closed before it could be established.");
+	}
+}
+
 // Connects to the WebSocket.
 function joinGame() {
 	// Ensures only one connection is open at a time
 	if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
-		addMessageToChat("WebSocket is already opened.");
+		if (playerAgentID == null) {
+			// The player ID is unset, so we're retrying for a username.
+			submitUsername();
+		} else {
+			// The player ID is already set, so we are already in gameplay.
+			addMessageToChat("WebSocket is already opened.");
+		}
 		return;
 	}
 	// Create a new instance of the websocket
@@ -266,29 +293,16 @@ function joinGame() {
 		addMessageToChat("Connection closed");
 	};
 
-	/** Wait until the connection is established and submit the chosen username. */
-	function submitUsername() {
-		var state = webSocket.readyState;
-		if (state === webSocket.CONNECTING) {
-			setTimeout(submitUsername, 250);
-		} else if (state === webSocket.OPEN) {
-			// Once connection is established
-
-			// Send username to the server
-			username = document.getElementById("username").value.trim();
-			webSocket.send(JSON.stringify({ 'name': username }));
-
-			// Change the view from welcome screen to the main game screen
-			document.getElementById("pregame").classList.add("hidden");
-			document.getElementById("game").classList.remove("hidden");
-
-			resize();
-			sendFrameInput();
-		} else {
-			alert("The connection to the server was closed before it could be established.");
-		}
-	}
 	submitUsername();
+}
+
+function startGamePlay() {
+	// Change the view from welcome screen to the main game screen
+	document.getElementById("pregame").classList.add("hidden");
+	document.getElementById("game").classList.remove("hidden");
+
+	resize();
+	sendFrameInput();
 }
 
 /** Sends the client's input to the server. Runs each frame. */

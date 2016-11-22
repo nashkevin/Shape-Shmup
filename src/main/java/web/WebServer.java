@@ -28,6 +28,9 @@ public class WebServer {
 	/** The chosen name of each named player, mapped to session. */
 	private static final Map<String, Session> nameToSession =
 		Collections.synchronizedMap(new HashMap<>());
+	/** The chosen name in lowercase and without spaces, mapped to session. */
+	private static final Map<String, Session> shortNameToSession =
+			Collections.synchronizedMap(new HashMap<>());
 	private static Environment environment;
 	private static GameSerializer gameThread;
 
@@ -73,22 +76,33 @@ public class WebServer {
 		Gson g = new Gson();
 		ClientInput input = g.fromJson(message, ClientInput.class);
 
-		// Add new player.
+		// Try to add new player (reject them if the name is duplicated).
 		if (input.getName() != null && input.getName() != "") {
-			synchronized(sessionToName) {
-				sessionToName.put(session, input.getName());
-			}
-			synchronized(nameToSession) {
-				nameToSession.put(input.getName(), session);
-			}
-			PlayerAgent agent = environment.spawnPlayer(input.getName());
-			synchronized(sessionToPlayerAgent) {
-				sessionToPlayerAgent.put(session, agent);
-			}
+			// Check for duplicate names.
+			if (shortNameToSession.containsKey(shortenName(input.getName()))) {
+				unicast("{\"pregame\":true, \"duplicateName\": true}", session);
+				return;  // Not in gameplay yet, so don't proceed to the rest of the method. 
+			} else {
+				// Name is unique, so we can add the client to the game.
+				synchronized(sessionToName) {
+					sessionToName.put(session, input.getName());
+				}
+				synchronized(nameToSession) {
+					nameToSession.put(input.getName(), session);
+				}
+				synchronized(shortNameToSession) {
+					shortNameToSession.put(shortenName(input.getName()), session);
+				}
+				
+				PlayerAgent agent = environment.spawnPlayer(input.getName());
+				synchronized(sessionToPlayerAgent) {
+					sessionToPlayerAgent.put(session, agent);
+				}
 
-			// Send the character's ID to the client.
- 			unicast("{\"pregame\":true, \"id\": \"" + agent.getID() + "\"}", session);
-			broadcast(input.getName() + " joined the game.");
+				// Send the character's ID to the client.
+	 			unicast("{\"pregame\":true, \"id\": \"" + agent.getID() + "\"}", session);
+				broadcast(input.getName() + " joined the game.");
+			}
 		}
 
 		// handle client chat input
@@ -146,6 +160,10 @@ public class WebServer {
 	PlayerAgent getPlayerAgentByName(String username) {
 		return sessionToPlayerAgent.get(getSessionByName(username));
 	}
+	
+	PlayerAgent getPlayerAgentByShortName(String username) {
+		return sessionToPlayerAgent.get(shortNameToSession.get(shortenName(username)));
+	}
 
 	Set<String> getNames() {
 		return nameToSession.keySet();
@@ -171,6 +189,13 @@ public class WebServer {
 		String name = sessionToName.remove(session);
 		if (name != null) {
 			nameToSession.remove(name);
+			shortNameToSession.remove(shortenName(name));
 		}
+	}
+	
+	/** Removes all whitespace and converts to lowercase. Used to check for duplicate names
+	 * and so that players can refer to shortened names in chat commands. */
+	private static String shortenName(String name) {
+		return name.replaceAll("\\s+", "").toLowerCase();
 	}
 }
