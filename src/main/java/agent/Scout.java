@@ -16,11 +16,12 @@ public class Scout extends NPCAgent {
 			position,
 			new ProjectileFactory(environment, null, 1 + level / 3, 5,
 				Math.toRadians(10), 1000, 0.5),
-			0.5 + level * 0.02,
+			0.5 + level * 0.005,
 			1 + level / 2,
 			1,
 			1000
 		);
+
 		this.getGun().setOwner(this);
 	}
 }

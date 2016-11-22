@@ -27,7 +27,7 @@ public class Environment {
 	/** Radius of the environment, in pixels. Value is arbitrarily chosen. */
 	private static final double RADIUS = 10000;
 	/** The ideal ratio of NPCAgents to PlayerAgents */
-	private static final int NPC_PLAYER_RATIO = 20;
+	private static final int NPC_PLAYER_RATIO = 5;
 	/** The frame rate, in Hz */
 	private static final int FRAME_RATE = 30;
 	/** A random number generator **/
@@ -129,11 +129,12 @@ public class Environment {
 	public Scout spawnScout(Point2D.Double point) {
 		// Randomly pick level from 1 to 100
 		int level = random.nextInt(100) + 1;
-		Scout agent = new Scout(this, point, random.nextInt(20));
+		Scout agent = new Scout(this, point, level);
 		activeNPCAgents.add(agent);
 		if (verbose) {
 			System.out.println("Level " + level + " scout (" +
 				agent.getID() + ") was spawned.");
+			System.out.println("[LEVEL " + level + " SCOUT]\n" + agent.toString());
 		}
 		return agent;
 	}

@@ -72,7 +72,7 @@ public enum Command {
 		},
 	BRING ("bring",
 			new String[] {"fetch", "summon"},
-			("Brings a player to you or to another player or to a location." +
+			("Brings a player to you or to another player or to coordinates." +
 				"<br>Syntax: /bring username [username|x y]")
 		) {
 			@Override
@@ -150,7 +150,7 @@ public enum Command {
 		},
 	GOTO ("goto",
 			new String[] {"tp"},
-			"Sends you to a location.<br>Syntax: /goto [player|x y]"
+			"Sends you to a player or to coordinates.<br>Syntax: /goto [player|x y]"
 		) {
 			@Override
 			protected void perform(String[] args, Session session, WebServer server) {
@@ -172,6 +172,57 @@ public enum Command {
 						caller.setPosition(targetPlayer.getPosition());
 					} else {
 						server.unicast("Player '" + args[1] + "' not found.", session);
+					}
+				}
+				else {
+					throw new IllegalArgumentException();
+				}
+			}
+		},
+	HEAL ("heal",
+			null,
+			"Gives a player full health or a given amount.<br>Syntax: /heal [username] [health]"
+		) {
+			@Override
+			protected void perform(String[] args, Session sourceSession, WebServer server) {
+				PlayerAgent target;
+				int healValue;
+				// /heal -> heals self to max health
+				if (args.length == 1) {
+					target = server.getPlayerAgentBySession(sourceSession);
+					target.applyHealing(target.getMaxHealth());
+				}
+				else if (args.length == 2) {
+					// /heal 10 -> heals self by 10
+					try {
+						healValue = Integer.parseInt(args[1]);
+						target = server.getPlayerAgentBySession(sourceSession);
+						target.applyHealing(healValue);
+					}
+					// /heal Player -> heals Player to max health
+					catch (NumberFormatException ex) {
+						target = server.getPlayerAgentByShortName(args[1]);
+						if (target != null) {
+							target.applyHealing(target.getMaxHealth());
+						} else {
+							server.unicast("Player '" + args[1] + "' not found.", sourceSession);
+						}
+					}
+				}
+				// heal Player 10 -> heals Player by 10
+				else if (args.length == 3) {
+					target = server.getPlayerAgentByShortName(args[1]);
+					if (target != null) {
+						try {
+							healValue = Integer.parseInt(args[2]);
+							target = server.getPlayerAgentBySession(sourceSession);
+							target.applyHealing(healValue);
+						}
+						catch (NumberFormatException ex) {
+							throw new IllegalArgumentException();
+						}
+					} else {
+						server.unicast("Player '" + args[1] + "' not found.", sourceSession);
 					}
 				}
 				else {
@@ -323,7 +374,7 @@ public enum Command {
 		},
 	SPAWN ("spawn",
 			new String[] {"create"},
-			("Spawns a game object at your location or a given location." +
+			("Spawns an Agent at your location or given coordinates." +
 				"<br>Syntax: /spawn (Player|Scout) [x y]")
 		) {
 			@Override
@@ -351,7 +402,7 @@ public enum Command {
 		},
 	WHERE ("where",
 			new String[] {"locate"} ,
-			("Gives your location or the location of another player. " +
+			("Gives your coordinates or the coordinates of another player. " +
 				"<br>Syntax: /where [username]")
 		) {
 			@Override

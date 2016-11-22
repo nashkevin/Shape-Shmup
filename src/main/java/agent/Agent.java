@@ -153,12 +153,15 @@ public abstract class Agent {
 	 * end of getters and setters *
 	 ******************************/
 
+
 	/** reduces health by an amount */
 	public final void applyDamage(int amount) {
-		health -= amount;
-		if (health <= 0) {
-			despawn();
-		}
+		setHealth(getHealth() - amount);
+	}
+
+	/** increases health by an amount */
+	public final void applyHealing(int amount) {
+		setHealth(getHealth() + amount);
 	}
 
 	public final double getAngleTo(Agent other) {
