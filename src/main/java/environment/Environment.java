@@ -11,6 +11,7 @@ import java.awt.geom.Point2D;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Random;
 import java.util.Set;
@@ -40,6 +41,10 @@ public class Environment {
 	private Set<NPCAgent> activeNPCAgents;
 	private Set<Projectile> activeProjectiles;
 
+	private Set<PlayerAgent> recentlyDespawnedPlayerAgents;
+	private Set<NPCAgent> recentlyDespawnedNPCAgents;
+	private Set<Projectile> recentlyDespawnedProjectiles;
+
 	private Timer timer = new Timer("Environment Timer");
 
 	public Environment() {
@@ -52,6 +57,10 @@ public class Environment {
 		activePlayerAgents = Collections.newSetFromMap(new ConcurrentHashMap<PlayerAgent, Boolean>());
 		activeNPCAgents = Collections.newSetFromMap(new ConcurrentHashMap<NPCAgent, Boolean>());
 		activeProjectiles = Collections.newSetFromMap(new ConcurrentHashMap<Projectile, Boolean>());
+		
+		recentlyDespawnedPlayerAgents = Collections.newSetFromMap(new ConcurrentHashMap<PlayerAgent, Boolean>());
+		recentlyDespawnedNPCAgents = Collections.newSetFromMap(new ConcurrentHashMap<NPCAgent, Boolean>());
+		recentlyDespawnedProjectiles = Collections.newSetFromMap(new ConcurrentHashMap<Projectile, Boolean>());
 
 		// call update at FRAME_RATE
 		timer.schedule(new TimerTask() {
@@ -79,9 +88,31 @@ public class Environment {
 	public Set<Projectile> getActiveProjectiles() {
 		return this.activeProjectiles;
 	}
+	
+	/** Gets the player agents who were despawned since the last time this method was called. */
+	public synchronized Set<PlayerAgent> getRecentlyDespawnedPlayerAgents() {
+		Set<PlayerAgent> agents = new HashSet<>(recentlyDespawnedPlayerAgents);
+		recentlyDespawnedPlayerAgents.clear();
+		return agents;
+	}
+
+	/** Gets the NPC agents that were despawned since the last time this method was called. */
+	public synchronized Set<NPCAgent> getRecentlyDespawnedNPCAgents() {
+		Set<NPCAgent> agents = new HashSet<>(recentlyDespawnedNPCAgents);
+		recentlyDespawnedNPCAgents.clear();
+		return agents;
+	}
+
+	/** Gets the projectiles that were despawned since the last time this method was called. */
+	public synchronized Set<Projectile> getRecentlyDespawnedProjectiles() {
+		Set<Projectile> projectiles = new HashSet<>(recentlyDespawnedProjectiles);
+		recentlyDespawnedProjectiles.clear();
+		return projectiles;
+	}
 
 	public void despawnNPCAgent(NPCAgent agent) {
 		activeNPCAgents.remove(agent);
+		recentlyDespawnedNPCAgents.add(agent);
 		// agent = null;
 		if (verbose) {
 			System.out.println(agent.getID() + " npc was despawned.");
@@ -90,6 +121,7 @@ public class Environment {
 
 	public void despawnPlayerAgent(PlayerAgent agent) {
 		activePlayerAgents.remove(agent);
+		recentlyDespawnedPlayerAgents.add(agent);
 		// agent = null;
 		if (verbose) {
 			System.out.println("\"" + agent.getName() + "\" was despawned.");
@@ -98,6 +130,7 @@ public class Environment {
 
 	public void despawnProjectile(Projectile projectile) {
 		activeProjectiles.remove(projectile);
+		recentlyDespawnedProjectiles.add(projectile);
 	}
 
 	/** Spawns a playable character entity. */
