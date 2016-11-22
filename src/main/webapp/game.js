@@ -72,7 +72,11 @@ window.onkeydown = function(e) {
 	if (connectedToGame()) {
 		var code = e.keyCode ? e.keyCode : e.which;
 		switch (code) {
-			case 87: case 38:  // 'w' or up
+			case 32: // spacebar
+				e.preventDefault();
+				startFiring(e);
+				break;
+			case 87: case 38: // 'w' or up
 				e.preventDefault();
 				clientInput.up = true;
 				delete clientInput.down;
@@ -118,6 +122,10 @@ window.onkeyup = function(e) {
 	if (connectedToGame()) {
 		var code = e.keyCode ? e.keyCode : e.which;
 		switch (code) {
+			case 32: // spacebar
+				e.preventDefault();
+				stopFiring(e);
+				break;
 			case 87: case 38:  // 'w' or up
 				e.preventDefault();
 				delete clientInput.up;
@@ -146,9 +154,9 @@ canvas.addEventListener("mousemove", trackAngle);
 // Action when the user fires a projectile by clicking with the mouse
 function startFiring(e) {
 	this.focus(); // Move focus to the game canvas
-	if (e.button == 0 && connectedToGame()) {
-		clientInput.isFiring = true;
+	if ((e.button == 0 || e.keyCode == 32) && connectedToGame()) {
 		trackAngle(e);
+		clientInput.isFiring = true;
 	}
 }
 
