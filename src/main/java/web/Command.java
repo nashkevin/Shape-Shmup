@@ -80,7 +80,7 @@ public enum Command {
 				PlayerAgent caller = server.getPlayerAgentBySession(session);
 
 				if (args.length == 2) {
-					PlayerAgent targetPlayer = server.getPlayerAgentByName(args[1]);
+					PlayerAgent targetPlayer = server.getPlayerAgentByShortName(args[1]);
 					if (targetPlayer == null) {
 						server.unicast("Player '" + args[1] + "' not found.", session);
 					} else {
@@ -88,8 +88,8 @@ public enum Command {
 					}
 				}
 				else if (args.length == 3) {
-					PlayerAgent playerFrom = server.getPlayerAgentByName(args[1]);
-					PlayerAgent playerTo = server.getPlayerAgentByName(args[2]);
+					PlayerAgent playerFrom = server.getPlayerAgentByShortName(args[1]);
+					PlayerAgent playerTo = server.getPlayerAgentByShortName(args[2]);
 					if (playerFrom == null) {
 						server.unicast("Player '" + args[1] + "' not found.", session);
 					}
@@ -101,7 +101,7 @@ public enum Command {
 					}
 				}
 				else if (args.length == 4) {
-					PlayerAgent targetPlayer = server.getPlayerAgentByName(args[1]);
+					PlayerAgent targetPlayer = server.getPlayerAgentByShortName(args[1]);
 					if (targetPlayer == null) {
 						server.unicast("Player '" + args[1] + "' not found.", session);
 					} else {
@@ -167,7 +167,7 @@ public enum Command {
 					}
 				}
 				else if (args.length == 2) {
-					PlayerAgent targetPlayer = server.getPlayerAgentByName(args[1]);
+					PlayerAgent targetPlayer = server.getPlayerAgentByShortName(args[1]);
 					if (targetPlayer != null) {
 						caller.setPosition(targetPlayer.getPosition());
 					} else {
@@ -220,7 +220,7 @@ public enum Command {
 				}
 
 				String targetName = args[1];
-				PlayerAgent target = server.getPlayerAgentByName(targetName);
+				PlayerAgent target = server.getPlayerAgentByShortName(targetName);
 				if (target != null) {
 					target.applyDamage(target.getMaxHealth());
 				} else {
@@ -357,8 +357,8 @@ public enum Command {
 					server.unicast("(" + position.getX() + ", " + position.getY() + ")", session);
 				}
 				else if (args.length == 2) {
-					if (server.getPlayerAgentByName(args[1]) != null) {
-						position = server.getPlayerAgentByName(args[1]).getPosition();
+					if (server.getPlayerAgentByShortName(args[1]) != null) {
+						position = server.getPlayerAgentByShortName(args[1]).getPosition();
 						server.unicast("(" + position.getX() + ", " + position.getY() + ")", session);
 					} else {
 						server.unicast("Player '" + args[1] + "' not found.", session);
