@@ -38,7 +38,8 @@ renderer.autoResize = true;
 
 /** Stage and background setup */
 var stage = new PIXI.Container();
-var bg = new PIXI.Texture.fromImage("images/background.png");
+var bg = new PIXI.Texture.fromImage("images/background.png",
+	scaleMode = PIXI.SCALE_MODES.LINEAR);
 var bgTile = new PIXI.extras.TilingSprite(bg, 1920, 1080);
 bgTile.position.set(0, 0);
 bgTile.tilePosition.set(0, 0);
@@ -329,7 +330,7 @@ function joinGame() {
 
 	/** Handle closing the connection */
 	webSocket.onclose = function(e) {
-		addMessageToChat("Connection closed");
+		addMessageToChat("Connection closed.");
 	};
 
 	submitUsername();

@@ -66,7 +66,7 @@ public class WebServer {
 		if (verbose) {
 			System.out.println(session.getId() + " has opened a connection.");
 		}
-		session.getAsyncRemote().sendText("Connection established");
+		session.getAsyncRemote().sendText("Connection established.");
 		synchronized(sessionToName) {
 			sessionToName.put(session, null);
 		}
@@ -106,7 +106,7 @@ public class WebServer {
 
 				// Send the character's ID to the client.
 	 			unicast("{\"pregame\":true, \"id\": \"" + agent.getID() + "\"}", session);
-				broadcast(input.getName() + " joined the game.");
+				broadcast("<b>" + input.getName() + "</b> joined the game.");
 			}
 		}
 
@@ -154,6 +154,10 @@ public class WebServer {
 
 	Session getSessionByName(String username) {
 		return nameToSession.get(username);
+	}
+
+	Session getSessionByShortName(String username) {
+		return shortNameToSession.get(username);
 	}
 
 	String getNameBySession(Session session) {

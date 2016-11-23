@@ -242,19 +242,17 @@ public enum Command {
 
 				String targetName = args[1];
 				String sourceName = server.getNameBySession(sourceSession);
-				Session targetSession = server.getSessionByName(targetName);
+				Session targetSession = server.getSessionByShortName(targetName.toLowerCase());
 				if (sourceSession.equals(targetSession)) {
 					server.unicast("You can't kick yourself. Use /exit instead.", sourceSession);
 				} else if (targetSession != null) {
-					String reasonPhrase = targetName + " was kicked by " + sourceName + ".";
-					System.out.println(reasonPhrase);
-					CloseReason.CloseCode code = CloseReason.CloseCodes.NORMAL_CLOSURE;
+					System.out.println(targetName + " was kicked from the game by " + sourceName + ".");
 					try {
-						targetSession.close(new CloseReason(code, reasonPhrase));
+						server.unicast("You were kicked by " + sourceName + ".", targetSession);
+						targetSession.close();
 					} catch (IOException ex) {
 						ex.printStackTrace();
 					}
-					server.broadcast(reasonPhrase);
 				}
 				else
 					server.unicast("Player '" + targetName + "' not found.", sourceSession);
@@ -329,7 +327,7 @@ public enum Command {
 
 				String sourceName = server.getNameBySession(sourceSession);
 				String destinationName = args[1];
-				Session destinationSession = server.getSessionByName(destinationName);
+				Session destinationSession = server.getSessionByShortName(destinationName);
 
 				if (sourceSession.equals(destinationSession)) {
 					server.unicast("You can't private message yourself.", sourceSession);
