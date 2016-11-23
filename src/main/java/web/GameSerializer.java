@@ -92,6 +92,7 @@ public class GameSerializer {
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));
 			element.add("angle", new JsonPrimitive(src.getAngle()));
+			element.add("color", new JsonPrimitive(src.getHexColor()));
 			return element;
 		}
 	}
@@ -108,6 +109,7 @@ public class GameSerializer {
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));
 			element.add("angle", new JsonPrimitive(src.getAngle()));
+			element.add("color", new JsonPrimitive(src.getHexColor()));
 			return element;
 		}
 	}
@@ -120,6 +122,7 @@ public class GameSerializer {
 			Point2D.Double point = src.getPosition();
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));
+			element.add("color", new JsonPrimitive(src.getHexColor()));
 			return element;
 		}
 	}

@@ -213,6 +213,31 @@ function coordinateToAngle(x, y) {
 	return Math.atan2(y - y_origin, x - x_origin);
 }
 
+function getBorderColor(hex) {
+	const FACTOR = 0.75;
+	var red = parseInt(hex.substring(2, 4), 16);
+	var green = parseInt(hex.substring(4, 6), 16);
+	var blue = parseInt(hex.substring(6, 8), 16);
+
+	red = Math.floor(red * FACTOR);
+	green *= Math.floor(green * FACTOR);
+	blue *= Math.floor(blue * FACTOR);
+
+	red = padString(red.toString(16), "0", 2);
+	green = padString(green.toString(16), "0", 2);
+	blue = padString(blue.toString(16), "0", 2);
+
+	return "0x" + red + green + blue;
+}
+
+/** Left pads a string with the character until it reaches the total length. */
+function padString(string, padChar, length) {
+	while (string.length < length) {
+		string = padChar + string;
+	}
+	return string;
+}
+
 
 //4. Network Communication
 
@@ -475,8 +500,8 @@ function createPlayer(playerObject) {
 
 	// Create the primitive shape that will be used as the texture for the sprite
 	var playerShape = new PIXI.Graphics();
-	playerShape.lineStyle(4, 0x87B56C, 1)
-	playerShape.beginFill(0xD6EAD5);
+	playerShape.lineStyle(4, getBorderColor(playerObject.color), 1)
+	playerShape.beginFill(playerObject.color);
 	playerShape.drawPolygon([
 		0,  25,
 		50, 50,
@@ -560,10 +585,6 @@ function updatePlayer(playerObject) {
 }
 
 
-
-
-
-
 /** Create or update an NPC agent on screen. */
 function drawNpc(npcObject) {
 	if (!gameEntities[npcObject.id]) {
@@ -579,8 +600,8 @@ function createNpc(npcObject) {
 
 	// Create the primitive shape that will be used as the texture for the sprite
 	var npcShape = new PIXI.Graphics();
-	npcShape.lineStyle(4 * (1 / npcObject.size), 0xE0A12E, 1)
-	npcShape.beginFill(0xFCE7CC);
+	npcShape.lineStyle(4 * (1 / npcObject.size), getBorderColor(npcObject.color), 1)
+	npcShape.beginFill(npcObject.color);
 	npcShape.drawPolygon([
 		0,  25,
 		50, 50,
@@ -659,8 +680,8 @@ function drawProjectile(projectileObject) {
 function createProjectile(projectileObject) {
 	// Create the primitive shape that will be used as the texture for the sprite
 	var projectileShape = new PIXI.Graphics();
-	projectileShape.lineStyle(4, 0x87B56C, 1)
-	projectileShape.beginFill(0xD6EAD5);
+	projectileShape.lineStyle(4, getBorderColor(projectileObject.color), 1)
+	projectileShape.beginFill(projectileObject.color);
 	projectileShape.drawCircle(0, 0, 7); // x, y, r (x and y will be set later)
 	projectileShape.endFill();
 

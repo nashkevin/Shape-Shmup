@@ -98,4 +98,8 @@ public class Projectile {
 			}
 		}
 	}
+	
+	public String getHexColor() {
+		return getOwner().getHexColor();
+	}
 }

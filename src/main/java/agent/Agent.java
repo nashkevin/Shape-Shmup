@@ -11,7 +11,15 @@ import java.util.UUID;
 public abstract class Agent {
 
 	public static enum Team {
-		ENEMY, RED, BLUE
+		ENEMY("0xFCE7CC"), RED("0xFF9696"), BLUE("0x7296FF");
+		
+		private String hexColor;
+		private Team(String hexColor) {
+			this.hexColor = hexColor;
+		}
+		public String getColor() {
+			return hexColor;
+		}
 	}
 
 	private UUID id = UUID.randomUUID();
@@ -149,6 +157,10 @@ public abstract class Agent {
 	public final void setHaste(int haste) {
 		this.haste = haste;
 	}
+	/** Override if you want an agent to display with a different color. */
+	public String getHexColor() {
+		return getTeam().getColor();
+	};
 	/******************************
 	 * end of getters and setters *
 	 ******************************/
