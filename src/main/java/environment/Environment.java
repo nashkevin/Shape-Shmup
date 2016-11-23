@@ -122,7 +122,6 @@ public class Environment {
 	public void despawnPlayerAgent(PlayerAgent agent) {
 		activePlayerAgents.remove(agent);
 		recentlyDespawnedPlayerAgents.add(agent);
-		// agent = null;
 		if (verbose) {
 			System.out.println("\"" + agent.getName() + "\" was despawned.");
 		}
