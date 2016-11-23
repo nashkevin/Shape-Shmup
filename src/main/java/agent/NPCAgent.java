@@ -41,6 +41,10 @@ public abstract class NPCAgent extends Agent {
 		this.aggroRange = range;
 	}
 
+	public void awardPoints(int pointsAwarded) {
+		// do nothing
+	}
+
 	@Override
 	public void update() {
 		// if targetting no one or target moves out of range
