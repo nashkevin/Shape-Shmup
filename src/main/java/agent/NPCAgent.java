@@ -51,6 +51,7 @@ public abstract class NPCAgent extends Agent {
 		if (target != null) {
 			approachPoint(target.getPosition());
 			getGun().fireProjectile();
+			target = null; //ensures we must refind a target after firing
 		}
 	}
 
