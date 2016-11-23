@@ -214,14 +214,17 @@ function coordinateToAngle(x, y) {
 }
 
 function getBorderColor(hex) {
-	const FACTOR = 0.75;
+	const PRIMARY_FACTOR = 0.75;
+	const SECONDARY_FACTOR = 0.55;
 	var red = parseInt(hex.substring(2, 4), 16);
 	var green = parseInt(hex.substring(4, 6), 16);
 	var blue = parseInt(hex.substring(6, 8), 16);
 
-	red = Math.floor(red * FACTOR);
-	green *= Math.floor(green * FACTOR);
-	blue *= Math.floor(blue * FACTOR);
+	var max = Math.max(red, green, blue);
+
+	red = Math.floor(red * ((red == max) ? PRIMARY_FACTOR : SECONDARY_FACTOR));
+	green = Math.floor(green * ((green == max) ? PRIMARY_FACTOR : SECONDARY_FACTOR));
+	blue = Math.floor(blue * ((blue == max) ? PRIMARY_FACTOR : SECONDARY_FACTOR));
 
 	red = padString(red.toString(16), "0", 2);
 	green = padString(green.toString(16), "0", 2);

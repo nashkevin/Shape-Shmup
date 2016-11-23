@@ -11,7 +11,7 @@ import java.util.UUID;
 public abstract class Agent {
 
 	public static enum Team {
-		ENEMY("0xFCE7CC"), RED("0xFF9696"), BLUE("0x7296FF");
+		ENEMY("0xF8CECC"), RED("0xD4E9D3"), BLUE("0x0000FF");
 		
 		private String hexColor;
 		private Team(String hexColor) {
