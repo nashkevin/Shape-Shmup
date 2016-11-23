@@ -433,7 +433,7 @@ function updateStage(json) {
 	for (var i = 0; i < despawnedProjectiles.length; i++) {
 		var projectile = gameEntities[despawnedProjectiles[i].id];
 		if (projectile !== undefined) {
-			projectile.visible = false;
+			fadeOutAndShrink(projectile);
 		}
 	}
 
@@ -712,15 +712,33 @@ function updateProjectile(projectileObject) {
 	return projectileSprite;
 }
 
-function fadeOut(entity) {
+function fadeOut(entity, stepSize = 0.05) {
 	if (!(entity in fadingEntities)) {
 		fadingEntities[entity] = entity;
 	}
 
-	entity.alpha -= 0.05;
+	entity.alpha -= stepSize;
 	if (entity.alpha > 0) {
 		requestAnimationFrame(function() {
-			fadeOut(entity);
+			fadeOut(entity, stepSize);
+		});
+	} else {
+		entity.visible = false;
+		delete fadingEntities[entity];
+	}
+}
+
+function fadeOutAndShrink(entity, stepSize = 0.05) {
+	if (!(entity in fadingEntities)) {
+		fadingEntities[entity] = entity;
+	}
+
+	entity.alpha -= stepSize;
+	var nextScale = entity.scale.x * (1 - stepSize)
+	entity.scale.set(nextScale);
+	if (entity.alpha > 0) {
+		requestAnimationFrame(function() {
+			fadeOutAndShrink(entity, stepSize);
 		});
 	} else {
 		entity.visible = false;
