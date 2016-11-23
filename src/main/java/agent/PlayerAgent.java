@@ -57,6 +57,7 @@ public class PlayerAgent extends Agent {
 		this.name = name;
 	}
 
+	@Override
 	public void awardPoints(int pointsAwarded) {
 		if (pointsAwarded >= pointsUntilLevelUp) {
 			this.points = pointsAwarded - pointsUntilLevelUp;

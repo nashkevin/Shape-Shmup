@@ -153,6 +153,11 @@ public abstract class Agent {
 	 * end of getters and setters *
 	 ******************************/
 
+	/** Give experience points to agent. If the agent is a player agent, it should
+	 * accumulate the points. If it is an NPC, it should not do anything. */
+	public void awardPoints(int pointsAwarded) {
+		// No functionality
+	}
 
 	/** reduces health by an amount */
 	public final void applyDamage(int amount) {
