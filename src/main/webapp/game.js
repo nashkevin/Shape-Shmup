@@ -351,11 +351,13 @@ function sendChatMessage() {
 
 function closeSocket() {
 	webSocket.close();
-	window.location.reload();
+	document.getElementById("game").classList.add("hidden");
+	document.getElementById("pregame").classList.remove("hidden");
 }
 
 function gameOver() {
-	//TODO implement
+	closeSocket();
+	alert("You lost! Play again?");
 }
 
 
@@ -381,9 +383,6 @@ function updateStage(json) {
 		}
 	}
 
-	if (thisPlayer === null) {
-		return;
-	}
 
 	// Iterate through despawned player agents
 	for (var i = 0; i < despawnedPlayerAgents.length; i++) {
@@ -405,6 +404,10 @@ function updateStage(json) {
 	for (var i = 0; i < despawnedProjectiles.length; i++) {
 		var projectile = gameEntities[despawnedProjectiles[i].id];
 		projectile.visible = false;
+	}
+
+	if (thisPlayer === null) {
+		return;
 	}
 
 	// Iterate through player agents
