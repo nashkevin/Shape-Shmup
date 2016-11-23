@@ -201,7 +201,7 @@ public class Environment {
 	}
 
 	public static double checkRadius(Point2D.Double p){
-		return Math.sqrt(Math.abs(p.getX()) * Math.abs(p.getX()) + Math.abs(p.getY()) * Math.abs(p.getY()));
+		return Math.sqrt(Math.abs(p.getX() * p.getX()) + Math.abs(p.getY() * p.getY()));
 	}
 
 	/** returns the PlayerAgent nearest to the given Agent */
@@ -226,18 +226,29 @@ public class Environment {
 
 	public ArrayList<Agent> checkCollision(Projectile p) {
 		ArrayList<Agent> collisions = new ArrayList<Agent>();
-		for (Agent a : getActivePlayerAgents()) {
-			if (a.getTeam() != p.getOwner().getTeam() &&
-				a.getPosition().distance(p.getPosition()) < 35 * a.getSize()) {
-				collisions.add(a);
+
+		// unaffiliated PlayerAgents can't damage other PlayerAgents
+		if (p.getOwner().getTeam() != Agent.Team.NONE) {
+			for (Agent a : getActivePlayerAgents()) {
+				boolean teamsDiffer = (a.getTeam() != p.getOwner.getTeam());
+				boolean overlapping = a.getPosition().distance(p.getPosition()) <
+					35 * a.getSize();
+				if (teamsDiffer && overlapping) {
+					collisions.add(a);
+				}
 			}
 		}
-		for (Agent a : getActiveNPCAgents()) {
-			if (a.getTeam() != p.getOwner().getTeam() &&
-				a.getPosition().distance(p.getPosition()) < 35 * a.getSize()) {
-				collisions.add(a);
+
+		// NPCAgents can't damage each other
+		if (p.getOwner() instanceof PlayerAgent) {
+			for (Agent a : getActiveNPCAgents()) {
+				if (a.getTeam() != p.getOwner().getTeam() &&
+					a.getPosition().distance(p.getPosition()) < 35 * a.getSize()) {
+					collisions.add(a);
+				}
 			}
 		}
+
 		return collisions;
 	}
 

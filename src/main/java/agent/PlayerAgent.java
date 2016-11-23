@@ -31,12 +31,19 @@ public class PlayerAgent extends Agent {
 	public PlayerAgent(
 		Environment environment, Point2D.Double position, String name
 	) {
+		this(environment, position, name, Agent.Team.NONE)
+	}
+
+	public PlayerAgent(
+		Environment environment, Point2D.Double position,
+		String name, Agent.Team team
+	) {
 		super(
 			environment,
 			position,
 			new ProjectileFactory(environment, null, 1, 10,
 				Math.toRadians(5.0), 750, 1.0),
-			Agent.Team.RED,
+			team,
 			1,
 			100,
 			0.5
