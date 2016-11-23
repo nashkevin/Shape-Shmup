@@ -18,6 +18,9 @@ var messages = document.getElementById("messages");
 
 /** Contains game objects drawn on the screen, indexed by UUID */
 var gameEntities = {};
+/** Contains game objects that are fading out of existence. They no longer receive
+positions from the server, but we still should keep them in the right position. */
+var fadingEntities = {};
 
 var canvas = document.getElementById("gameCanvas");
 
@@ -378,10 +381,14 @@ function updateStage(json) {
 		}
 	}
 
+	if (thisPlayer === null) {
+		return;
+	}
+
 	// Iterate through despawned player agents
 	for (var i = 0; i < despawnedPlayerAgents.length; i++) {
 		var player = gameEntities[despawnedPlayerAgents[i].id];
-		player.visible = false; //TODO animate disappearance
+		fadeOut(player);
 
 		if (despawnedPlayerAgents[i].id === playerAgentID) {
 			gameOver();
@@ -391,7 +398,7 @@ function updateStage(json) {
 	// Iterate through despawned NPC agents
 	for (var i = 0; i < despawnedNPCAgents.length; i++) {
 		var npc = gameEntities[despawnedNPCAgents[i].id];
-		npc.visible = false; //TODO animate disappearance
+		fadeOut(npc);
 	}
 
 	// Iterate through despawned projectiles
@@ -431,6 +438,12 @@ function updateStage(json) {
 	playerY = thisPlayer.y;
 	bgTile.tilePosition.x -= bgOffsetX;
 	bgTile.tilePosition.y += bgOffsetY;
+
+	for (var key in fadingEntities) {
+		var entity = fadingEntities[key];
+		entity.x -= bgOffsetX;
+		entity.y += bgOffsetY;
+	}
 
 	renderer.render(stage);
 }
@@ -667,6 +680,22 @@ function updateProjectile(projectileObject) {
 	projectileSprite.position.set(projectileObject.screen_x, projectileObject.screen_y);
 
 	return projectileSprite;
+}
+
+function fadeOut(entity) {
+	if (!(entity in fadingEntities)) {
+		fadingEntities[entity] = entity;
+	}
+
+	entity.alpha -= 0.05;
+	if (entity.alpha > 0) {
+		requestAnimationFrame(function() {
+			fadeOut(entity);
+		});
+	} else {
+		entity.visible = false;
+		delete fadingEntities[entity];
+	}
 }
 
 function isOnScreen(pixiObject) {
