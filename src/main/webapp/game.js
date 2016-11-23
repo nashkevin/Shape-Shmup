@@ -35,6 +35,8 @@ var pingStartTime;
 var renderer = PIXI.autoDetectRenderer(getGameWidth(), getGameHeight(), {view: canvas});
 renderer.backgroundColor = 0x272822;
 renderer.autoResize = true;
+const healthBackgroundColor = 0xBB5E5B;
+const healthForegroundColor = 0x85B36B;
 
 /** Stage and background setup */
 var stage = new PIXI.Container();
@@ -543,30 +545,27 @@ function createPlayer(playerObject) {
 	playerContainer.addChild(playerName);
 
 	// Create the health bar background (red)
-	var healthBackgroundShape = new PIXI.Graphics();
-	healthBackgroundShape.lineStyle(2, 0xCC0000, 1);
-	healthBackgroundShape.moveTo(0, 0);
-	healthBackgroundShape.lineTo(50, 0);
-	var healthBackground = new PIXI.Sprite(renderer.generateTexture(healthBackgroundShape));
-	healthBackground.anchor.set(0, 0);
+	var healthBackground = new PIXI.Graphics();
+	healthBackground.lineStyle(2, healthBackgroundColor, 1);
+	healthBackground.moveTo(0, 0);
+	healthBackground.lineTo(50, 0);
 	healthBackground.pivot.set(0, 0);
 	healthBackground.position = playerSprite.position;
 	healthBackground.position.x -= 25;
-	healthBackground.position.y -= 45;
+	healthBackground.position.y -= 40;
 
 	playerContainer.addChild(healthBackground);
 
 	// Create the health bar foreground (green)
-	var healthForegroundShape = new PIXI.Graphics();
-	healthForegroundShape.lineStyle(2, 0x00CC00, 1);
-	healthForegroundShape.moveTo(0, 0);
-	healthForegroundShape.lineTo(50, 0);
-	var healthForeground = new PIXI.Sprite(renderer.generateTexture(healthForegroundShape));
-	healthForeground.anchor.set(0, 0);
+	var healthForeground = new PIXI.Graphics();
+	healthForeground.lineStyle(2, healthForegroundColor, 1);
+	healthForeground.moveTo(0, 0);
+	healthForeground.lineTo(50, 0);
+	// healthForeground.anchor.set(0, 0);
 	healthForeground.pivot.set(0, 0);
 	healthForeground.position = playerSprite.position;
 	healthForeground.position.x -= 25;
-	healthForeground.position.y -= 45;
+	healthForeground.position.y -= 40;
 
 	playerContainer.addChild(healthForeground);
 
@@ -626,30 +625,26 @@ function createNpc(npcObject) {
 	npcContainer.addChild(npcSprite);
 
 	// Create the health bar background (red)
-	var healthBackgroundShape = new PIXI.Graphics();
-	healthBackgroundShape.lineStyle(2, 0xCC0000, 1);
-	healthBackgroundShape.moveTo(0, 0);
-	healthBackgroundShape.lineTo(50, 0);
-	var healthBackground = new PIXI.Sprite(renderer.generateTexture(healthBackgroundShape));
-	healthBackground.anchor.set(0, 0);
+	var healthBackground = new PIXI.Graphics();
+	healthBackground.lineStyle(2, healthBackgroundColor, 1);
+	healthBackground.moveTo(0, 0);
+	healthBackground.lineTo(50, 0);
 	healthBackground.pivot.set(0, 0);
 	healthBackground.position = npcSprite.position;
 	healthBackground.position.x -= 25;
-	healthBackground.position.y -= 45 * npcObject.size;
+	healthBackground.position.y -= 40 * npcObject.size;
 
 	npcContainer.addChild(healthBackground);
 
 	// Create the health bar foreground (green)
-	var healthForegroundShape = new PIXI.Graphics();
-	healthForegroundShape.lineStyle(2, 0x00CC00, 1);
-	healthForegroundShape.moveTo(0, 0);
-	healthForegroundShape.lineTo(50, 0);
-	var healthForeground = new PIXI.Sprite(renderer.generateTexture(healthForegroundShape));
-	healthForeground.anchor.set(0, 0);
+	var healthForeground = new PIXI.Graphics();
+	healthForeground.lineStyle(2, healthForegroundColor, 1);
+	healthForeground.moveTo(0, 0);
+	healthForeground.lineTo(50, 0);
 	healthForeground.pivot.set(0, 0);
 	healthForeground.position = npcSprite.position;
 	healthForeground.position.x -= 25;
-	healthForeground.position.y -= 45 * npcObject.size;
+	healthForeground.position.y -= 40 * npcObject.size;
 
 	npcContainer.addChild(healthForeground);
 
