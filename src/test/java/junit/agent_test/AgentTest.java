@@ -72,8 +72,8 @@ public class AgentTest {
 		Agent agent1 = new PlayerAgent(environment, new Point2D.Double(0, 0), "Agent1");
 		Agent agent2 = new PlayerAgent(environment, new Point2D.Double(0, 5), "Agent2");
 
-		Assert.assertEquals(Math.PI / 2, agent1.getAngleTo(agent2), ERROR_MARGIN);
-		Assert.assertEquals(Math.PI / 2, agent1.getAngleTo(new Point2D.Double(0, 1)), ERROR_MARGIN);
-		Assert.assertEquals(Math.PI / 2, agent1.getAngleTo(0, 10), ERROR_MARGIN);
+		Assert.assertEquals(-Math.PI / 2, agent1.getAngleTo(agent2), ERROR_MARGIN);
+		Assert.assertEquals(-Math.PI / 2, agent1.getAngleTo(new Point2D.Double(0, 1)), ERROR_MARGIN);
+		Assert.assertEquals(-Math.PI / 2, agent1.getAngleTo(0, 10), ERROR_MARGIN);
 	}
 }

@@ -230,7 +230,7 @@ public class Environment {
 		// unaffiliated PlayerAgents can't damage other PlayerAgents
 		if (p.getOwner().getTeam() != Agent.Team.NONE) {
 			for (Agent a : getActivePlayerAgents()) {
-				boolean teamsDiffer = (a.getTeam() != p.getOwner.getTeam());
+				boolean teamsDiffer = (a.getTeam() != p.getOwner().getTeam());
 				boolean overlapping = a.getPosition().distance(p.getPosition()) <
 					35 * a.getSize();
 				if (teamsDiffer && overlapping) {

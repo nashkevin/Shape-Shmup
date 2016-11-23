@@ -327,7 +327,8 @@ public enum Command {
 
 				String sourceName = server.getNameBySession(sourceSession);
 				String destinationName = args[1];
-				Session destinationSession = server.getSessionByShortName(destinationName);
+				Session destinationSession =
+					server.getSessionByShortName(destinationName.toLowerCase());
 
 				if (sourceSession.equals(destinationSession)) {
 					server.unicast("You can't private message yourself.", sourceSession);
