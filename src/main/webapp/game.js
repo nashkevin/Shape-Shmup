@@ -428,7 +428,9 @@ function updateStage(json) {
 	// Iterate through despawned projectiles
 	for (var i = 0; i < despawnedProjectiles.length; i++) {
 		var projectile = gameEntities[despawnedProjectiles[i].id];
-		projectile.visible = false;
+		if (projectile !== undefined) {
+			projectile.visible = false;
+		}
 	}
 
 	if (thisPlayer === null) {
