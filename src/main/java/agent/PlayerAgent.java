@@ -19,7 +19,7 @@ import java.util.LinkedList;
 public class PlayerAgent extends Agent {
 
 	/** PlayerAgent's speed will not exceed its haste times this multiple */
-	private int MAX_SPEED_MULTIPLE = 5;
+	private int MAX_SPEED_MULTIPLE = 10;
 
 	private String name = "An Unnamed Hero";
 	private int level = 1;
@@ -39,7 +39,7 @@ public class PlayerAgent extends Agent {
 			Agent.Team.RED,
 			1,
 			100,
-			1
+			0.5
 		);
 
 		this.name = name;
@@ -178,11 +178,11 @@ public class PlayerAgent extends Agent {
 		x += getPosition().getX();
 		y += getPosition().getY();
 
-		setPosition((int)(x + 0.5), (int)(y + 0.5));
+		setPosition(x, y);
 	}
 
 	private void move() {
-		getVelocity().setMagnitude(getVelocity().getMagnitude() - getHaste());
+		getVelocity().setMagnitude(getVelocity().getMagnitude() - getHaste() / 3.0);
 
 		if (getVelocity().getMagnitude() > 0.0) {
 			double x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
@@ -191,7 +191,7 @@ public class PlayerAgent extends Agent {
 			x += getPosition().getX();
 			y += getPosition().getY();
 
-			setPosition((int)(x + 0.5), (int)(y + 0.5));
+			setPosition(x, y);
 		} else {
 			getVelocity().setMagnitude(0.0);
 		}

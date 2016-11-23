@@ -18,7 +18,7 @@ public class Scout extends NPCAgent {
 				Math.toRadians(10), 1000, 0.5),
 			0.5 + level * 0.005,
 			1 + level / 2,
-			1,
+			0.5,
 			1000
 		);
 

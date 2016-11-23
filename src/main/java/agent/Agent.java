@@ -38,7 +38,7 @@ public abstract class Agent {
 	/** the maximum value that health can reach */
 	private int maxHealth;
 	/** how speedy the Agent is, affects acceleration and max speed */
-	private int haste;
+	private double haste;
 	/** Agent must wait this duration (in milliseconds) before firing */
 	private int firingDelay;
 
@@ -46,7 +46,7 @@ public abstract class Agent {
 
 	public Agent(
 		Environment environment, Point2D.Double position, ProjectileFactory gun,
-		Team team, double size, int health, int haste
+		Team team, double size, int health, double haste
 	) {
 		this.environment = environment;
 		this.position = (Point2D.Double) position.clone();
@@ -150,11 +150,11 @@ public abstract class Agent {
 		this.health = (health > maxHealth) ? maxHealth : health;
 	}
 
-	public final int getHaste() {
+	public final double getHaste() {
 		return haste;
 	}
 
-	public final void setHaste(int haste) {
+	public final void setHaste(double haste) {
 		this.haste = haste;
 	}
 	/** Override if you want an agent to display with a different color. */
@@ -188,7 +188,7 @@ public abstract class Agent {
 	}
 
 	public final double getAngleTo(double x, double y) {
-		return Math.atan2(y - this.getPosition().getY(),
+		return -Math.atan2(y - this.getPosition().getY(),
 			x - this.getPosition().getX());
 	}
 

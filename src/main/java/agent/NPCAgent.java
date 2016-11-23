@@ -12,14 +12,14 @@ public abstract class NPCAgent extends Agent {
 	/** NPCAgent will notice PlayerAgents within this range */
 	private double aggroRange;
 	/** NPCAgent will try to maintain this distance from its target */
-	private double DESIRED_SPACING = 300;
+	private double DESIRED_SPACING = 200;
 	/** NPCAgent's speed will not exceed its haste times this multiple */
-	private int MAX_SPEED_MULTIPLE = 5;
+	private int MAX_SPEED_MULTIPLE = 10;
 
 
 	public NPCAgent(
 		Environment environment, Point2D.Double position, ProjectileFactory gun,
-		double size, int health, int haste, double aggroRange
+		double size, int health, double haste, double aggroRange
 	) {
 		super(environment, position, gun, Agent.Team.ENEMY, size, health, haste);
 		this.aggroRange = aggroRange;
@@ -68,7 +68,7 @@ public abstract class NPCAgent extends Agent {
 		double angleToPoint = getAngleTo(p);		
 
 		// update to face the point
-		setAngle(-angleToPoint);
+		setAngle(angleToPoint);
 
 		// if the NPCAgent is too far away from its target
 		if (getPosition().distance(p) > DESIRED_SPACING) {
@@ -76,9 +76,9 @@ public abstract class NPCAgent extends Agent {
 			double y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
 
 			x += getHaste() * Math.cos(angleToPoint);
-			y += getHaste() * Math.sin(angleToPoint);
+			y += getHaste() * Math.sin(-angleToPoint);
 
-			getVelocity().setAngle(Math.atan2(y, x));
+			getVelocity().setAngle(-Math.atan2(y, x));
 
 			getVelocity().setMagnitude(Math.sqrt(x * x + y * y));
 			if (getVelocity().getMagnitude() >= getHaste() * MAX_SPEED_MULTIPLE) {
@@ -86,10 +86,26 @@ public abstract class NPCAgent extends Agent {
 			}
 
 			x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
-			y = getVelocity().getMagnitude() * -Math.sin(getVelocity().getAngle());
+			y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
 			
-			getPosition().x += x;
-			getPosition().y += y;
+			x += getPosition().x;
+			y += getPosition().y;
+
+			setPosition(x, y);
+		} else {
+			getVelocity().setMagnitude(getVelocity().getMagnitude() - getHaste() / 3.0);
+
+			if (getVelocity().getMagnitude() > 0.0) {
+				double x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
+				double y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
+
+				x += getPosition().getX();
+				y += getPosition().getY();
+
+				setPosition(x, y);
+			} else {
+				getVelocity().setMagnitude(0.0);
+			}
 		}
 	}
 
