@@ -57,7 +57,6 @@ public class PlayerAgent extends Agent {
 		this.name = name;
 	}
 
-	@Override
 	public void awardPoints(int pointsAwarded) {
 		if (pointsAwarded >= pointsUntilLevelUp) {
 			this.points = pointsAwarded - pointsUntilLevelUp;
@@ -141,16 +140,17 @@ public class PlayerAgent extends Agent {
 			if (event.isFiring()) {
 				getGun().fireProjectile();
 			}
-
-			horizontalInput = countRight - countLeft;
-			verticalInput = countUp - countDown;
-
-			if (verticalInput != 0 || horizontalInput != 0) {
-				move(Math.atan2(verticalInput, horizontalInput));
-			} else {
-				move();
-			}
 		}
+
+		horizontalInput = countRight - countLeft;
+		verticalInput = countUp - countDown;
+
+		if (verticalInput != 0 || horizontalInput != 0) {
+			move(Math.atan2(verticalInput, horizontalInput));
+		} else {
+			move();
+		}
+		
 	}
 
 	private void move(double inputAngle) {
@@ -182,9 +182,9 @@ public class PlayerAgent extends Agent {
 	}
 
 	private void move() {
-		if (getVelocity().getMagnitude() > 0.0) {
-			getVelocity().setMagnitude(getVelocity().getMagnitude() - getHaste());
+		getVelocity().setMagnitude(getVelocity().getMagnitude() - getHaste());
 
+		if (getVelocity().getMagnitude() > 0.0) {
 			double x = getVelocity().getMagnitude() * Math.cos(getVelocity().getAngle());
 			double y = getVelocity().getMagnitude() * Math.sin(getVelocity().getAngle());
 			
