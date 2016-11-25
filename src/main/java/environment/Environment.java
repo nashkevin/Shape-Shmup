@@ -241,27 +241,28 @@ public class Environment {
 	public ArrayList<Agent> checkCollision(Projectile p) {
 		ArrayList<Agent> collisions = new ArrayList<Agent>();
 
+		// NPCAgents can't damage each other
+		if (p.getOwner() instanceof PlayerAgent) {
+			for (Agent a : getActiveNPCAgents()) {
+				if (a.getTeam() != p.getOwner().getTeam() &&
+					a.getPosition().distance(p.getPosition()) < 33 * a.getSize()) {
+					collisions.add(a);
+				}
+			}
+		}
+
 		// unaffiliated PlayerAgents can't damage other PlayerAgents
 		if (p.getOwner().getTeam() != Agent.Team.NONE) {
 			for (Agent a : getActivePlayerAgents()) {
-				// target is not on a PvP team
-				boolean neutralTarget = (a.getTeam() == Agent.Team.NONE);
+				// target is not on a PvP team and shooter is
+				boolean neutralTarget = (p.getOwner().getTeam() !=
+					Agent.Team.ENEMY && a.getTeam() == Agent.Team.NONE);
 				// target and shooter are on different teams
 				boolean teamsDiffer = (a.getTeam() != p.getOwner().getTeam());
 				// the shot actually hits
 				boolean overlapping = a.getPosition().distance(p.getPosition()) <
 					33 * a.getSize();
 				if (!neutralTarget && teamsDiffer && overlapping) {
-					collisions.add(a);
-				}
-			}
-		}
-
-		// NPCAgents can't damage each other
-		if (p.getOwner() instanceof PlayerAgent) {
-			for (Agent a : getActiveNPCAgents()) {
-				if (a.getTeam() != p.getOwner().getTeam() &&
-					a.getPosition().distance(p.getPosition()) < 33 * a.getSize()) {
 					collisions.add(a);
 				}
 			}
