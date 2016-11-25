@@ -216,6 +216,7 @@ function coordinateToAngle(x, y) {
 	return Math.atan2(y - y_origin, x - x_origin);
 }
 
+/* Returns a darker shade of the input color */
 function getBorderColor(hex) {
 	const PRIMARY_FACTOR = 0.75;
 	const SECONDARY_FACTOR = 0.55;

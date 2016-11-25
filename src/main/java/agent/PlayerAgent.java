@@ -10,19 +10,13 @@ import java.util.Queue;
 import java.util.LinkedList;
 
 
-/*****************************************************************************
- * To-do:                                                                    *
- *   Implement points gain and levelling up system                           *
- *   Implement levelling up to increase stats                                *
- *****************************************************************************/
-
 public class PlayerAgent extends Agent {
 
 	/** PlayerAgent's speed will not exceed its haste times this multiple */
 	private int MAX_SPEED_MULTIPLE = 10;
 
 	private String name = "An Unnamed Hero";
-	private int level = 1;
+	private int level = 0;
 	private int points = 0;
 	private int pointsUntilLevelUp;
 
@@ -41,12 +35,12 @@ public class PlayerAgent extends Agent {
 		super(
 			environment,
 			position,
-			new ProjectileFactory(environment, null, 1, 10,
-				Math.toRadians(5.0), 750, 1.0),
+			new ProjectileFactory(environment, null, 1, 7,
+				Math.toRadians(5.0), 1000, 1.0),
 			team,
 			1,
 			100,
-			0.5
+			0.3
 		);
 
 		this.name = name;
@@ -64,24 +58,53 @@ public class PlayerAgent extends Agent {
 		this.name = name;
 	}
 
+	public final int getLevel() {
+		return level;
+	}
+
+	public final int getPoints() {
+		return points;
+	}
+
+	public final int getPointsUntilLevelUp() {
+		return pointsUntilLevelUp;
+	}
+
 	public void awardPoints(int pointsAwarded) {
-		if (pointsAwarded >= pointsUntilLevelUp) {
+		if (pointsAwarded >= pointsUntilLevelUp && level < 100) {
 			this.points = pointsAwarded - pointsUntilLevelUp;
 			level++; // Level up!
-			upgrade(level);
+			// This handles being awarded enough points for multiple levels at once
 			while (this.points > levelToPoints(level)) {
 				this.points -= levelToPoints(level);
 				level++;
-				upgrade(level);
 			}
-			pointsUntilLevelUp = levelToPoints(level) - this.points;
+			upgrade(level);
+			getEnvironment().updateEnvironmentLevel();
+			pointsUntilLevelUp = levelToPoints(level + 1) - this.points;
 		} else {
 			this.points += pointsAwarded;
+			pointsUntilLevelUp -= pointsAwarded;
 		}
 	}
 
 	private void upgrade(int level) {
-		// To-do: modify attributes based on level
+		// Upgrade damage. Min 1, Max 50
+		getGun().setDamage((int) Math.round(0.49 * level + 1));
+
+		// Upgrade bullet speed. Min 7, Max 25
+		getGun().setSpeed(0.18 * level + 7);
+
+		// Upgrade firing delay. Max 1000, Min 100
+		getGun().setFiringDelay(1000 - 9 * level);
+
+		// Upgrade health. Min 100, Max 1000
+		double healthRatio = (double) getHealth() / getMaxHealth();
+		setMaxHealth(9 * level + 100);
+		setHealth((int) Math.round(healthRatio * getMaxHealth()));
+
+		// Upgrade haste. Min 0.3, Max 1
+		setHaste(0.007 * level + 0.3);
 	}
 
 	/** Returns the number of points needed to reach the given level */
@@ -93,7 +116,7 @@ public class PlayerAgent extends Agent {
 	 *  the given number of points */
 	public static int pointsToLevel(int points) {
 		return (points < 100) ? 0 : (int)Math.sqrt(points - 100);
-	}	
+	}
 
 	@Override
 	public final void despawn() {

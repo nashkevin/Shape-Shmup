@@ -42,10 +42,6 @@ public abstract class Agent {
 	private int maxHealth;
 	/** how speedy the Agent is, affects acceleration and max speed */
 	private double haste;
-	/** Agent must wait this duration (in milliseconds) before firing */
-	private int firingDelay;
-
-	private boolean isReadyToFire;
 
 	public Agent(
 		Environment environment, Point2D.Double position, ProjectileFactory gun,

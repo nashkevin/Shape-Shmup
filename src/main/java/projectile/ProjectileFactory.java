@@ -16,7 +16,7 @@ public class ProjectileFactory {
 	private Vector2D velocity;
 
 	private int damage;
-	private int speed;
+	private double speed;
 	private double spread;
 	private int firingDelay; // must wait this duration (in ms) before firing
 	private double size;
@@ -28,7 +28,7 @@ public class ProjectileFactory {
 	private Timer timer = new Timer("ProjectileFactory Timer");
 
 	public ProjectileFactory(Environment environment, Agent owner, int damage,
-		int speed, double spread, int firingDelay, double size
+		double speed, double spread, int firingDelay, double size
 	) {
 		this.environment = environment;
 		this.owner = owner;
@@ -66,11 +66,11 @@ public class ProjectileFactory {
 		this.damage = damage;
 	}
 
-	public final int getSpeed() {
+	public final double getSpeed() {
 		return speed;
 	}
 
-	public final void setSpeed(int speed) {
+	public final void setSpeed(double speed) {
 		this.speed = speed;
 	}
  
@@ -108,7 +108,7 @@ public class ProjectileFactory {
 				public void run() {
 					setReadyToFire(true);
 				}
-			}, 0, firingDelay);
+			}, 500, firingDelay);
 		} else {
 			throw new IllegalArgumentException("firing delay must be positive");
 		}

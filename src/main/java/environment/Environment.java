@@ -21,19 +21,18 @@ import java.util.TimerTask;
 
 /** TODOs
 	Fix constructor calls for NPC and Player agents for integration
-	Change check collision to use range instead of exact coords
-	Limit update frequency
 */
 public class Environment {
 	/** Radius of the environment, in pixels. Value is arbitrarily chosen. */
 	private static final double RADIUS = 10000;
 	/** The ideal ratio of NPCAgents to PlayerAgents */
-	private static final int NPC_PLAYER_RATIO = 5;
+	private static final int NPC_PLAYER_RATIO = 50;
 	/** The frame rate, in Hz */
 	private static final int FRAME_RATE = 30;
 	/** A random number generator **/
 	private static final Random random = new Random();
 	
+	private int envionmentLevel = 1;
 	private boolean gameplayOccurring = true;
 	private boolean verbose = true;
 
@@ -136,8 +135,9 @@ public class Environment {
 	public PlayerAgent spawnPlayer(String name) {
 		PlayerAgent player = new PlayerAgent(this, randomPlayerSpawn(), name);
 		activePlayerAgents.add(player);
+		updateEnvironmentLevel();
 		if (verbose) {
-			System.out.println("Player (" + player.getID() + ") was spawned.");
+			System.out.println("Player (" + player.getName() + ") was spawned.");
 		}
 		return player;
 	}
@@ -147,20 +147,24 @@ public class Environment {
 			String.format("%04d", random.nextInt(10000)));
 		activePlayerAgents.add(player);
 		if (verbose) {
-			System.out.println("Player (" + player.getID() + ") was spawned.");
+			System.out.println("Spoofed player (" + player.getName() + ") was spawned.");
 		}
 		return player;
 	}
 
 	public Scout spawnScout() {
-		// Randomly pick level from 1 to 15
-		int level = random.nextInt(15) + 1;
-		return spawnScout(level);
+		return spawnScout(generateLevel());
+	}
+
+	public Scout spawnScout(int level) {
+		return spawnScout(randomNPCSpawn(), level);
 	}
 
 	public Scout spawnScout(Point2D.Double point) {
-		// Randomly pick level from 1 to 100
-		int level = random.nextInt(100) + 1;
+		return spawnScout(point, generateLevel());
+	}
+
+	public Scout spawnScout(Point2D.Double point, int level) {
 		Scout agent = new Scout(this, point, level);
 		activeNPCAgents.add(agent);
 		if (verbose) {
@@ -170,14 +174,24 @@ public class Environment {
 		return agent;
 	}
 
-	public Scout spawnScout(int level) {
-		Scout agent = new Scout(this, randomNPCSpawn(), level);
-		activeNPCAgents.add(agent);
-		if (verbose) {
-			System.out.println("Level " + level + " scout (" +
-				agent.getID() + ") was spawned.");
+	public int generateLevel() {
+		int level = (int) Math.round(random.nextGaussian() * 2 + envionmentLevel);
+		if (level < 1) {
+			level = 1;
 		}
-		return agent;
+		else if (level > 100) {
+			level = 100;
+		}
+		return level;
+	}
+
+	public void updateEnvironmentLevel() {
+		double avgPlayerLevel = 0;
+		for (PlayerAgent a : getActivePlayerAgents()) {
+			avgPlayerLevel += a.getLevel();
+		}
+		avgPlayerLevel /= getActivePlayerAgents().size();
+		envionmentLevel = (int) Math.round(avgPlayerLevel);
 	}
 
 	public void addProjectile(Projectile p) {

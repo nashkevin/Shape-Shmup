@@ -148,6 +148,57 @@ public enum Command {
 				}
 			}
 		},
+	GIVEXP ("givexp",
+			new String[] {"xp"},
+			"Gives a player experience points.<br>Syntax: /givexp [username] [amount]"
+		) {
+			@Override
+			protected void perform(String[] args, Session sourceSession, WebServer server) {
+				PlayerAgent target;
+				int pointValue;
+				// /givexp -> gives self enough experience points for next level
+				if (args.length == 1) {
+					target = server.getPlayerAgentBySession(sourceSession);
+					target.awardPoints(target.getPointsUntilLevelUp());
+				}
+				else if (args.length == 2) {
+					// /givexp 10 -> gives self 10 experience points
+					try {
+						pointValue = Integer.parseInt(args[1]);
+						target = server.getPlayerAgentBySession(sourceSession);
+						target.awardPoints(pointValue);
+					}
+					// /givexp Player -> gives Player enough experience points for next level
+					catch (NumberFormatException ex) {
+						target = server.getPlayerAgentByShortName(args[1]);
+						if (target != null) {
+							target.awardPoints(target.getPointsUntilLevelUp());
+						} else {
+							server.unicast("Player '" + args[1] + "' not found.", sourceSession);
+						}
+					}
+				}
+				// /givexp Player 10 -> gives Player 10 experience points
+				else if (args.length == 3) {
+					target = server.getPlayerAgentByShortName(args[1]);
+					if (target != null) {
+						try {
+							pointValue = Integer.parseInt(args[2]);
+							target = server.getPlayerAgentBySession(sourceSession);
+							target.awardPoints(pointValue);
+						}
+						catch (NumberFormatException ex) {
+							throw new IllegalArgumentException();
+						}
+					} else {
+						server.unicast("Player '" + args[1] + "' not found.", sourceSession);
+					}
+				}
+				else {
+					throw new IllegalArgumentException();
+				}
+			}
+		},
 	GOTO ("goto",
 			new String[] {"tp"},
 			"Sends you to a player or to coordinates.<br>Syntax: /goto [player|x y]"
@@ -181,7 +232,7 @@ public enum Command {
 		},
 	HEAL ("heal",
 			null,
-			"Gives a player full health or a given amount.<br>Syntax: /heal [username] [health]"
+			"Gives a player full health or a given amount.<br>Syntax: /heal [username] [amount]"
 		) {
 			@Override
 			protected void perform(String[] args, Session sourceSession, WebServer server) {
@@ -209,7 +260,7 @@ public enum Command {
 						}
 					}
 				}
-				// heal Player 10 -> heals Player by 10
+				// /heal Player 10 -> heals Player by 10
 				else if (args.length == 3) {
 					target = server.getPlayerAgentByShortName(args[1]);
 					if (target != null) {
@@ -399,6 +450,59 @@ public enum Command {
 				}
 			}
 		},
+	STATS ("stats",
+			new String[] {"statistics", "status"} ,
+			("Gives your level and attributes or those of another player. " +
+				"<br>Syntax: /stats [username]")
+		) {
+			@Override
+			protected void perform(String[] args, Session session, WebServer server) {
+				PlayerAgent player;
+				StringBuilder sb = new StringBuilder();
+				if (args.length == 1) {
+					player = server.getPlayerAgentBySession(session);
+				}
+				else if (args.length == 2) {
+					player = server.getPlayerAgentByShortName(args[1].toLowerCase());						
+				}
+				else {
+					throw new IllegalArgumentException();
+				}
+
+				if (player != null) {
+					String tab = "&nbsp&nbsp&nbsp&nbsp";
+					sb.append("<strong>" + player.getName() + "</strong>");
+					sb.append(", Lv. ");
+					sb.append(player.getLevel());
+					sb.append(" (");
+					sb.append(player.getPoints());
+					sb.append("/");
+					sb.append(player.levelToPoints(player.getLevel() + 1));
+					sb.append(" exp)");
+					sb.append("<br>" + tab);
+					sb.append("Health: ");
+					sb.append(player.getHealth());
+					sb.append("/");
+					sb.append(player.getMaxHealth());
+					sb.append("<br>" + tab);
+					sb.append("Damage: ");
+					sb.append(player.getGun().getDamage());
+					sb.append("<br>" + tab);
+					sb.append("Bullet Speed: ");
+					sb.append(player.getGun().getSpeed());
+					sb.append("<br>" + tab);
+					sb.append("Firing Speed: ");
+					sb.append(String.format("%.2f", 1000 / player.getGun().getFiringDelay()));
+					sb.append(" shots/sec<br>" + tab);
+					sb.append("Haste: ");
+					sb.append(String.format("%.2f", player.getHaste() * 100) + "%");
+
+					server.unicast(sb.toString(), session);
+				} else {
+					server.unicast("Player '" + args[1] + "' not found.", session);
+				}
+			}
+		},
 	WHERE ("where",
 			new String[] {"locate"} ,
 			("Gives your coordinates or the coordinates of another player. " +
@@ -409,12 +513,16 @@ public enum Command {
 				Point2D.Double position = new Point2D.Double();
 				if (args.length == 1) {
 					position = server.getPlayerAgentBySession(session).getPosition();
-					server.unicast("(" + position.getX() + ", " + position.getY() + ")", session);
+					server.unicast("(" +  String.format("%.2f", position.getX()) +
+						", " +  String.format("%.2f", position.getY()) +
+						")", session);
 				}
 				else if (args.length == 2) {
 					if (server.getPlayerAgentByShortName(args[1]) != null) {
-						position = server.getPlayerAgentByShortName(args[1]).getPosition();
-						server.unicast("(" + position.getX() + ", " + position.getY() + ")", session);
+						position = server.getPlayerAgentByShortName(args[1].toLowerCase()).getPosition();
+						server.unicast("(" +  String.format("%.2f", position.getX()) +
+							", " +  String.format("%.2f", position.getY()) +
+							")", session);
 					} else {
 						server.unicast("Player '" + args[1] + "' not found.", session);
 					}

@@ -75,9 +75,6 @@ public class WebServer {
 	/** When a client sends a message to the server. */
 	@OnMessage
 	public void onMessage(String message, Session session) {
-		if (verbose) {
-			System.out.println("Message from " + session.getId() + ": " + message);
-		}
 		Gson g = new Gson();
 		ClientInput input = g.fromJson(message, ClientInput.class);
 
