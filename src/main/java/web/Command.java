@@ -1,5 +1,6 @@
 package main.java.web;
 
+import main.java.agent.Agent;
 import main.java.agent.PlayerAgent;
 import main.java.environment.Environment;
 
@@ -232,7 +233,7 @@ public enum Command {
 		},
 	HEAL ("heal",
 			null,
-			"Gives a player full health or a given amount.<br>Syntax: /heal [username] [amount]"
+			"Heals a player to full health or by a given amount.<br>Syntax: /heal [username] [amount]"
 		) {
 			@Override
 			protected void perform(String[] args, Session sourceSession, WebServer server) {
@@ -451,8 +452,8 @@ public enum Command {
 			}
 		},
 	STATS ("stats",
-			new String[] {"statistics", "status"} ,
-			("Gives your level and attributes or those of another player. " +
+			new String[] {"statistics", "status"},
+			("Displays your level and attributes or those of another player. " +
 				"<br>Syntax: /stats [username]")
 		) {
 			@Override
@@ -503,9 +504,64 @@ public enum Command {
 				}
 			}
 		},
+	TEAM ("team",
+			null,
+			("Displays your current team or that of another player, " +
+				"or assigns you or that player to a given team. " +
+				"<br>Syntax: /team [username] [red|blue]")
+		) {
+			@Override
+			protected void perform(String[] args, Session session, WebServer server) {
+				if (args.length == 1) {
+					Agent.Team team = server.getPlayerAgentBySession(session).getTeam();
+					if (team == null || team == Agent.Team.NONE) {
+						server.unicast("You are not on a team.", session);
+					} else {
+						server.unicast("You are on the " + team.toString() + " team.", session);
+					}
+				}
+				else if (args.length == 2) {
+					try {
+						Agent.Team team = Agent.Team.valueOf(args[1].toUpperCase());
+						server.getPlayerAgentBySession(session).setTeam(team);
+						server.unicast("You were placed on the " + team.toString() + " team.", session);
+					} catch (IllegalArgumentException ex) {
+						PlayerAgent target = server.getPlayerAgentByShortName(args[1].toLowerCase());
+						if (target != null) {
+							if (target.getTeam() == null || target.getTeam() == Agent.Team.NONE) {
+								server.unicast(target.getName() + " is not on a team.", session);
+							} else {
+								server.unicast(target.getName() + " is on the " +
+									target.getTeam().toString() + " team.", session);
+							}
+						} else {
+							server.unicast("Found no teams or players named '" + args[1] + "'.", session);
+						}
+					}
+				}
+				else if (args.length == 3) {
+					PlayerAgent target = server.getPlayerAgentByShortName(args[1].toLowerCase());
+					if (target != null) {
+						try {
+							Agent.Team team = Agent.Team.valueOf(args[2].toUpperCase());
+							target.setTeam(team);
+							server.unicast(target.getName() + " was placed on the " +
+								team.toString() + " team.", session);
+						} catch (IllegalArgumentException ex) {
+							server.unicast("There is no '" + args[2] + "' team.", session);
+						}
+					} else {
+						server.unicast("Player '" + args[1] + "' not found.", session);
+					}
+				}
+				else {
+					throw new IllegalArgumentException();
+				}
+			}
+		},
 	WHERE ("where",
-			new String[] {"locate"} ,
-			("Gives your coordinates or the coordinates of another player. " +
+			new String[] {"locate"},
+			("Displays your coordinates or the coordinates of another player. " +
 				"<br>Syntax: /where [username]")
 		) {
 			@Override
