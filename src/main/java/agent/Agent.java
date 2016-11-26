@@ -97,10 +97,10 @@ public abstract class Agent {
 	}
 
 	public final void setPosition(double x, double y) {
-		double angleFromOrigin = getAngleTo(0, 0);
+		double angleFromOrigin = 90 - getAngleTo(0, 0);
 		double maxX = Math.cos(angleFromOrigin) * getEnvironment().getRadius();
 		double maxY = Math.sin(angleFromOrigin) * getEnvironment().getRadius();
-		if (x > maxX || y > maxY) {
+		if (false) {
 			position.setLocation(maxX, maxY);
 		}
 		else {
