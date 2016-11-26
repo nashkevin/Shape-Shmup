@@ -48,14 +48,14 @@ public abstract class NPCAgent extends Agent {
 	@Override
 	public void update() {
 		// if targetting no one or target moves out of range
-		if (target == null || getPosition().distance(target.getPosition()) > getAggroRange()) {
+		if (target == null || target.getHealth() < 1 ||
+			getPosition().distance(target.getPosition()) > getAggroRange()) {
 			target = findNewTarget();
 		}
 		// if finding new target was successful
 		if (target != null) {
 			approachPoint(target.getPosition());
 			getGun().fireProjectile();
-			target = null; //ensures we must refind a target after firing
 		}
 	}
 

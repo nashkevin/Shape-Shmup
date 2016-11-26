@@ -23,6 +23,10 @@ public abstract class Agent {
 		public String getColor() {
 			return hexColor;
 		}
+		@Override
+		public String toString() {
+			return super.toString().toLowerCase();
+		}
 	}
 
 	private UUID id = UUID.randomUUID();
