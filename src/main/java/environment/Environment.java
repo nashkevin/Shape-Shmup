@@ -132,6 +132,14 @@ public class Environment {
 		}
 	}
 
+	public void removePlayerFromTeam(PlayerAgent player){
+		if (player.getTeam() == Agent.Team.RED) {
+			redPlayers.remove(player);
+		} else if (player.getTeam() == Agent.Team.BLUE) {
+			bluePlayers.remove(player);
+		}
+	}
+
 	public void despawnNPCAgent(NPCAgent agent) {
 		activeNPCAgents.remove(agent);
 		recentlyDespawnedNPCAgents.add(agent);
@@ -144,11 +152,7 @@ public class Environment {
 	public void despawnPlayerAgent(PlayerAgent agent) {
 		activePlayerAgents.remove(agent);
 		recentlyDespawnedPlayerAgents.add(agent);
-		if (agent.getTeam() == Agent.Team.RED) {
-			redPlayers.remove(agent);
-		} else if (agent.getTeam() == Agent.Team.BLUE) {
-			bluePlayers.remove(agent);
-		}
+		removePlayerFromTeam(agent);
 		if (verbose) {
 			System.out.println("\"" + agent.getName() + "\" was despawned.");
 		}
