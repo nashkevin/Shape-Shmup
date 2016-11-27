@@ -383,13 +383,12 @@ function sendChatMessage() {
 
 function closeSocket() {
 	webSocket.close();
-	document.getElementById("game").classList.add("hidden");
-	document.getElementById("pregame").classList.remove("hidden");
+	window.location.reload();
 }
 
 function gameOver() {
-	closeSocket();
 	alert("You lost! Play again?");
+	closeSocket();
 }
 
 
