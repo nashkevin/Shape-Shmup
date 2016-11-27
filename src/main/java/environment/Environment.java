@@ -4,6 +4,7 @@ import main.java.agent.Agent;
 import main.java.agent.NPCAgent;
 import main.java.agent.PlayerAgent;
 import main.java.agent.Scout;
+import main.java.agent.Turret;
 
 import main.java.projectile.Projectile;
 
@@ -44,6 +45,9 @@ public class Environment {
 	private Set<NPCAgent> recentlyDespawnedNPCAgents;
 	private Set<Projectile> recentlyDespawnedProjectiles;
 
+	private Set<PlayerAgent> redPlayers;
+	private Set<PlayerAgent> bluePlayers;
+
 	private Timer timer = new Timer("Environment Timer");
 
 	public Environment() {
@@ -60,6 +64,10 @@ public class Environment {
 		recentlyDespawnedPlayerAgents = Collections.newSetFromMap(new ConcurrentHashMap<PlayerAgent, Boolean>());
 		recentlyDespawnedNPCAgents = Collections.newSetFromMap(new ConcurrentHashMap<NPCAgent, Boolean>());
 		recentlyDespawnedProjectiles = Collections.newSetFromMap(new ConcurrentHashMap<Projectile, Boolean>());
+
+		redPlayers = Collections.newSetFromMap(new ConcurrentHashMap<PlayerAgent, Boolean>());
+		bluePlayers = Collections.newSetFromMap(new ConcurrentHashMap<PlayerAgent, Boolean>());
+
 
 		// call update at FRAME_RATE
 		timer.schedule(new TimerTask() {
@@ -109,6 +117,30 @@ public class Environment {
 		return projectiles;
 	}
 
+	public Agent.Team getSmallestTeam(){
+		if (redPlayers.size() < bluePlayers.size()) {
+			return Agent.Team.RED;
+		} else {
+			return Agent.Team.BLUE;
+		}
+	}
+
+	public void addPlayerToTeam(PlayerAgent player) {
+		if (player.getTeam() == Agent.Team.RED) {
+			redPlayers.add(player);
+		} else if (player.getTeam() == Agent.Team.BLUE) {
+			bluePlayers.add(player);
+		}
+	}
+
+	public void removePlayerFromTeam(PlayerAgent player) {
+		if (player.getTeam() == Agent.Team.RED) {
+			redPlayers.remove(player);
+		} else if (player.getTeam() == Agent.Team.BLUE) {
+			bluePlayers.remove(player);
+		}
+	}
+
 	public void despawnNPCAgent(NPCAgent agent) {
 		activeNPCAgents.remove(agent);
 		recentlyDespawnedNPCAgents.add(agent);
@@ -121,6 +153,7 @@ public class Environment {
 	public void despawnPlayerAgent(PlayerAgent agent) {
 		activePlayerAgents.remove(agent);
 		recentlyDespawnedPlayerAgents.add(agent);
+		removePlayerFromTeam(agent);
 		if (verbose) {
 			System.out.println("\"" + agent.getName() + "\" was despawned.");
 		}
@@ -133,8 +166,10 @@ public class Environment {
 
 	/** Spawns a playable character entity. */
 	public PlayerAgent spawnPlayer(String name) {
-		PlayerAgent player = new PlayerAgent(this, randomPlayerSpawn(), name);
+		PlayerAgent player = new PlayerAgent(this, randomPlayerSpawn(),
+			name, getSmallestTeam());
 		activePlayerAgents.add(player);
+		addPlayerToTeam(player);		
 		updateEnvironmentLevel();
 		if (verbose) {
 			System.out.println("Player (" + player.getName() + ") was spawned.");
@@ -144,8 +179,9 @@ public class Environment {
 
 	public PlayerAgent spawnPlayer(Point2D.Double point) {
 		PlayerAgent player = new PlayerAgent(this, point, "Player" +
-			String.format("%04d", random.nextInt(10000)));
+			String.format("%04d", random.nextInt(10000)), getSmallestTeam());
 		activePlayerAgents.add(player);
+		addPlayerToTeam(player);		
 		if (verbose) {
 			System.out.println("Spoofed player (" + player.getName() + ") was spawned.");
 		}
@@ -166,6 +202,28 @@ public class Environment {
 
 	public Scout spawnScout(Point2D.Double point, int level) {
 		Scout agent = new Scout(this, point, level);
+		activeNPCAgents.add(agent);
+		if (verbose) {
+			System.out.println("Level " + level + " scout (" +
+				agent.getID() + ") was spawned.");
+		}
+		return agent;
+	}
+
+	public Turret spawnTurret() {
+		return spawnTurret(generateLevel());
+	}
+
+	public Turret spawnTurret(int level) {
+		return spawnTurret(randomNPCSpawn(), level);
+	}
+
+	public Turret spawnTurret(Point2D.Double point) {
+		return spawnTurret(point, generateLevel());
+	}
+
+	public Turret spawnTurret(Point2D.Double point, int level) {
+		Turret agent = new Turret(this, point, level);
 		activeNPCAgents.add(agent);
 		if (verbose) {
 			System.out.println("Level " + level + " scout (" +

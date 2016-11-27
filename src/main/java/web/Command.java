@@ -426,7 +426,7 @@ public enum Command {
 	SPAWN ("spawn",
 			new String[] {"create"},
 			("Spawns an Agent at your location or given coordinates." +
-				"<br>Syntax: /spawn (Player|Scout) [x y]")
+				"<br>Syntax: /spawn (Player|Scout|Turret) [x y]")
 		) {
 			@Override
 			protected void perform(String[] args, Session session, WebServer server) {
@@ -448,6 +448,8 @@ public enum Command {
 					server.spoofPlayer(new Point2D.Double(x, y));
 				} else if (args[1].equalsIgnoreCase("scout")) {
 					server.getEnvironment().spawnScout(new Point2D.Double(x, y));
+				} else if (args[1].equalsIgnoreCase("turret")) {
+					server.getEnvironment().spawnTurret(new Point2D.Double(x, y));
 				}
 			}
 		},
@@ -523,7 +525,10 @@ public enum Command {
 				else if (args.length == 2) {
 					try {
 						Agent.Team team = Agent.Team.valueOf(args[1].toUpperCase());
-						server.getPlayerAgentBySession(session).setTeam(team);
+						PlayerAgent player = server.getPlayerAgentBySession(session);
+						server.getEnvironment().removePlayerFromTeam(player);
+						player.setTeam(team);
+						server.getEnvironment().addPlayerToTeam(player);
 						server.unicast("You were placed on the " + team.toString() + " team.", session);
 					} catch (IllegalArgumentException ex) {
 						PlayerAgent target = server.getPlayerAgentByShortName(args[1].toLowerCase());
@@ -544,7 +549,9 @@ public enum Command {
 					if (target != null) {
 						try {
 							Agent.Team team = Agent.Team.valueOf(args[2].toUpperCase());
+							server.getEnvironment().removePlayerFromTeam(target);
 							target.setTeam(team);
+							server.getEnvironment().addPlayerToTeam(target);
 							server.unicast(target.getName() + " was placed on the " +
 								team.toString() + " team.", session);
 						} catch (IllegalArgumentException ex) {
