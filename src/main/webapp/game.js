@@ -507,20 +507,8 @@ function createPlayer(playerObject) {
 	// Create the container, which contains all components of the player avatar
 	var playerContainer = new PIXI.Container();
 
-	// Create the primitive shape that will be used as the texture for the sprite
-	var playerShape = new PIXI.Graphics();
-	playerShape.lineStyle(4, getBorderColor(playerObject.color), 1)
-	playerShape.beginFill(playerObject.color);
-	playerShape.drawPolygon([
-		0,  25,
-		50, 50,
-		50, 0,
-		0,  25
-	]);
-	playerShape.endFill();
-
 	// Create the sprite that represents the player itself
-	var playerSprite = new PIXI.Sprite(renderer.generateTexture(playerShape));
+	var playerSprite = new PIXI.Sprite(getPlayerTexture(playerObject.color));
 	playerSprite.anchor.set(2/3, 0.5);
 	playerSprite.pivot.set(2/3, 0.5);
 	playerSprite.position.set(0, 0);
@@ -577,6 +565,22 @@ function createPlayer(playerObject) {
 	return playerContainer;
 }
 
+/** Create the primitive shape that will be used as the texture for the sprite */
+function getPlayerTexture(color) {
+	var playerShape = new PIXI.Graphics();
+	playerShape.lineStyle(4, getBorderColor(color), 1);
+	playerShape.beginFill(color);
+	playerShape.drawPolygon([
+		0,  25,
+		50, 50,
+		50, 0,
+		0,  25
+	]);
+	playerShape.endFill();
+
+	return renderer.generateTexture(playerShape);
+}
+
 /** Update the position and rotation of the player agent. */
 function updatePlayer(playerObject) {
 	var playerContainer = gameEntities[playerObject.id];
@@ -586,6 +590,8 @@ function updatePlayer(playerObject) {
 	var healthForeground = playerContainer.getChildAt(3);
 	var healthPercent = playerObject.health / playerObject.maxHealth;
 	healthForeground.scale.set(healthPercent, 1);
+
+	playerSprite.texture = getPlayerTexture(playerObject.color);
 
 	return playerContainer;
 }
