@@ -11,10 +11,10 @@ import java.util.UUID;
 public abstract class Agent {
 
 	public static enum Team {
-		ENEMY("0xF8CECC"), // all NPCAgents
+		ENEMY("0xFDE7CE"), // all NPCAgents
 		NONE("0xD4E9D3"), // unaffiliated PlayerAgents
-		RED("0xCC0000"), // Red PlayerAgents
-		BLUE("0x0000CC"); // Blue PlayerAgents
+		RED("0xF8CECC"), // Red PlayerAgents
+		BLUE("0xD4D3E9"); // Blue PlayerAgents
 		
 		private String hexColor;
 		private Team(String hexColor) {

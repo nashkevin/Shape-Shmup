@@ -124,7 +124,7 @@ public class Environment {
 		}
 	}
 
-	public void addPlayerToTeam(PlayerAgent player){
+	public void addPlayerToTeam(PlayerAgent player) {
 		if (player.getTeam() == Agent.Team.RED) {
 			redPlayers.add(player);
 		} else if (player.getTeam() == Agent.Team.BLUE) {
@@ -132,7 +132,7 @@ public class Environment {
 		}
 	}
 
-	public void removePlayerFromTeam(PlayerAgent player){
+	public void removePlayerFromTeam(PlayerAgent player) {
 		if (player.getTeam() == Agent.Team.RED) {
 			redPlayers.remove(player);
 		} else if (player.getTeam() == Agent.Team.BLUE) {
@@ -165,7 +165,8 @@ public class Environment {
 
 	/** Spawns a playable character entity. */
 	public PlayerAgent spawnPlayer(String name) {
-		PlayerAgent player = new PlayerAgent(this, randomPlayerSpawn(), name, getSmallestTeam());
+		PlayerAgent player = new PlayerAgent(this, randomPlayerSpawn(),
+			name, getSmallestTeam());
 		activePlayerAgents.add(player);
 		addPlayerToTeam(player);		
 		updateEnvironmentLevel();

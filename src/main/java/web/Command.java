@@ -523,7 +523,10 @@ public enum Command {
 				else if (args.length == 2) {
 					try {
 						Agent.Team team = Agent.Team.valueOf(args[1].toUpperCase());
-						server.getPlayerAgentBySession(session).setTeam(team);
+						PlayerAgent player = server.getPlayerAgentBySession(session);
+						server.getEnvironment().removePlayerFromTeam(player);
+						player.setTeam(team);
+						server.getEnvironment().addPlayerToTeam(player);
 						server.unicast("You were placed on the " + team.toString() + " team.", session);
 					} catch (IllegalArgumentException ex) {
 						PlayerAgent target = server.getPlayerAgentByShortName(args[1].toLowerCase());
@@ -544,7 +547,9 @@ public enum Command {
 					if (target != null) {
 						try {
 							Agent.Team team = Agent.Team.valueOf(args[2].toUpperCase());
+							server.getEnvironment().removePlayerFromTeam(target);
 							target.setTeam(team);
+							server.getEnvironment().addPlayerToTeam(target);
 							server.unicast(target.getName() + " was placed on the " +
 								team.toString() + " team.", session);
 						} catch (IllegalArgumentException ex) {
