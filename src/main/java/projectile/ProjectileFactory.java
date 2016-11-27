@@ -126,10 +126,14 @@ public class ProjectileFactory {
 	 ******************************/
 
 	public Projectile fireProjectile() {
+		return fireProjectile(owner.getAngle());
+	}
+
+	public Projectile fireProjectile(double angle) {
 		if (isReadyToFire()) {
 			setReadyToFire(false);
 			double offset = random.nextDouble() * spread * 2 - spread;
-			Vector2D shotVector = new Vector2D(speed, owner.getAngle() + offset);
+			Vector2D shotVector = new Vector2D(speed, angle + offset);
 			Projectile projectile = new Projectile(environment, owner,
 				owner.getPosition(), shotVector, damage);
 			environment.addProjectile(projectile);

@@ -4,6 +4,7 @@ import main.java.agent.Agent;
 import main.java.agent.NPCAgent;
 import main.java.agent.PlayerAgent;
 import main.java.agent.Scout;
+import main.java.agent.Turret;
 
 import main.java.projectile.Projectile;
 
@@ -201,6 +202,28 @@ public class Environment {
 
 	public Scout spawnScout(Point2D.Double point, int level) {
 		Scout agent = new Scout(this, point, level);
+		activeNPCAgents.add(agent);
+		if (verbose) {
+			System.out.println("Level " + level + " scout (" +
+				agent.getID() + ") was spawned.");
+		}
+		return agent;
+	}
+
+	public Turret spawnTurret() {
+		return spawnTurret(generateLevel());
+	}
+
+	public Turret spawnTurret(int level) {
+		return spawnTurret(randomNPCSpawn(), level);
+	}
+
+	public Turret spawnTurret(Point2D.Double point) {
+		return spawnTurret(point, generateLevel());
+	}
+
+	public Turret spawnTurret(Point2D.Double point, int level) {
+		Turret agent = new Turret(this, point, level);
 		activeNPCAgents.add(agent);
 		if (verbose) {
 			System.out.println("Level " + level + " scout (" +

@@ -426,7 +426,7 @@ public enum Command {
 	SPAWN ("spawn",
 			new String[] {"create"},
 			("Spawns an Agent at your location or given coordinates." +
-				"<br>Syntax: /spawn (Player|Scout) [x y]")
+				"<br>Syntax: /spawn (Player|Scout|Turret) [x y]")
 		) {
 			@Override
 			protected void perform(String[] args, Session session, WebServer server) {
@@ -448,6 +448,8 @@ public enum Command {
 					server.spoofPlayer(new Point2D.Double(x, y));
 				} else if (args[1].equalsIgnoreCase("scout")) {
 					server.getEnvironment().spawnScout(new Point2D.Double(x, y));
+				} else if (args[1].equalsIgnoreCase("turret")) {
+					server.getEnvironment().spawnTurret(new Point2D.Double(x, y));
 				}
 			}
 		},

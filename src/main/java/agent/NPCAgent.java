@@ -54,6 +54,7 @@ public abstract class NPCAgent extends Agent {
 		}
 		// if finding new target was successful
 		if (target != null) {
+			setAngle(getAngleTo(target.getPosition()));
 			approachPoint(target.getPosition());
 			getGun().fireProjectile();
 		}
@@ -64,11 +65,8 @@ public abstract class NPCAgent extends Agent {
 		getEnvironment().despawnNPCAgent(this);
 	}
 
-	private void approachPoint(Point2D.Double p) {
-		double angleToPoint = getAngleTo(p);		
-
-		// update to face the point
-		setAngle(angleToPoint);
+	protected void approachPoint(Point2D.Double p) {
+		double angleToPoint = getAngleTo(p);
 
 		// if the NPCAgent is too far away from its target
 		if (getPosition().distance(p) > DESIRED_SPACING) {
@@ -109,7 +107,7 @@ public abstract class NPCAgent extends Agent {
 		}
 	}
 
-	private Agent findNewTarget() {
+	protected Agent findNewTarget() {
 		return getEnvironment().getNearestPlayer(this, getAggroRange());
 	}
 }
