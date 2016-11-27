@@ -101,7 +101,7 @@ public abstract class Agent {
 		double maxX = Math.cos(angleFromOrigin) * getEnvironment().getRadius();
 		double maxY = Math.sin(angleFromOrigin) * getEnvironment().getRadius();
 		
-		if (x > maxX || y > maxY) {
+		if (Math.abs(x) > Math.abs(maxX) || Math.abs(y) > Math.abs(maxY)) {
 			position.setLocation(maxX, maxY);
 		}
 		else {
