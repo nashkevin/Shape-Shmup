@@ -113,6 +113,10 @@ public class ProjectileFactory {
 			throw new IllegalArgumentException("firing delay must be positive");
 		}
 	}
+	
+	private void resetFiringTimer() {
+		setFiringDelay(firingDelay);
+	}
 
 	public final double getSize() {
 		return size;
@@ -131,6 +135,7 @@ public class ProjectileFactory {
 
 	public Projectile fireProjectile(double angle) {
 		if (isReadyToFire()) {
+			resetFiringTimer();
 			setReadyToFire(false);
 			double offset = random.nextDouble() * spread * 2 - spread;
 			Vector2D shotVector = new Vector2D(speed, angle + offset);
