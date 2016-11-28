@@ -34,7 +34,7 @@ Here is a comprehensive list of the pre-existing APIs, libraries, and other tech
 
 * **Jetty 9**, The Eclipse Foundation, [license](https://www.eclipse.org/jetty/licenses.html)
  * WebSocket server API
- * clients communicate with the game server using  the Jetty WebSocketServlet
+ * clients communicate with the game server using the Jetty WebSocketServlet
 
 * **Maven 3**, The Apache Software Foundation, [license](http://maven.apache.org/ref/3.0/license.html)
  * build manager for Java projects
@@ -43,3 +43,7 @@ Here is a comprehensive list of the pre-existing APIs, libraries, and other tech
 * **PixiJS**, Goodboy Digital Ltd., [license](https://github.com/pixijs/pixi.js/blob/master/LICENSE)
  * 2D WebGL renderer
  * graphics are drawn on an HTML5 canvas in the player's browser using PixiJS
+
+* **JS Intersections**, Kevin Lindsey, [license](https://github.com/thelonious/js-intersections/blob/master/LICENSE)
+ * JavaScript library for calculating intersections of geometric objects
+ * the barrier of the game arena is calculated using JS Intersections
