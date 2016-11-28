@@ -89,7 +89,7 @@ public class ProjectileFactory {
 		this.ready = b;
 	}
 
-	public final double getFiringDelay() {
+	public final int getFiringDelay() {
 		return firingDelay;
 	}
 

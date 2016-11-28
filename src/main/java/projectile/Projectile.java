@@ -12,21 +12,14 @@ import java.util.TimerTask;
 import java.util.UUID;
 
 
-/*****************************************************************************
- * To-do:                                                                    *
- *   Award shooter points when collision results in kill                     *
- *   Check that onCollision() actually works                                 *
- *****************************************************************************/
-
 public class Projectile {
-
-	private final long TIME_TO_LIVE = 4000;
 
 	private UUID id = UUID.randomUUID();
 	private transient Environment environment;
 	private Agent owner;
 	private Point2D.Double position;
 	private Vector2D velocity;
+	private int timeToLive;
 	private int damage;
 	private double size;
 
@@ -35,22 +28,24 @@ public class Projectile {
 	public Projectile(
 		Environment environment, Agent owner, Point2D.Double position,
 		Vector2D velocity, int damage, double size
-	) {	
+	) {
+
 		this.environment = environment;
 		this.owner = owner;
 		this.position = position;
 		this.velocity = velocity;
+		this.timeToLive = (int) (25000 / velocity.getMagnitude());
 		this.damage = damage;
 		this.size = size;
 
-		// despawn when TIME_TO_LIVE is up
+		// despawn when timeToLive is up
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				despawn(); // despawn the projectile
 				timer.cancel(); // terminate the timer
 			}
-		}, TIME_TO_LIVE);
+		}, timeToLive);
 	}
 	
 	public final UUID getID() {

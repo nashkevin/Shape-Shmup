@@ -20,16 +20,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-/** TODOs
-	Fix constructor calls for NPC and Player agents for integration
-*/
 public class Environment {
 	/** Radius of the environment, in pixels. Value is arbitrarily chosen. */
 	private static final double RADIUS = 10000;
 	/** The ideal ratio of NPCAgents to PlayerAgents */
 	private static final int NPC_PLAYER_RATIO = 50;
 	/** The frame rate, in Hz */
-	private static final int FRAME_RATE = 30;
+	private static final int FRAME_RATE = 60;
 	/** A random number generator **/
 	private static final Random random = new Random();
 	
@@ -303,7 +300,7 @@ public class Environment {
 		if (p.getOwner() instanceof PlayerAgent) {
 			for (Agent a : getActiveNPCAgents()) {
 				if (a.getTeam() != p.getOwner().getTeam() &&
-					a.getPosition().distance(p.getPosition()) < 33 * a.getSize()) {
+					a.getPosition().distance(p.getPosition()) < 33 * a.getSize() * p.getSize()) {
 					collisions.add(a);
 				}
 			}
@@ -319,7 +316,7 @@ public class Environment {
 				boolean teamsDiffer = (a.getTeam() != p.getOwner().getTeam());
 				// the shot actually hits
 				boolean overlapping = a.getPosition().distance(p.getPosition()) <
-					33 * a.getSize();
+					33 * a.getSize() * p.getSize();
 				if (!neutralTarget && teamsDiffer && overlapping) {
 					collisions.add(a);
 				}

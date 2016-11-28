@@ -22,6 +22,7 @@ public class Scout extends NPCAgent {
 			1000
 		);
 
-		this.getGun().setOwner(this);
+		getGun().setOwner(this);
+		getGun().setSize(getSize());
 	}
 }

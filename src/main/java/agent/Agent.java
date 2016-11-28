@@ -114,7 +114,7 @@ public abstract class Agent {
 		return gun;
 	}
 
-	public final void setGun(ProjectileFactory gun) {
+	public void setGun(ProjectileFactory gun) {
 		this.gun = gun;
 	}
 
