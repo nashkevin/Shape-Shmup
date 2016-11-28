@@ -143,6 +143,9 @@ public abstract class Agent {
 
 		// if given health exceeds maxHealth, increase to maxHealth
 		this.health = (health > maxHealth) ? maxHealth : health;
+		
+		// ensure that the health is not negative
+		this.health = Math.max(this.health, 0);
 
 		if (health <= 0) {
 			despawn();
