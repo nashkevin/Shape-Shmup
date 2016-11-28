@@ -11,6 +11,8 @@
 
 /** Variables related to server-client connection */
 const INPUT_RATE = 20; // maximum number of inputs per second
+/** Radius of game plus leeway (otherwise, agents could half-way cross the barrier). */
+const RADIUS = 10000 + 30;
 var webSocket;
 var playerAgentID;  // ID referring to this player in the serialized game state
 var clientInput = {};  // represents the current input of the player
@@ -47,6 +49,9 @@ bgTile.position.set(0, 0);
 bgTile.tilePosition.set(0, 0);
 stage.addChild(bgTile);
 
+/** Barrier for game arena boundary. */
+var barrier = new PIXI.Graphics();
+stage.addChild(barrier);
 
 //2. Event Listeners
 
@@ -481,7 +486,30 @@ function updateStage(json) {
 		entity.y += bgOffsetY;
 	}
 
+	updateBarrier();
+
 	renderer.render(stage);
+}
+
+/** Redraw the game boundary on screen. */
+function updateBarrier() {
+	barrier.clear();
+
+	// Calculate intersections between the browser screen (rectangle) and game
+	// environment (circle), using screen coordinates.
+	var center = new Point2D(-playerX + getGameWidth()/2, playerY + getGameHeight()/2);
+	var r1 = new Point2D(0, 0);
+	var r2 = new Point2D(getGameWidth(), getGameHeight());
+	var intersections = Intersection.intersectCircleRectangle(center, RADIUS, r1, r2);
+
+	if (intersections.points.length == 2) {
+		var p1 = intersections.points[0];
+		var p2 = intersections.points[1];
+
+		barrier.lineStyle(4, 0x000000, 1);
+		barrier.moveTo(p1.x, p1.y);
+		barrier.lineTo(p2.x, p2.y);
+	}
 }
 
 /** Calculate the coordinates of the entity in relation to the canvas screen.
