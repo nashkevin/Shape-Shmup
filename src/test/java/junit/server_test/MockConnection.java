@@ -83,6 +83,18 @@ public class MockConnection {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		try {
+			Mockito.doAnswer(new Answer<Void>() {
+				@Override
+				public Void answer(InvocationOnMock invocation) throws Throwable {
+					getServer().onClose(session);
+					return null;
+				}
+			}).when(session).close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		return session;
 	}
