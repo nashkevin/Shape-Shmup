@@ -1,7 +1,5 @@
 package test.java.junit.environment_test;
 
-import main.java.agent.Agent;
-import main.java.agent.NPCAgent;
 import main.java.agent.PlayerAgent;
 import main.java.agent.Scout;
 import main.java.environment.Environment;

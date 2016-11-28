@@ -2,7 +2,6 @@ package main.java.web;
 
 import main.java.agent.Agent;
 import main.java.agent.PlayerAgent;
-import main.java.environment.Environment;
 
 import java.awt.geom.Point2D;
 
@@ -480,7 +479,7 @@ public enum Command {
 					sb.append(" (");
 					sb.append(player.getPoints());
 					sb.append("/");
-					sb.append(player.levelToPoints(player.getLevel() + 1));
+					sb.append(PlayerAgent.levelToPoints(player.getLevel() + 1));
 					sb.append(" exp)");
 					sb.append("<br>" + tab);
 					sb.append("Health: ");

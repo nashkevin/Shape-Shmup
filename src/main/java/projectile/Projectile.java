@@ -7,7 +7,6 @@ import java.awt.geom.Point2D;
 import main.java.misc.Vector2D;
 
 import java.util.List;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;

@@ -13,7 +13,6 @@ public class ProjectileFactory {
 	
 	private transient Environment environment;
 	private Agent owner;
-	private Vector2D velocity;
 
 	private int damage;
 	private double speed;

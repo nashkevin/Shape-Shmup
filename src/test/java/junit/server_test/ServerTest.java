@@ -55,7 +55,7 @@ public class ServerTest {
 	@Test
 	public void testKickOther() {
 		MockConnection user1 = new MockConnection(server, "Test1");
-		MockConnection user2 = new MockConnection(server, "Test2");
+		new MockConnection(server, "Test2");
 		
 		// Have user 1 kick user 2.
 		String kickMessage = " {\"message\":\"/kick Test2\"}";

@@ -37,7 +37,6 @@ public class WebServer {
 	private static final Map<String, PlayerAgent> shortNameToSpoofedAgent =
 		Collections.synchronizedMap(new HashMap<>());
 	private static Environment environment;
-	private static GameSerializer gameThread;
 
 	private boolean verbose = true;
 
@@ -56,7 +55,7 @@ public class WebServer {
 		if (environment == null) {
 			// The GameThread needs a reference to any one WebServer so that it can broadcast.
 			environment = new Environment(verbose);
-			gameThread = new GameSerializer(this, environment);
+			new GameSerializer(this, environment);
 		}
 	}
 
