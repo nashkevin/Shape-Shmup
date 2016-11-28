@@ -250,6 +250,16 @@ function padString(string, padChar, length) {
 	return string;
 }
 
+/** Converts a Point2D object (from geometry library) to a PIXI Point. */
+function geoToPixiPoint(geoPoint) {
+	return new PIXI.Point(geoPoint.x, geoPoint.y);
+}
+
+/** Comparison function for sorting 2D coordinates. */
+function comparePoints(a, b) {
+	return coordinateToAngle(a.x, a.y) - coordinateToAngle(b.x, b.y);
+}
+
 
 //4. Network Communication
 
@@ -498,18 +508,46 @@ function updateBarrier() {
 	// Calculate intersections between the browser screen (rectangle) and game
 	// environment (circle), using screen coordinates.
 	var center = new Point2D(-playerX + getGameWidth()/2, playerY + getGameHeight()/2);
-	var r1 = new Point2D(0, 0);
-	var r2 = new Point2D(getGameWidth(), getGameHeight());
+	var r1 = new Point2D(0, 0); // top left of rectangle
+	var r2 = new Point2D(getGameWidth(), getGameHeight()); // bottom right of rectangle
 	var intersections = Intersection.intersectCircleRectangle(center, RADIUS, r1, r2);
 
+	// If there are two points, the barrier crosses the screen and should be drawn.
 	if (intersections.points.length == 2) {
-		var p1 = intersections.points[0];
-		var p2 = intersections.points[1];
+		// Convert intersected points to PIXI points.
+		var points = intersections.points.map(geoToPixiPoint);
+		// Add corners of the screen that are outside of the game arena.
+		points = points.concat(getOutsideCorners(center, RADIUS));
+		// Sort points by polar angle so that the polygon is correct.
+		points = points.sort(comparePoints);
 
-		barrier.lineStyle(4, 0x000000, 1);
-		barrier.moveTo(p1.x, p1.y);
-		barrier.lineTo(p2.x, p2.y);
+		// Draw polygon of the area outside of the game arena.
+		barrier.alpha = 0.5;
+		barrier.lineStyle();
+		barrier.beginFill(0x000000);
+		barrier.drawPolygon(points);
+		barrier.endFill();
 	}
+}
+
+/** Determine which corners of the screen are outside of the game arena. */
+function getOutsideCorners(center, radius) {
+	// Coordinates relative to the screen.
+	var corners = [
+		new PIXI.Point(0, 0),
+		new PIXI.Point(getGameWidth(), 0),
+		new PIXI.Point(0, getGameHeight()),
+		new PIXI.Point(getGameWidth(), getGameHeight())
+	];
+
+	return corners.filter(function(point) {
+		// Coordinates relative to the center of the game arena.
+		var gameX = point.x - center.x;
+		var gameY = point.y - center.y;
+
+		// Compare (a^2 + b^2) to the squared radius of the game arena.
+		return (Math.pow(gameX, 2) + Math.pow(gameY, 2)) >= Math.pow(radius, 2);
+	});
 }
 
 /** Calculate the coordinates of the entity in relation to the canvas screen.
