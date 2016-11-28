@@ -29,18 +29,20 @@ public class Projectile {
 	private Point2D.Double position;
 	private Vector2D velocity;
 	private int damage;
+	private double size;
 
 	private Timer timer = new Timer("Projectile Timer");
 
 	public Projectile(
 		Environment environment, Agent owner, Point2D.Double position,
-		Vector2D velocity, int damage
+		Vector2D velocity, int damage, double size
 	) {	
 		this.environment = environment;
 		this.owner = owner;
 		this.position = position;
 		this.velocity = velocity;
 		this.damage = damage;
+		this.size = size;
 
 		// despawn when TIME_TO_LIVE is up
 		timer.schedule(new TimerTask() {
@@ -101,5 +103,9 @@ public class Projectile {
 	
 	public String getHexColor() {
 		return getOwner().getHexColor();
+	}
+	
+	public double getSize() {
+		return size;
 	}
 }

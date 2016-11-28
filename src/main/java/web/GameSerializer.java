@@ -119,6 +119,7 @@ public class GameSerializer {
 		public JsonElement serialize(Projectile src, Type typeOfSrc, JsonSerializationContext context) {
 			JsonObject element = new JsonObject();
 			element.add("id", new JsonPrimitive(src.getID().toString()));
+			element.add("size", new JsonPrimitive(src.getSize()));
 			Point2D.Double point = src.getPosition();
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));

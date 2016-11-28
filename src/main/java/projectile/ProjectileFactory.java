@@ -135,7 +135,7 @@ public class ProjectileFactory {
 			double offset = random.nextDouble() * spread * 2 - spread;
 			Vector2D shotVector = new Vector2D(speed, angle + offset);
 			Projectile projectile = new Projectile(environment, owner,
-				owner.getPosition(), shotVector, damage);
+				owner.getPosition(), shotVector, damage, size);
 			environment.addProjectile(projectile);
 			return projectile;
 		}

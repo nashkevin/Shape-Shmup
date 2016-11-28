@@ -60,13 +60,13 @@ public class EnvironmentTest {
 		Environment environment = new Environment(false);
 		int initialCount = environment.getActiveProjectiles().size();
 		Projectile projectile1 = new Projectile(environment, null,
-			new Point2D.Double(), new Vector2D(0.0, 0.0), 1);
+			new Point2D.Double(), new Vector2D(0.0, 0.0), 1, 1);
 		environment.addProjectile(projectile1);
 		Projectile projectile2 = new Projectile(environment, null,
-			new Point2D.Double(), new Vector2D(0.0, 0.0), 1);
+			new Point2D.Double(), new Vector2D(0.0, 0.0), 1, 1);
 		environment.addProjectile(projectile2);
 		Projectile projectile3 = new Projectile(environment, null,
-			new Point2D.Double(), new Vector2D(0.0, 0.0), 1);
+			new Point2D.Double(), new Vector2D(0.0, 0.0), 1, 1);
 		environment.addProjectile(projectile3);
 		int spawnedCount = environment.getActiveProjectiles().size();
 		environment.despawnProjectile(projectile1);
