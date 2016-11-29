@@ -13,6 +13,9 @@ import java.util.UUID;
 
 
 public class Projectile {
+	/** The distance into the environment's edge (in pixels) that the Projectile
+	  * can travel before it despawns. */
+	private static final int PROJECTILE_LEEWAY = 30;
 
 	private UUID id = UUID.randomUUID();
 	private transient Environment environment;
@@ -47,7 +50,7 @@ public class Projectile {
 			}
 		}, timeToLive);
 	}
-	
+
 	public final UUID getID() {
 		return id;
 	}
@@ -63,7 +66,7 @@ public class Projectile {
 	public final Point2D.Double getPosition() {
 		return (Point2D.Double) position.clone();
 	}
-	
+
 	public final Vector2D getVelocity() {
 		return new Vector2D(velocity);
 	}
@@ -75,9 +78,14 @@ public class Projectile {
 		double newX = oldX + (velocity.getMagnitude() * Math.cos(velocity.getAngle()));
 		double newY = oldY + (velocity.getMagnitude() * -Math.sin(velocity.getAngle()));
 
-		position.setLocation(newX, newY);
+		if ((Math.pow(newX, 2) + Math.pow(newY, 2)) >=
+				(Math.pow(environment.getRadius() + PROJECTILE_LEEWAY, 2)) ) {
+			despawn();
+		} else {
+			position.setLocation(newX, newY);
 
-		onCollision(environment.checkCollision(this));
+			onCollision(environment.checkCollision(this));
+		}
 	}
 
 	public final void despawn() {
@@ -94,11 +102,11 @@ public class Projectile {
 			}
 		}
 	}
-	
+
 	public String getHexColor() {
 		return getOwner().getHexColor();
 	}
-	
+
 	public double getSize() {
 		return size;
 	}
