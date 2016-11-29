@@ -266,7 +266,6 @@ public enum Command {
 					if (target != null) {
 						try {
 							healValue = Integer.parseInt(args[2]);
-							target = server.getPlayerAgentBySession(sourceSession);
 							target.applyHealing(healValue);
 						}
 						catch (NumberFormatException ex) {
