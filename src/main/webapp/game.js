@@ -238,13 +238,10 @@ function getBorderColor(hex) {
 	rgb.g = padString(rgb.g.toString(16), "0", 2);
 	rgb.b = padString(rgb.b.toString(16), "0", 2);
 
-	console.log("0x" + rgb.r + rgb.g + rgb.b);
-
 	return "0x" + rgb.r + rgb.g + rgb.b;
 }
 
 function rgbToHsv(rgb) {
-	console.log("rgb in = " + rgb.r + " " + rgb.g + " " + rgb.b);
 	// Red
 	var r = rgb.r / 255;
 	// Green
@@ -281,12 +278,10 @@ function rgbToHsv(rgb) {
 	// Determine value
 	hsv.v = Cmax;
 
-	console.log("hsv out = " + hsv.h + " " + hsv.s + " " + hsv.v);
 	return hsv;
 }
 
 function hsvToRgb(hsv) {
-	console.log("hsv in = " + hsv.h + " " + hsv.s + " " + hsv.v);
 	// Hue
 	var h = hsv.h / 60;
 	// Chroma
@@ -324,7 +319,6 @@ function hsvToRgb(hsv) {
 	rgb.g = Math.round((rgb.g + m) * 255);
 	rgb.b = Math.round((rgb.b + m) * 255);
 
-	console.log("rgb out = " + rgb.r + " " + rgb.g + " " + rgb.b);
 	return rgb;
 }
 
