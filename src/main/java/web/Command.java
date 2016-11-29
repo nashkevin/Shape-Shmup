@@ -493,7 +493,7 @@ public enum Command {
 					sb.append(player.getGun().getSpeed());
 					sb.append("<br>" + tab);
 					sb.append("Firing Speed: ");
-					sb.append(String.format("%.2f", 1000 / player.getGun().getFiringDelay()));
+					sb.append(String.format("%.2f", 1000.0 / player.getGun().getFiringDelay()));
 					sb.append(" shots/sec<br>" + tab);
 					sb.append("Haste: ");
 					sb.append(String.format("%.2f", player.getHaste() * 100) + "%");
