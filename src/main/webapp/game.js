@@ -223,23 +223,109 @@ function coordinateToAngle(x, y) {
 
 /* Returns a darker shade of the input color */
 function getBorderColor(hex) {
-	const PRIMARY_FACTOR = 0.75;
-	const SECONDARY_FACTOR = 0.55;
-	var red = parseInt(hex.substring(2, 4), 16);
-	var green = parseInt(hex.substring(4, 6), 16);
-	var blue = parseInt(hex.substring(6, 8), 16);
+	var rgb = {
+		r: parseInt(hex.substring(2, 4), 16),
+		g: parseInt(hex.substring(4, 6), 16),
+		b: parseInt(hex.substring(6, 8), 16)
+	};
 
-	var max = Math.max(red, green, blue);
+	var hsv = rgbToHsv(rgb);
+	hsv.s = Math.min(hsv.s * 2.9, 1);
+	hsv.v *= 0.75;
+	rgb = hsvToRgb(hsv);
 
-	red = Math.floor(red * ((red == max) ? PRIMARY_FACTOR : SECONDARY_FACTOR));
-	green = Math.floor(green * ((green == max) ? PRIMARY_FACTOR : SECONDARY_FACTOR));
-	blue = Math.floor(blue * ((blue == max) ? PRIMARY_FACTOR : SECONDARY_FACTOR));
+	rgb.r = padString(rgb.r.toString(16), "0", 2);
+	rgb.g = padString(rgb.g.toString(16), "0", 2);
+	rgb.b = padString(rgb.b.toString(16), "0", 2);
 
-	red = padString(red.toString(16), "0", 2);
-	green = padString(green.toString(16), "0", 2);
-	blue = padString(blue.toString(16), "0", 2);
+	console.log("0x" + rgb.r + rgb.g + rgb.b);
 
-	return "0x" + red + green + blue;
+	return "0x" + rgb.r + rgb.g + rgb.b;
+}
+
+function rgbToHsv(rgb) {
+	console.log("rgb in = " + rgb.r + " " + rgb.g + " " + rgb.b);
+	// Red
+	var r = rgb.r / 255;
+	// Green
+	var g = rgb.g / 255;
+	// Blue
+	var b = rgb.b / 255;
+
+	// The maximum color value
+	var Cmax = Math.max(r, g, b);
+	// The minimum color value
+	var Cmin = Math.min(r, g, b);
+	// Distance between max and min colors
+	var delta = Cmax - Cmin;
+
+	var hsv = {h: 0, s: 0, v: 0}
+
+	// Determine hue
+	if (delta == 0) {
+		hsv.h = 0;
+	}
+	else if (Cmax == r) {
+		hsv.h = 60 * (((g - b) / delta) % 6);
+	}
+	else if (Cmax == g) {
+		hsv.h = 60 * (((b - r) / delta) + 2);
+	}
+	else if (Cmax == b) {
+		hsv.h = 60 * (((r - g) / delta) + 4);
+	}
+
+	// Determine saturation
+	hsv.s = (Cmax == 0) ? 0 : delta / Cmax;
+
+	// Determine value
+	hsv.v = Cmax;
+
+	console.log("hsv out = " + hsv.h + " " + hsv.s + " " + hsv.v);
+	return hsv;
+}
+
+function hsvToRgb(hsv) {
+	console.log("hsv in = " + hsv.h + " " + hsv.s + " " + hsv.v);
+	// Hue
+	var h = hsv.h / 60;
+	// Chroma
+	var c = hsv.v * hsv.s;
+	// Middle color value
+	var x = c * (1 - Math.abs(h % 2 - 1));
+	// Matching variable
+	var m = hsv.v - c;
+
+	var rgb = {r: 0, g: 0, b: 0};
+	switch (Math.floor(h)) {
+		case 0:
+			rgb = {r: c, g: x, b: 0};
+			break;
+		case 1:
+			rgb = {r: x, g: c, b: 0};
+			break;
+		case 2:
+			rgb = {r: 0, g: c, b: x};
+			break;
+		case 3:
+			rgb = {r: 0, g: x, b: c};
+			break;
+		case 4:
+			rgb = {r: x, g: 0, b: c};
+			break;
+		case 5:
+			rgb = {r: c, g: 0, b: x};
+			break;
+		default:
+			rgb = {r: 0, g: 0, b: 0};
+	}
+
+	rgb.r = Math.round((rgb.r + m) * 255);
+	rgb.g = Math.round((rgb.g + m) * 255);
+	rgb.b = Math.round((rgb.b + m) * 255);
+
+	console.log("rgb out = " + rgb.r + " " + rgb.g + " " + rgb.b);
+	return rgb;
 }
 
 /** Left pads a string with the character until it reaches the total length. */

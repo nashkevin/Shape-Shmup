@@ -13,8 +13,8 @@ public abstract class Agent {
 	public static enum Team {
 		ENEMY("0xFDE7CE"), // all NPCAgents
 		NONE("0xD4E9D3"), // unaffiliated PlayerAgents
-		RED("0xF8CECC"), // Red PlayerAgents
-		BLUE("0xD4D3E9"); // Blue PlayerAgents
+		RED("0xFFD3D3"), // Red PlayerAgents
+		BLUE("0xCED5FF"); // Blue PlayerAgents
 		
 		private String hexColor;
 		private Team(String hexColor) {
