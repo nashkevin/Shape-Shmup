@@ -106,7 +106,9 @@ public class MockConnection {
 			@Override
 			public Void answer(InvocationOnMock invocation) throws Throwable {
 				for (Object arg : invocation.getArguments()) {
-					output.add(arg.toString());
+					synchronized(output) {
+						output.add(arg.toString());
+					}
 				}
 				return null;
 			}
@@ -123,7 +125,9 @@ public class MockConnection {
 			@Override
 			public Void answer(InvocationOnMock invocation) throws Throwable {
 				for (Object arg : invocation.getArguments()) {
-					output.add(arg.toString());
+					synchronized(output) {
+						output.add(arg.toString());
+					}
 				}
 				return null;
 			}

@@ -118,7 +118,9 @@ public class WebServer {
 
 		// Send client's update to the relevant agent entity.
 		PlayerAgent agent = sessionToPlayerAgent.get(session);
-		agent.addPlayerEvent(input);
+		if (agent != null) {
+			agent.addPlayerEvent(input);
+		}
 	}
 
 	/** Broadcast text to all connected clients. */

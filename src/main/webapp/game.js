@@ -10,7 +10,7 @@
 //1. Constants, variables, etc.
 
 /** Variables related to server-client connection */
-const INPUT_RATE = 50; // maximum number of inputs per second
+const INPUT_RATE = 30; // maximum number of inputs per second
 /** Radius of game plus leeway (otherwise, agents could half-way cross the barrier). */
 const RADIUS = 10000 + 30;
 var webSocket;

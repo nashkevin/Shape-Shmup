@@ -26,7 +26,7 @@ public class Environment {
 	/** The ideal ratio of NPCAgents to PlayerAgents */
 	private static final int NPC_PLAYER_RATIO = 50;
 	/** The frame rate, in Hz */
-	private static final int FRAME_RATE = 60;
+	private static final int FRAME_RATE = 40;
 	/** A random number generator **/
 	private static final Random random = new Random();
 	
@@ -152,12 +152,14 @@ public class Environment {
 
 	/** Despawns a PlayerAgent */
 	public void despawnPlayerAgent(PlayerAgent agent) {
-		activePlayerAgents.remove(agent);
-		recentlyDespawnedPlayerAgents.add(agent);
-		removePlayerFromTeam(agent);
-		decimate();
-		if (verbose) {
-			System.out.println("\"" + agent.getName() + "\" was despawned.");
+		if (agent != null) {
+			activePlayerAgents.remove(agent);
+			recentlyDespawnedPlayerAgents.add(agent);
+			removePlayerFromTeam(agent);
+			decimate();
+			if (verbose) {
+				System.out.println("\"" + agent.getName() + "\" was despawned.");
+			}
 		}
 
 	}
@@ -319,12 +321,13 @@ public class Environment {
 	/** Checks collisions between projectiles and agent entities and returns an array of agents hit */
 	public ArrayList<Agent> checkCollision(Projectile p) {
 		ArrayList<Agent> collisions = new ArrayList<Agent>();
+		double projectileSize = 33 * p.getSize();
 
 		// NPCAgents can't damage each other
 		if (p.getOwner() instanceof PlayerAgent) {
 			for (Agent a : getActiveNPCAgents()) {
 				if (a.getTeam() != p.getOwner().getTeam() &&
-					a.getPosition().distance(p.getPosition()) < 33 * a.getSize() * p.getSize()) {
+					a.getPosition().distance(p.getPosition()) < projectileSize * a.getSize()) {
 					collisions.add(a);
 				}
 			}
@@ -333,15 +336,12 @@ public class Environment {
 		// unaffiliated PlayerAgents can't damage other PlayerAgents
 		if (p.getOwner().getTeam() != Agent.Team.NONE) {
 			for (Agent a : getActivePlayerAgents()) {
-				// target is not on a PvP team and shooter is
-				boolean neutralTarget = (p.getOwner().getTeam() !=
-					Agent.Team.ENEMY && a.getTeam() == Agent.Team.NONE);
-				// target and shooter are on different teams
-				boolean teamsDiffer = (a.getTeam() != p.getOwner().getTeam());
-				// the shot actually hits
-				boolean overlapping = a.getPosition().distance(p.getPosition()) <
-					33 * a.getSize() * p.getSize();
-				if (!neutralTarget && teamsDiffer && overlapping) {
+				if (// target is not on a PvP team and shooter is
+						!(p.getOwner().getTeam() != Agent.Team.ENEMY && a.getTeam() == Agent.Team.NONE) && 
+						// target and shooter are on different teams
+						(a.getTeam() != p.getOwner().getTeam()) && 
+						// the shot actually hits
+						(a.getPosition().distance(p.getPosition()) < projectileSize * a.getSize())){
 					collisions.add(a);
 				}
 			}

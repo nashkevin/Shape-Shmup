@@ -493,7 +493,7 @@ public enum Command {
 					sb.append(player.getGun().getSpeed());
 					sb.append("<br>" + tab);
 					sb.append("Firing Speed: ");
-					sb.append(String.format("%.2f", 1000 / player.getGun().getFiringDelay()));
+					sb.append(String.format("%.2f", 1000.0 / player.getGun().getFiringDelay()));
 					sb.append(" shots/sec<br>" + tab);
 					sb.append("Haste: ");
 					sb.append(String.format("%.2f", player.getHaste() * 100) + "%");
@@ -522,6 +522,7 @@ public enum Command {
 				}
 				else if (args.length == 2) {
 					try {
+						// Parse the first argument as a team (to change teams).
 						Agent.Team team = Agent.Team.valueOf(args[1].toUpperCase());
 						PlayerAgent player = server.getPlayerAgentBySession(session);
 						server.getEnvironment().removePlayerFromTeam(player);
@@ -529,6 +530,7 @@ public enum Command {
 						server.getEnvironment().addPlayerToTeam(player);
 						server.unicast("You were placed on the " + team.toString() + " team.", session);
 					} catch (IllegalArgumentException ex) {
+						// Parse the first argument as a player (to check the player's team).
 						PlayerAgent target = server.getPlayerAgentByShortName(args[1].toLowerCase());
 						if (target != null) {
 							if (target.getTeam() == null || target.getTeam() == Agent.Team.NONE) {
