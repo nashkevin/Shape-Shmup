@@ -833,9 +833,9 @@ function drawProjectile(projectileObject) {
 function createProjectile(projectileObject) {
 	// Create the primitive shape that will be used as the texture for the sprite
 	var projectileShape = new PIXI.Graphics();
-	projectileShape.lineStyle(4 * (projectileObject.size), getBorderColor(projectileObject.color), 1)
+	projectileShape.lineStyle(4, getBorderColor(projectileObject.color), 1);
 	projectileShape.beginFill(projectileObject.color);
-	projectileShape.drawCircle(0, 0, 7 * (projectileObject.size)); // x, y, r (x and y will be set later)
+	projectileShape.drawCircle(0, 0, 7 * projectileObject.size); // x, y, r (x and y will be set later)
 	projectileShape.endFill();
 
 	// Create the sprite that represents the player itself

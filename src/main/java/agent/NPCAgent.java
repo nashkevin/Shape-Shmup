@@ -5,6 +5,8 @@ import main.java.projectile.ProjectileFactory;
 
 import java.awt.geom.Point2D;
 
+import java.lang.Math;
+
 
 public abstract class NPCAgent extends Agent {
 
@@ -12,16 +14,16 @@ public abstract class NPCAgent extends Agent {
 	/** NPCAgent will notice PlayerAgents within this range */
 	private double aggroRange;
 	/** NPCAgent will try to maintain this distance from its target */
-	private double DESIRED_SPACING = 200;
+	private double DESIRED_SPACING = 150 + Math.random() * 100;
 	/** NPCAgent's speed will not exceed its haste times this multiple */
 	private int MAX_SPEED_MULTIPLE = 10;
-
 
 	public NPCAgent(
 		Environment environment, Point2D.Double position, ProjectileFactory gun,
 		double size, int health, double haste, double aggroRange
 	) {
-		super(environment, position, gun, Agent.Team.ENEMY, size, health, haste);
+		super(environment, position, gun, Agent.Team.ENEMY, size, health,
+			haste + Math.random() / 100);
 		this.aggroRange = aggroRange;
 	}
 
