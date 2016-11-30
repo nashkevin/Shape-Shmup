@@ -22,7 +22,7 @@ public class CommandsTest {
 		// Create a mock session and connect it to the server.
 		MockConnection user = new MockConnection(server, "Test");
 		
-		String message = " {\"message\":\"/help\"}";
+		String message = "{\"message\":\"/help\"}";
 		server.onMessage(message, user.getSession());
 
 		String expectedSubstring = "/help [command]";
@@ -37,7 +37,7 @@ public class CommandsTest {
 		// Create a mock session and connect it to the server.
 		MockConnection user = new MockConnection(server, "Test");
 		
-		String message = " {\"message\":\"/help exit\"}";
+		String message = "{\"message\":\"/help exit\"}";
 		server.onMessage(message, user.getSession());
 
 		String expectedResult = Command.EXIT.getHelpText();
@@ -54,7 +54,7 @@ public class CommandsTest {
 		// Create a mock session and connect it to the server.
 		MockConnection user = new MockConnection(server, "Test");
 		
-		String message = " {\"message\":\"/commands\"}";
+		String message = "{\"message\":\"/commands\"}";
 		server.onMessage(message, user.getSession());
 
 		for (Command command : Command.values()) {
@@ -70,7 +70,7 @@ public class CommandsTest {
 		// Create a mock session and connect it to the server.
 		MockConnection user = new MockConnection(server, "Test");
 		
-		String message = " {\"message\":\"/pm Test hi\"}";
+		String message = "{\"message\":\"/pm Test hi\"}";
 		server.onMessage(message, user.getSession());
 
 		String expectedResponse = "You can't private message yourself";
@@ -89,7 +89,7 @@ public class CommandsTest {
 		
 		// Send a message from A to B.
 		String privateMessage = "Message with multiple words";
-		String message = " {\"message\":\"/pm B " + privateMessage + "\"}";
+		String message = "{\"message\":\"/pm B " + privateMessage + "\"}";
 		server.onMessage(message, user1.getSession());
 
 		// Verify that B received the message but C didn't.
@@ -107,7 +107,7 @@ public class CommandsTest {
 		// Create a mock session and connect it to the server.
 		MockConnection user = new MockConnection(server, "Test");
 		
-		String message = " {\"message\":\"/pm\"}";
+		String message = "{\"message\":\"/pm\"}";
 		server.onMessage(message, user.getSession());
 
 		// Verify that the help info for /pm appeared.
@@ -122,7 +122,7 @@ public class CommandsTest {
 		// Create a mock session and connect it to the server.
 		MockConnection user = new MockConnection(server, "Test");
 		
-		String message = " {\"message\":\"/stats\"}";
+		String message = "{\"message\":\"/stats\"}";
 		server.onMessage(message, user.getSession());
 
 		// Verify that the info about the player and level appears.
@@ -139,7 +139,7 @@ public class CommandsTest {
 		MockConnection user = new MockConnection(server, "Test");
 		MockConnection user2 = new MockConnection(server, "Test2");
 		
-		String message = " {\"message\":\"/stats Test2\"}";
+		String message = "{\"message\":\"/stats Test2\"}";
 		server.onMessage(message, user.getSession());
 
 		// Verify that the info about the player and level appears.
@@ -151,27 +151,12 @@ public class CommandsTest {
 	}
 	
 	@Test
-	/** Test using the /stats command to check another player's stats. */
-	public void testStatsInvalidPlayer() {
-		// Create a mock session and connect it to the server.
-		MockConnection user = new MockConnection(server, "Test");
-		
-		String message = " {\"message\":\"/stats test2\"}";
-		server.onMessage(message, user.getSession());
-
-		String expected = "Player 'test2' not found.";
-		Assert.assertTrue(user.receivedMessage(expected));
-
-		server.onClose(user.getSession());
-	}
-	
-	@Test
 	/** Test using the /team command to check the player's team. */
 	public void testTeam() {
 		// Create a mock session and connect it to the server.
 		MockConnection user = new MockConnection(server, "Test");
 		
-		String message = " {\"message\":\"/team\"}";
+		String message = "{\"message\":\"/team\"}";
 		server.onMessage(message, user.getSession());
 
 		// Have the expected string be vague because we don't want to make
@@ -188,7 +173,7 @@ public class CommandsTest {
 		// Create a mock session and connect it to the server.
 		MockConnection user = new MockConnection(server, "Test");
 		
-		String message = " {\"message\":\"/team red\"}";
+		String message = "{\"message\":\"/team red\"}";
 		server.onMessage(message, user.getSession());
 
 		String expected = "You were placed on the red team.";
