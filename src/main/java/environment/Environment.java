@@ -26,7 +26,7 @@ public class Environment {
 	/** The ideal ratio of NPCAgents to PlayerAgents */
 	private static final int NPC_PLAYER_RATIO = 50;
 	/** The ideal ratio of Scouts to Pulsars */
-	private static final int SCOUT_PULSAR_RATIO = 15;
+	private static final int SCOUT_PULSAR_RATIO = 50;
 	/** The frame rate, in Hz */
 	private static final int FRAME_RATE = 40;
 	/** A random number generator **/
