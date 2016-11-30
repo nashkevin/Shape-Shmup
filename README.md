@@ -10,7 +10,7 @@ EECS 393 (Fall 2016) -- Software Engineering, Case Western Reserve University
 * [Kevin Wang](https://github.com/kevinwang95) ([kxw233](mailto:kxw233@case.edu?Subject=Cool%20EECS%20393%20project))
 
 ## Description
-Our currently-untitled web browser game is a 2D multiplayer game in which you navigate as a simple geometric character and shoot down simple geometric enemies because, let's face it, none of us are artists.
+Shape Shmup game is a 2D multiplayer game in which you navigate as a simple geometric character and shoot down simple geometric enemies because, let's face it, none of us are artists.
 
 ### Features
 * Use arrow keys or WASD to move

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>war</packaging>
 	<groupId>software.engineering.group.project</groupId>
-	<artifactId>web-browser-game</artifactId>
+	<artifactId>shape-shmup</artifactId>
 	<version>1.0</version>
 	<properties>
 		<jetty-version>9.3.12.v20160915</jetty-version>
