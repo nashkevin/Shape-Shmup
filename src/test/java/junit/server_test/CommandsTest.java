@@ -131,4 +131,21 @@ public class CommandsTest {
 
 		server.onClose(user.getSession());
 	}
+	
+	@Test
+	/** Test using the /stats command to check another player's stats. */
+	public void testOtherStats() {
+		// Create a mock session and connect it to the server.
+		MockConnection user = new MockConnection(server, "Test");
+		new MockConnection(server, "Test2");
+		
+		String message = " {\"message\":\"/stats test2\"}";
+		server.onMessage(message, user.getSession());
+
+		// Verify that the info about the player and level appears.
+		String expected = "<strong>Test2</strong>, Lv. 0";
+		Assert.assertTrue(user.receivedMessage(expected));
+
+		server.onClose(user.getSession());
+	}
 }
