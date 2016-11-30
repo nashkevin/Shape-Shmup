@@ -196,4 +196,21 @@ public class CommandsTest {
 
 		server.onClose(user.getSession());
 	}
+	
+	@Test
+	/** Test using the /team command to change the player's team. */
+	public void testTeamOfPlayer() {
+		// Create a mock session and connect it to the server.
+		MockConnection user = new MockConnection(server, "Test");
+		MockConnection user2 = new MockConnection(server, "Test2");
+		
+		String message = " {\"message\":\"/team Test2\"}";
+		server.onMessage(message, user.getSession());
+
+		String expected = "Test2 is on the";
+		Assert.assertTrue(user.receivedMessage(expected));
+
+		server.onClose(user.getSession());
+		server.onClose(user2.getSession());
+	}
 }
