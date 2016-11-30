@@ -104,7 +104,7 @@ public class CommandsTest {
 	@Test
 	/** Test trying to send a PM with no recipient or message. */
 	public void testPmWithInvalidArguments() {
-		// Create a mock sessions and connect it to the server.
+		// Create a mock session and connect it to the server.
 		MockConnection user = new MockConnection(server, "Test");
 		
 		String message = " {\"message\":\"/pm\"}";
@@ -112,6 +112,22 @@ public class CommandsTest {
 
 		// Verify that the help info for /pm appeared.
 		Assert.assertTrue(user.receivedMessage(Command.PM.getHelpText()));
+
+		server.onClose(user.getSession());
+	}
+	
+	@Test
+	/** Test the /stats command without arguments. */
+	public void testSelfStats() {
+		// Create a mock session and connect it to the server.
+		MockConnection user = new MockConnection(server, "Test");
+		
+		String message = " {\"message\":\"/stats\"}";
+		server.onMessage(message, user.getSession());
+
+		// Verify that the info about the player and level appears.
+		String expected = "<strong>Test</strong>, Lv. 0";
+		Assert.assertTrue(user.receivedMessage(expected));
 
 		server.onClose(user.getSession());
 	}
