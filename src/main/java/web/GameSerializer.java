@@ -24,7 +24,7 @@ import main.java.projectile.Projectile;
 
 public class GameSerializer {
 	
-	private static final int FRAME_RATE = 60;
+	private static final int FRAME_RATE = 40;
 
 	private WebServer server;
 	private Environment environment;

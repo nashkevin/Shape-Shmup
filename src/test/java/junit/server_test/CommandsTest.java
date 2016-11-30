@@ -73,7 +73,7 @@ public class CommandsTest {
 		String message = " {\"message\":\"/pm Test hi\"}";
 		server.onMessage(message, user.getSession());
 
-		String expectedResponse = "You can't private message yourself";
+		String expectedResponse = "You can't private message yourselfff";
 		Assert.assertTrue(user.receivedMessage(expectedResponse));
 		
 		server.onClose(user.getSession());
