@@ -25,7 +25,7 @@ public class ServerTest {
 		MockConnection user2 = new MockConnection(server, "Test2");
 		
 		// Send a chat message from the first.
-		String message = " {\"message\":\"Message.\"}";
+		String message = "{\"message\":\"Message.\"}";
 		server.onMessage(message, user1.getSession());
 
 		// Verify that both clients receive the chat message.
@@ -42,7 +42,7 @@ public class ServerTest {
 		MockConnection user = new MockConnection(server, "Test");
 		
 		// Try to kick the player itself.
-		String message = " {\"message\":\"/kick Test\"}";
+		String message = "{\"message\":\"/kick Test\"}";
 		server.onMessage(message, user.getSession());
 		
 		// Verify that the user received a message that they can't kick themself.
@@ -58,15 +58,15 @@ public class ServerTest {
 		new MockConnection(server, "Test2");
 		
 		// Have user 1 kick user 2.
-		String kickMessage = " {\"message\":\"/kick Test2\"}";
+		String kickMessage = "{\"message\":\"/kick Test2\"}";
 		server.onMessage(kickMessage, user1.getSession());
 		
 		// Now try to PM user 2 to confirm that they are no longer present.
-		String playersMessage = " {\"message\":\"/pm Test2 hi\"}";
+		String playersMessage = "{\"message\":\"/pm Test2 hi\"}";
 		server.onMessage(playersMessage, user1.getSession());
 		
 		// Confirm the above by the chat output.
-		String receivedMessage = "Player 'Test2' not found.";
+		String receivedMessage = "Player 'Test2' was not found.";
 		Assert.assertTrue(user1.receivedMessage(receivedMessage));
 				
 		server.onClose(user1.getSession());

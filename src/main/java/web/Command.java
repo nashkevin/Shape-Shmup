@@ -76,43 +76,28 @@ public enum Command {
 				"<br>Syntax: /bring username [username|x y]")
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) {
+			protected void perform(String[] args, Session session, WebServer server) throws PlayerNotFoundException {
 				PlayerAgent caller = server.getPlayerAgentBySession(session);
 
 				if (args.length == 2) {
-					PlayerAgent targetPlayer = server.getPlayerAgentByShortName(args[1]);
-					if (targetPlayer == null) {
-						server.unicast("Player '" + args[1] + "' not found.", session);
-					} else {
-						targetPlayer.setPosition(caller.getPosition());
-					}
+					PlayerAgent targetPlayer = getPlayerAgent(server, args[1]);
+					targetPlayer.setPosition(caller.getPosition());
 				}
 				else if (args.length == 3) {
-					PlayerAgent playerFrom = server.getPlayerAgentByShortName(args[1]);
-					PlayerAgent playerTo = server.getPlayerAgentByShortName(args[2]);
-					if (playerFrom == null) {
-						server.unicast("Player '" + args[1] + "' not found.", session);
-					}
-					else if (playerTo == null) {
-						server.unicast("Player '" + args[2] + "' not found.", session);
-					}
-					else {
-						playerFrom.setPosition(playerTo.getPosition());
-					}
+					PlayerAgent playerFrom = getPlayerAgent(server, args[1]);
+					PlayerAgent playerTo = getPlayerAgent(server, args[2]);
+					playerFrom.setPosition(playerTo.getPosition());
 				}
 				else if (args.length == 4) {
-					PlayerAgent targetPlayer = server.getPlayerAgentByShortName(args[1]);
-					if (targetPlayer == null) {
-						server.unicast("Player '" + args[1] + "' not found.", session);
-					} else {
-						try {
-							int x = Integer.parseInt(args[2]);
-							int y = Integer.parseInt(args[3]);
-							targetPlayer.setPosition(x, y);
-						}
-						catch (NumberFormatException ex) {
-							server.unicast("Invalid coordinates", session);
-						}
+					PlayerAgent targetPlayer = getPlayerAgent(server, args[1]);
+					
+					try {
+						int x = Integer.parseInt(args[2]);
+						int y = Integer.parseInt(args[3]);
+						targetPlayer.setPosition(x, y);
+					}
+					catch (NumberFormatException ex) {
+						server.unicast("Invalid coordinates", session);
 					}
 
 				}
@@ -153,7 +138,7 @@ public enum Command {
 			"Gives a player experience points.<br>Syntax: /givexp [username] [amount]"
 		) {
 			@Override
-			protected void perform(String[] args, Session sourceSession, WebServer server) {
+			protected void perform(String[] args, Session sourceSession, WebServer server) throws PlayerNotFoundException {
 				PlayerAgent target;
 				int pointValue;
 				// /givexp -> gives self enough experience points for next level
@@ -170,28 +155,20 @@ public enum Command {
 					}
 					// /givexp Player -> gives Player enough experience points for next level
 					catch (NumberFormatException ex) {
-						target = server.getPlayerAgentByShortName(args[1]);
-						if (target != null) {
-							target.awardPoints(target.getPointsUntilLevelUp());
-						} else {
-							server.unicast("Player '" + args[1] + "' not found.", sourceSession);
-						}
+						target = getPlayerAgent(server, args[1]);
+						target.awardPoints(target.getPointsUntilLevelUp());
 					}
 				}
 				// /givexp Player 10 -> gives Player 10 experience points
 				else if (args.length == 3) {
-					target = server.getPlayerAgentByShortName(args[1]);
-					if (target != null) {
-						try {
-							pointValue = Integer.parseInt(args[2]);
-							target = server.getPlayerAgentBySession(sourceSession);
-							target.awardPoints(pointValue);
-						}
-						catch (NumberFormatException ex) {
-							throw new IllegalArgumentException();
-						}
-					} else {
-						server.unicast("Player '" + args[1] + "' not found.", sourceSession);
+					target = getPlayerAgent(server, args[1]);
+					try {
+						pointValue = Integer.parseInt(args[2]);
+						target = server.getPlayerAgentBySession(sourceSession);
+						target.awardPoints(pointValue);
+					}
+					catch (NumberFormatException ex) {
+						throw new IllegalArgumentException();
 					}
 				}
 				else {
@@ -204,7 +181,7 @@ public enum Command {
 			"Sends you to a player or to coordinates.<br>Syntax: /goto [player|x y]"
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) {
+			protected void perform(String[] args, Session session, WebServer server) throws PlayerNotFoundException {
 				PlayerAgent caller = server.getPlayerAgentBySession(session);
 
 				if (args.length == 3) {
@@ -218,12 +195,8 @@ public enum Command {
 					}
 				}
 				else if (args.length == 2) {
-					PlayerAgent targetPlayer = server.getPlayerAgentByShortName(args[1]);
-					if (targetPlayer != null) {
-						caller.setPosition(targetPlayer.getPosition());
-					} else {
-						server.unicast("Player '" + args[1] + "' not found.", session);
-					}
+					PlayerAgent targetPlayer = getPlayerAgent(server, args[1]);
+					caller.setPosition(targetPlayer.getPosition());
 				}
 				else {
 					throw new IllegalArgumentException();
@@ -235,7 +208,7 @@ public enum Command {
 			"Heals a player to full health or by a given amount.<br>Syntax: /heal [username] [amount]"
 		) {
 			@Override
-			protected void perform(String[] args, Session sourceSession, WebServer server) {
+			protected void perform(String[] args, Session sourceSession, WebServer server) throws PlayerNotFoundException {
 				PlayerAgent target;
 				int healValue;
 				// /heal -> heals self to max health
@@ -252,27 +225,19 @@ public enum Command {
 					}
 					// /heal Player -> heals Player to max health
 					catch (NumberFormatException ex) {
-						target = server.getPlayerAgentByShortName(args[1]);
-						if (target != null) {
-							target.applyHealing(target.getMaxHealth());
-						} else {
-							server.unicast("Player '" + args[1] + "' not found.", sourceSession);
-						}
+						target = getPlayerAgent(server, args[1]);
+						target.applyHealing(target.getMaxHealth());
 					}
 				}
 				// /heal Player 10 -> heals Player by 10
 				else if (args.length == 3) {
-					target = server.getPlayerAgentByShortName(args[1]);
-					if (target != null) {
-						try {
-							healValue = Integer.parseInt(args[2]);
-							target.applyHealing(healValue);
-						}
-						catch (NumberFormatException ex) {
-							throw new IllegalArgumentException();
-						}
-					} else {
-						server.unicast("Player '" + args[1] + "' not found.", sourceSession);
+					target = getPlayerAgent(server, args[1]);
+					try {
+						healValue = Integer.parseInt(args[2]);
+						target.applyHealing(healValue);
+					}
+					catch (NumberFormatException ex) {
+						throw new IllegalArgumentException();
 					}
 				}
 				else {
@@ -285,17 +250,17 @@ public enum Command {
 			"Disconnects another user from the server.<br>Syntax: /kick username"
 		) {
 			@Override
-			protected void perform(String[] args, Session sourceSession, WebServer server) {
+			protected void perform(String[] args, Session sourceSession, WebServer server) throws PlayerNotFoundException {
 				if (args.length != 2) {
 					throw new IllegalArgumentException();
 				}
 
 				String targetName = args[1];
 				String sourceName = server.getNameBySession(sourceSession);
-				Session targetSession = server.getSessionByShortName(targetName.toLowerCase());
+				Session targetSession = getSession(server, targetName);
 				if (sourceSession.equals(targetSession)) {
 					server.unicast("You can't kick yourself. Use /exit instead.", sourceSession);
-				} else if (targetSession != null) {
+				} else {
 					System.out.println(targetName + " was kicked from the game by " + sourceName + ".");
 					try {
 						server.unicast("You were kicked by " + sourceName + ".", targetSession);
@@ -304,8 +269,6 @@ public enum Command {
 						ex.printStackTrace();
 					}
 				}
-				else
-					server.unicast("Player '" + targetName + "' not found.", sourceSession);
 			}
 		},
 	KILL ("kill",
@@ -370,20 +333,18 @@ public enum Command {
 			"Sends a private message to a player.<br>Syntax: /pm username message"
 		) {
 			@Override
-			protected void perform(String[] args, Session sourceSession, WebServer server) {
+			protected void perform(String[] args, Session sourceSession, WebServer server) throws PlayerNotFoundException {
 				if (args.length <= 2) {
 					throw new IllegalArgumentException();
 				}
 
 				String sourceName = server.getNameBySession(sourceSession);
 				String destinationName = args[1];
-				Session destinationSession =
-					server.getSessionByShortName(destinationName.toLowerCase());
+				Session destinationSession = getSession(server, destinationName);
 
 				if (sourceSession.equals(destinationSession)) {
 					server.unicast("You can't private message yourself.", sourceSession);
-				}
-				else if (destinationSession != null) {
+				} else {
 					StringBuilder msg = new StringBuilder();
 					StringBuilder echo = new StringBuilder();
 					msg.append("<i>From " + sourceName + ":");
@@ -397,9 +358,7 @@ public enum Command {
 					server.unicast(msg.toString(), destinationSession);
 					server.unicast(echo.toString(), sourceSession);
 				}
-				else {
-					server.unicast("Player '" + destinationName + "' not found.", sourceSession);
-				}
+				
 			}
 		},
 	SAY ("say",
@@ -457,51 +416,47 @@ public enum Command {
 				"<br>Syntax: /stats [username]")
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) {
+			protected void perform(String[] args, Session session, WebServer server) throws PlayerNotFoundException {
 				PlayerAgent player;
 				StringBuilder sb = new StringBuilder();
 				if (args.length == 1) {
 					player = server.getPlayerAgentBySession(session);
 				}
 				else if (args.length == 2) {
-					player = server.getPlayerAgentByShortName(args[1].toLowerCase());						
+					player = getPlayerAgent(server, args[1]);
 				}
 				else {
 					throw new IllegalArgumentException();
 				}
 
-				if (player != null) {
-					String tab = "&nbsp&nbsp&nbsp&nbsp";
-					sb.append("<strong>" + player.getName() + "</strong>");
-					sb.append(", Lv. ");
-					sb.append(player.getLevel());
-					sb.append(" (");
-					sb.append(player.getPoints());
-					sb.append("/");
-					sb.append(PlayerAgent.levelToPoints(player.getLevel() + 1));
-					sb.append(" exp)");
-					sb.append("<br>" + tab);
-					sb.append("Health: ");
-					sb.append(player.getHealth());
-					sb.append("/");
-					sb.append(player.getMaxHealth());
-					sb.append("<br>" + tab);
-					sb.append("Damage: ");
-					sb.append(player.getGun().getDamage());
-					sb.append("<br>" + tab);
-					sb.append("Bullet Speed: ");
-					sb.append(player.getGun().getSpeed());
-					sb.append("<br>" + tab);
-					sb.append("Firing Speed: ");
-					sb.append(String.format("%.2f", 1000.0 / player.getGun().getFiringDelay()));
-					sb.append(" shots/sec<br>" + tab);
-					sb.append("Haste: ");
-					sb.append(String.format("%.2f", player.getHaste() * 100) + "%");
+				String tab = "&nbsp&nbsp&nbsp&nbsp";
+				sb.append("<strong>" + player.getName() + "</strong>");
+				sb.append(", Lv. ");
+				sb.append(player.getLevel());
+				sb.append(" (");
+				sb.append(player.getPoints());
+				sb.append("/");
+				sb.append(PlayerAgent.levelToPoints(player.getLevel() + 1));
+				sb.append(" exp)");
+				sb.append("<br>" + tab);
+				sb.append("Health: ");
+				sb.append(player.getHealth());
+				sb.append("/");
+				sb.append(player.getMaxHealth());
+				sb.append("<br>" + tab);
+				sb.append("Damage: ");
+				sb.append(player.getGun().getDamage());
+				sb.append("<br>" + tab);
+				sb.append("Bullet Speed: ");
+				sb.append(player.getGun().getSpeed());
+				sb.append("<br>" + tab);
+				sb.append("Firing Speed: ");
+				sb.append(String.format("%.2f", 1000.0 / player.getGun().getFiringDelay()));
+				sb.append(" shots/sec<br>" + tab);
+				sb.append("Haste: ");
+				sb.append(String.format("%.2f", player.getHaste() * 100) + "%");
 
-					server.unicast(sb.toString(), session);
-				} else {
-					server.unicast("Player '" + args[1] + "' not found.", session);
-				}
+				server.unicast(sb.toString(), session);
 			}
 		},
 	TEAM ("team",
@@ -572,7 +527,7 @@ public enum Command {
 				"<br>Syntax: /where [username]")
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) {
+			protected void perform(String[] args, Session session, WebServer server) throws PlayerNotFoundException {
 				Point2D.Double position = new Point2D.Double();
 				if (args.length == 1) {
 					position = server.getPlayerAgentBySession(session).getPosition();
@@ -581,14 +536,11 @@ public enum Command {
 						")", session);
 				}
 				else if (args.length == 2) {
-					if (server.getPlayerAgentByShortName(args[1]) != null) {
-						position = server.getPlayerAgentByShortName(args[1].toLowerCase()).getPosition();
-						server.unicast("(" +  String.format("%.2f", position.getX()) +
-							", " +  String.format("%.2f", position.getY()) +
-							")", session);
-					} else {
-						server.unicast("Player '" + args[1] + "' not found.", session);
-					}
+					PlayerAgent agent = getPlayerAgent(server, args[1]);
+					position = agent.getPosition();
+					server.unicast("(" +  String.format("%.2f", position.getX()) +
+						", " +  String.format("%.2f", position.getY()) +
+						")", session);
 				}
 				else {
 					throw new IllegalArgumentException();
@@ -637,7 +589,7 @@ public enum Command {
 	}
 
 	/** Performs the command. Each command must implement this function. */
-	protected abstract void perform(String[] args, Session session, WebServer server);
+	protected abstract void perform(String[] args, Session session, WebServer server) throws PlayerNotFoundException;
 
 
 
@@ -675,6 +627,8 @@ public enum Command {
 		if (command != null) {
 			try {
 				command.perform(args, session, server);
+			} catch (PlayerNotFoundException e) {
+				server.unicast(e.getMessage(), session);
 			} catch (IllegalArgumentException e) {
 				// Incorrect parameters for command
 				server.unicast(command.getHelpText(), session);
@@ -682,6 +636,28 @@ public enum Command {
 		} else {
 			// Command not found
 			server.unicast("Unrecognized command.", session);
+		}
+	}
+	
+	/** Gets the PlayerAgent corresponding to the name, or throws PlayerNotFoundException. */
+	private static PlayerAgent getPlayerAgent(WebServer server, String name) throws PlayerNotFoundException {
+		PlayerAgent agent = server.getPlayerAgentByShortName(name);
+		
+		if (agent == null) {
+			throw new PlayerNotFoundException("Player '" + name + "' was not found.");
+		} else {
+			return agent;
+		}
+	}
+	
+	/** Gets the Session corresponding to the name, or throws PlayerNotFoundException. */
+	private static Session getSession(WebServer server, String name) throws PlayerNotFoundException {
+		Session session = server.getSessionByShortName(name);
+		
+		if (session == null) {
+			throw new PlayerNotFoundException("Player '" + name + "' was not found.");
+		} else {
+			return session;
 		}
 	}
 }

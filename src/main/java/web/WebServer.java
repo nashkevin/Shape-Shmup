@@ -155,7 +155,7 @@ public class WebServer {
 	}
 
 	Session getSessionByShortName(String username) {
-		return shortNameToSession.get(username);
+		return shortNameToSession.get(shortenName(username));
 	}
 
 	String getNameBySession(Session session) {

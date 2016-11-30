@@ -106,8 +106,10 @@ public class MockConnection {
 			@Override
 			public Void answer(InvocationOnMock invocation) throws Throwable {
 				for (Object arg : invocation.getArguments()) {
-					synchronized(output) {
-						output.add(arg.toString());
+					if (!arg.toString().startsWith("{")) {
+						synchronized(output) {
+							output.add(arg.toString());
+						}
 					}
 				}
 				return null;
@@ -125,8 +127,10 @@ public class MockConnection {
 			@Override
 			public Void answer(InvocationOnMock invocation) throws Throwable {
 				for (Object arg : invocation.getArguments()) {
-					synchronized(output) {
-						output.add(arg.toString());
+					if (!arg.toString().startsWith("{")) {
+						synchronized(output) {
+							output.add(arg.toString());
+						}
 					}
 				}
 				return null;
