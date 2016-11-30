@@ -122,6 +122,7 @@ public class Environment {
 		}
 	}
 
+	/** Takes a PlayerAgent and adds them to the roster of a team*/
 	public void addPlayerToTeam(PlayerAgent player) {
 		if (player.getTeam() == Agent.Team.RED) {
 			redPlayers.add(player);
@@ -130,6 +131,7 @@ public class Environment {
 		}
 	}
 
+	/** Removes a PlayerAgent from the roster of its team */
 	public void removePlayerFromTeam(PlayerAgent player) {
 		if (player.getTeam() == Agent.Team.RED) {
 			redPlayers.remove(player);
@@ -138,6 +140,7 @@ public class Environment {
 		}
 	}
 
+	/** Despawns a NPCAgent */
 	public void despawnNPCAgent(NPCAgent agent) {
 		activeNPCAgents.remove(agent);
 		recentlyDespawnedNPCAgents.add(agent);
@@ -147,15 +150,19 @@ public class Environment {
 		}
 	}
 
+	/** Despawns a PlayerAgent */
 	public void despawnPlayerAgent(PlayerAgent agent) {
 		activePlayerAgents.remove(agent);
 		recentlyDespawnedPlayerAgents.add(agent);
 		removePlayerFromTeam(agent);
+		decimate();
 		if (verbose) {
 			System.out.println("\"" + agent.getName() + "\" was despawned.");
 		}
+
 	}
 
+	/** Despawns a projectile */
 	public void despawnProjectile(Projectile projectile) {
 		activeProjectiles.remove(projectile);
 		recentlyDespawnedProjectiles.add(projectile);
@@ -174,6 +181,7 @@ public class Environment {
 		return player;
 	}
 
+	/** Spawns a playable character entity at a specified coordinate */
 	public PlayerAgent spawnPlayer(Point2D.Double point) {
 		PlayerAgent player = new PlayerAgent(this, point, "Player" +
 			String.format("%04d", random.nextInt(10000)), getSmallestTeam());
@@ -185,18 +193,22 @@ public class Environment {
 		return player;
 	}
 
+	/** Spawns a Scout-type NPCAgent of a random level at a random location */
 	public Scout spawnScout() {
 		return spawnScout(generateLevel());
 	}
 
+	/** Spawns a Scout-type NPCAgent of a specified level at a random location */
 	public Scout spawnScout(int level) {
 		return spawnScout(randomNPCSpawn(), level);
 	}
 
+	/** Spawns a Scout-type NPCAgent of a random level at a specified coordinate */
 	public Scout spawnScout(Point2D.Double point) {
 		return spawnScout(point, generateLevel());
 	}
 
+	/** Spawns a Scout-Type NPCAgent of a specified level at a specified coordinate */
 	public Scout spawnScout(Point2D.Double point, int level) {
 		Scout agent = new Scout(this, point, level);
 		activeNPCAgents.add(agent);
@@ -207,18 +219,22 @@ public class Environment {
 		return agent;
 	}
 
+	/** Spawns a Turret-type NPCAgent of a random level at a random location */
 	public Turret spawnTurret() {
 		return spawnTurret(generateLevel());
 	}
 
+	/** Spawns a Scout-type NPCAgent of a specified level at a random location */
 	public Turret spawnTurret(int level) {
 		return spawnTurret(randomNPCSpawn(), level);
 	}
 
+	/** Spawns a Scout-type NPCAgent of a random level at a specified location */
 	public Turret spawnTurret(Point2D.Double point) {
 		return spawnTurret(point, generateLevel());
 	}
 
+	/** Spawns a Scout-type NPCAgent of a specified level at a specified location */
 	public Turret spawnTurret(Point2D.Double point, int level) {
 		Turret agent = new Turret(this, point, level);
 		activeNPCAgents.add(agent);
@@ -229,17 +245,21 @@ public class Environment {
 		return agent;
 	}
 
+	/** Calculates a level for new NPCAgents based on the environmentLevel */
 	public int generateLevel() {
 		int level = (int) Math.round(random.nextGaussian() * 2 + envionmentLevel);
+		/** Level must be an integer value greater than 0 */
 		if (level < 1) {
 			level = 1;
 		}
+		/** Level cannot exceed 100 regardless of environmentLevel */
 		else if (level > 100) {
 			level = 100;
 		}
 		return level;
 	}
 
+	/** Changes environmentLevel to reflect the average player level */
 	public void updateEnvironmentLevel() {
 		double avgPlayerLevel = 0;
 		for (PlayerAgent a : getActivePlayerAgents()) {
@@ -249,10 +269,12 @@ public class Environment {
 		envionmentLevel = (int) Math.round(avgPlayerLevel);
 	}
 
+	/** Creates a new projectile */
 	public void addProjectile(Projectile p) {
 		activeProjectiles.add(p);
 	}
 
+	/** Converts polar coordinates to Cartesian coordinates */
 	public static Point2D.Double polarToCartesian(double angle, double radius) {
 		Point2D.Double p = new Point2D.Double();
 		double x = Math.cos(angle) * radius;
@@ -269,6 +291,7 @@ public class Environment {
 		return polar;
 	}
 
+	/** Returns the distance from the center of the environment */
 	public static double checkRadius(Point2D.Double p){
 		return Math.sqrt(Math.abs(p.getX() * p.getX()) + Math.abs(p.getY() * p.getY()));
 	}
@@ -293,6 +316,7 @@ public class Environment {
 		return nearestPlayer;
 	}
 
+	/** Checks collisions between projectiles and agent entities and returns an array of agents hit */
 	public ArrayList<Agent> checkCollision(Projectile p) {
 		ArrayList<Agent> collisions = new ArrayList<Agent>();
 
@@ -326,17 +350,22 @@ public class Environment {
 		return collisions;
 	}
 
+	/** Creates a polar coordinate for the location of a new PlayerAgent spawn on the perimeter of the arena and returns it as a cartesian coordinate */
 	private Point2D.Double randomPlayerSpawn() {
 		double angle = Math.random() * 2 * Math.PI;
 		return polarToCartesian(angle, getRadius());
 	}
 
+	/** Creates a polar coordinate for the location of a new NPCAgent spawn in the interior of the arena and returns it as cartesian coordinate */
 	private Point2D.Double randomNPCSpawn() {
 		double angle = Math.random() * 2 * Math.PI;
 		double distance = Math.random() * getRadius();
 		return polarToCartesian(angle, distance);
 	}
 
+	/** Calls each entity's update method 
+	* Spawns a new Scout-type NPCAgent if the NPC:player ratio is too low
+	* Despawns max health NPCAgents if the NPC:player ratio is too high */
 	private void update() {
 		for(PlayerAgent agent : getActivePlayerAgents())
 			agent.update();
@@ -346,6 +375,19 @@ public class Environment {
 			p.update();
 		while(getActiveNPCAgents().size() < (NPC_PLAYER_RATIO * getActivePlayerAgents().size()))
 			spawnScout();
+	}
+
+	private void decimate() {
+		int numVictims = ((int)(1.25 * NPC_PLAYER_RATIO * getActivePlayerAgents().size()) - getActiveNPCAgents().size());
+		int counter = 0;
+		for(NPCAgent agent : getActiveNPCAgents()){
+			if(agent.getHealth() == agent.getMaxHealth() && getNearestPlayer(agent, getRadius()/3) == null) {
+				despawnNPCAgent(agent);
+				counter++;
+			}
+			if(counter == numVictims)
+				break;
+		}
 	}
 
 	public boolean isGameplayOccurring() {

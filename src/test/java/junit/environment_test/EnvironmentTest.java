@@ -2,6 +2,7 @@ package test.java.junit.environment_test;
 
 import main.java.agent.PlayerAgent;
 import main.java.agent.Scout;
+import main.java.agent.Turret;
 import main.java.environment.Environment;
 import main.java.misc.Vector2D;
 import main.java.projectile.Projectile;
@@ -34,14 +35,32 @@ public class EnvironmentTest {
 		Assert.assertEquals(initialCount, despawnedCount);
 	}
 
-	/** Tests that the environment can spawn and despawn NPCs */
+	/** Tests that the environment can spawn and despawn Scout-type NPCs */
 	@Test
-	public void testSpawnDespawnNPC() {
+	public void testSpawnDespawnScoutNPC() {
 		Environment environment = new Environment(false);
 		int initialCount = environment.getActiveNPCAgents().size();
 		Scout npc1 = environment.spawnScout();
 		Scout npc2 = environment.spawnScout();
 		Scout npc3 = environment.spawnScout();
+		int spawnedCount = environment.getActiveNPCAgents().size();
+		environment.despawnNPCAgent(npc1);
+		environment.despawnNPCAgent(npc2);
+		environment.despawnNPCAgent(npc3);
+		int despawnedCount = environment.getActiveNPCAgents().size();
+
+		Assert.assertNotEquals(initialCount, spawnedCount);
+		Assert.assertEquals(initialCount, despawnedCount);
+	}
+
+	/** Tests that the environment can spawn and despawn Turret-type NPCs */
+	@Test
+	public void testSpawnDespawnTurretNPC() {
+		Environment environment = new Environment(false);
+		int initialCount = environment.getActiveNPCAgents().size();
+		Turret npc1 = environment.spawnTurret();
+		Turret npc2 = environment.spawnTurret();
+		Turret npc3 = environment.spawnTurret();
 		int spawnedCount = environment.getActiveNPCAgents().size();
 		environment.despawnNPCAgent(npc1);
 		environment.despawnNPCAgent(npc2);
@@ -76,6 +95,7 @@ public class EnvironmentTest {
 		Assert.assertEquals(initialCount, despawnedCount);
 	}
 
+	/** Tests that checkRadius correctly returns distance from origin */
 	@Test
 	public void testCheckRadius() {
 		Point2D.Double p = new Point2D.Double(0, 0);
@@ -86,6 +106,7 @@ public class EnvironmentTest {
 		Assert.assertEquals(10.0, Environment.checkRadius(p), ERROR_MARGIN);
 	}
 
+	/** Tests that polarToCartesian correctly converts between coordinate formats */
 	@Test
 	public void testPolarToCartesian() {
 		Point2D.Double p1 = new Point2D.Double(0, 0);
@@ -109,6 +130,7 @@ public class EnvironmentTest {
 		Assert.assertEquals(p1.getY(), p2.getY(), ERROR_MARGIN);
 	}
 
+	/** Tests that cartesianToPolar correctly converts between coordinate formats */
 	@Test
 	public void testCartesianToPolar() {
 		Point2D.Double p1 = new Point2D.Double(0, 0);
