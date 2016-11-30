@@ -44,11 +44,11 @@ public class Pulsar extends NPCAgent {
 		// if finding new target was successful
 		if (getTarget() != null) {
 			approachPoint(getTarget().getPosition());
-		}
-		double firingAngle = getAngle();
-		for (ProjectileFactory gun : guns) {
-			gun.fireProjectile(firingAngle);
-			firingAngle += Math.PI / 4;
+			double firingAngle = getAngle();
+			for (ProjectileFactory gun : guns) {
+				gun.fireProjectile(firingAngle);
+				firingAngle += Math.PI / 4;
+			}
 		}
 	}
 }
