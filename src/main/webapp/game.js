@@ -22,7 +22,7 @@ var messages = document.getElementById("messages");
 var gameEntities = {};
 /** Contains game objects that are fading out of existence. They no longer receive
 positions from the server, but we still should keep them in the right position. */
-var fadingEntities = {};
+var fadingEntities = new Set();
 
 var canvas = document.getElementById("gameCanvas");
 
@@ -570,8 +570,7 @@ function updateStage(json) {
 	bgTile.tilePosition.x -= bgOffsetX;
 	bgTile.tilePosition.y += bgOffsetY;
 
-	for (var key in fadingEntities) {
-		var entity = fadingEntities[key];
+	for (let entity of fadingEntities) {
 		entity.x -= bgOffsetX;
 		entity.y += bgOffsetY;
 	}
@@ -860,8 +859,8 @@ function updateProjectile(projectileObject) {
 }
 
 function fadeOut(entity, stepSize = 0.05) {
-	if (!(entity in fadingEntities)) {
-		fadingEntities[entity] = entity;
+	if (!fadingEntities.has(entity)) {
+		fadingEntities.add(entity);
 	}
 
 	entity.alpha -= stepSize;
@@ -871,13 +870,13 @@ function fadeOut(entity, stepSize = 0.05) {
 		});
 	} else {
 		entity.visible = false;
-		delete fadingEntities[entity];
+		fadingEntities.delete(entity);
 	}
 }
 
 function fadeOutAndShrink(entity, stepSize = 0.05) {
-	if (!(entity in fadingEntities)) {
-		fadingEntities[entity] = entity;
+	if (!fadingEntities.has(entity)) {
+		fadingEntities.add(entity);
 	}
 
 	entity.alpha -= stepSize;
@@ -889,7 +888,7 @@ function fadeOutAndShrink(entity, stepSize = 0.05) {
 		});
 	} else {
 		entity.visible = false;
-		delete fadingEntities[entity];
+		fadingEntities.delete(entity);
 	}
 }
 
