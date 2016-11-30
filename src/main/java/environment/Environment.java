@@ -32,7 +32,7 @@ public class Environment {
 	/** A random number generator **/
 	private static final Random random = new Random();
 	
-	private int envionmentLevel = 1;
+	private int environmentLevel = 1;
 	private boolean gameplayOccurring = true;
 	private boolean verbose = true;
 
@@ -251,7 +251,7 @@ public class Environment {
 
 	/** Calculates a level for new NPCAgents based on the environmentLevel */
 	public int generateLevel() {
-		int level = (int) Math.round(random.nextGaussian() * 2 + envionmentLevel);
+		int level = (int) Math.round(random.nextGaussian() * 2 + environmentLevel);
 		/** Level must be an integer value greater than 0 */
 		if (level < 1) {
 			level = 1;
@@ -270,7 +270,7 @@ public class Environment {
 			avgPlayerLevel += a.getLevel();
 		}
 		avgPlayerLevel /= getActivePlayerAgents().size();
-		envionmentLevel = (int) Math.round(avgPlayerLevel);
+		environmentLevel = (int) Math.round(avgPlayerLevel);
 	}
 
 	/** Creates a new projectile */
