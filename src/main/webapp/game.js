@@ -12,7 +12,7 @@
 /** Variables related to server-client connection */
 const INPUT_RATE = 30; // maximum number of inputs per second
 /** Radius of game plus leeway (otherwise, agents could half-way cross the barrier). */
-const RADIUS = 10000 + 30;
+const RADIUS = 4000 + 30;
 var webSocket;
 var playerAgentID;  // ID referring to this player in the serialized game state
 var clientInput = {};  // represents the current input of the player

@@ -8,11 +8,11 @@ import java.awt.geom.Point2D;
 import java.lang.Math;
 
 
-public class Turret extends NPCAgent {
+public class Pulsar extends NPCAgent {
 
 	ProjectileFactory[] guns = new ProjectileFactory[8];
 
-	public Turret(Environment environment, Point2D.Double position, int level) {
+	public Pulsar(Environment environment, Point2D.Double position, int level) {
 		super(
 			environment,
 			position,

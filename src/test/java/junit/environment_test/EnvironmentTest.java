@@ -1,8 +1,8 @@
 package test.java.junit.environment_test;
 
 import main.java.agent.PlayerAgent;
+import main.java.agent.Pulsar;
 import main.java.agent.Scout;
-import main.java.agent.Turret;
 import main.java.environment.Environment;
 import main.java.misc.Vector2D;
 import main.java.projectile.Projectile;
@@ -53,14 +53,14 @@ public class EnvironmentTest {
 		Assert.assertEquals(initialCount, despawnedCount);
 	}
 
-	/** Tests that the environment can spawn and despawn Turret-type NPCs */
+	/** Tests that the environment can spawn and despawn Pulsar-type NPCs */
 	@Test
-	public void testSpawnDespawnTurretNPC() {
+	public void testSpawnDespawnPulsarNPC() {
 		Environment environment = new Environment(false);
 		int initialCount = environment.getActiveNPCAgents().size();
-		Turret npc1 = environment.spawnTurret();
-		Turret npc2 = environment.spawnTurret();
-		Turret npc3 = environment.spawnTurret();
+		Pulsar npc1 = environment.spawnPulsar();
+		Pulsar npc2 = environment.spawnPulsar();
+		Pulsar npc3 = environment.spawnPulsar();
 		int spawnedCount = environment.getActiveNPCAgents().size();
 		environment.despawnNPCAgent(npc1);
 		environment.despawnNPCAgent(npc2);

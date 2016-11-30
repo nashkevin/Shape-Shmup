@@ -3,8 +3,8 @@ package main.java.environment;
 import main.java.agent.Agent;
 import main.java.agent.NPCAgent;
 import main.java.agent.PlayerAgent;
+import main.java.agent.Pulsar;
 import main.java.agent.Scout;
-import main.java.agent.Turret;
 
 import main.java.projectile.Projectile;
 
@@ -21,10 +21,12 @@ import java.util.TimerTask;
 
 
 public class Environment {
-	/** Radius of the environment, in pixels. Value is arbitrarily chosen. */
-	private static final double RADIUS = 10000;
+	/** Radius of the environment, in pixels. An arbitrary number. */
+	private static final double RADIUS = 4000;
 	/** The ideal ratio of NPCAgents to PlayerAgents */
 	private static final int NPC_PLAYER_RATIO = 50;
+	/** The ideal ratio of Scouts to Pulsars */
+	private static final int SCOUT_PULSAR_RATIO = 15;
 	/** The frame rate, in Hz */
 	private static final int FRAME_RATE = 40;
 	/** A random number generator **/
@@ -215,33 +217,33 @@ public class Environment {
 		Scout agent = new Scout(this, point, level);
 		activeNPCAgents.add(agent);
 		if (verbose) {
-			System.out.println("Level " + level + " scout (" +
+			System.out.println("Level " + level + " Scout (" +
 				agent.getID() + ") was spawned.");
 		}
 		return agent;
 	}
 
-	/** Spawns a Turret-type NPCAgent of a random level at a random location */
-	public Turret spawnTurret() {
-		return spawnTurret(generateLevel());
+	/** Spawns a Pulsar-type NPCAgent of a random level at a random location */
+	public Pulsar spawnPulsar() {
+		return spawnPulsar(generateLevel());
 	}
 
-	/** Spawns a Scout-type NPCAgent of a specified level at a random location */
-	public Turret spawnTurret(int level) {
-		return spawnTurret(randomNPCSpawn(), level);
+	/** Spawns a Pulsar-type NPCAgent of a specified level at a random location */
+	public Pulsar spawnPulsar(int level) {
+		return spawnPulsar(randomNPCSpawn(), level);
 	}
 
-	/** Spawns a Scout-type NPCAgent of a random level at a specified location */
-	public Turret spawnTurret(Point2D.Double point) {
-		return spawnTurret(point, generateLevel());
+	/** Spawns a Pulsar-type NPCAgent of a random level at a specified location */
+	public Pulsar spawnPulsar(Point2D.Double point) {
+		return spawnPulsar(point, generateLevel());
 	}
 
-	/** Spawns a Scout-type NPCAgent of a specified level at a specified location */
-	public Turret spawnTurret(Point2D.Double point, int level) {
-		Turret agent = new Turret(this, point, level);
+	/** Spawns a Pulsar-type NPCAgent of a specified level at a specified location */
+	public Pulsar spawnPulsar(Point2D.Double point, int level) {
+		Pulsar agent = new Pulsar(this, point, level);
 		activeNPCAgents.add(agent);
 		if (verbose) {
-			System.out.println("Level " + level + " scout (" +
+			System.out.println("Level " + level + " Pulsar (" +
 				agent.getID() + ") was spawned.");
 		}
 		return agent;
@@ -367,14 +369,25 @@ public class Environment {
 	* Spawns a new Scout-type NPCAgent if the NPC:player ratio is too low
 	* Despawns max health NPCAgents if the NPC:player ratio is too high */
 	private void update() {
-		for(PlayerAgent agent : getActivePlayerAgents())
+		for (PlayerAgent agent : getActivePlayerAgents()) {
 			agent.update();
-		for(NPCAgent agent : getActiveNPCAgents())
+		}
+		for (NPCAgent agent : getActiveNPCAgents()) {
 			agent.update();
-		for(Projectile p : getActiveProjectiles())
+		}
+		for (Projectile p : getActiveProjectiles()) {
 			p.update();
-		while(getActiveNPCAgents().size() < (NPC_PLAYER_RATIO * getActivePlayerAgents().size()))
-			spawnScout();
+		}
+		int spawnCounter = 0;
+		while (getActiveNPCAgents().size() <
+			(NPC_PLAYER_RATIO * getActivePlayerAgents().size())) {
+			if (spawnCounter % SCOUT_PULSAR_RATIO == 0) {
+				spawnPulsar();
+			} else {
+				spawnScout();
+			}
+			spawnCounter++;
+		}
 	}
 
 	private void decimate() {
