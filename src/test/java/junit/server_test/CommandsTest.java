@@ -200,11 +200,11 @@ public class CommandsTest {
 	@Test
 	/** Test using the /team command to change the player's team. */
 	public void testTeamOfPlayer() {
-		// Create a mock session and connect it to the server.
+		// Create two mock sessions and connect them to the server.
 		MockConnection user = new MockConnection(server, "Test");
 		MockConnection user2 = new MockConnection(server, "Test2");
 		
-		String message = " {\"message\":\"/team Test2\"}";
+		String message = "{\"message\":\"/team Test2\"}";
 		server.onMessage(message, user.getSession());
 
 		String expected = "Test2 is on the";
@@ -212,5 +212,69 @@ public class CommandsTest {
 
 		server.onClose(user.getSession());
 		server.onClose(user2.getSession());
+	}
+	
+	@Test
+	/** Test using the /team command where the argument is neither a team nor a player. */
+	public void testTeamInvalidArg() {
+		// Create a mock session and connect it to the server.
+		MockConnection user = new MockConnection(server, "Test");
+		
+		String message = "{\"message\":\"/team blah\"}";
+		server.onMessage(message, user.getSession());
+
+		String expected = "Found no teams or players named 'blah'.";
+		Assert.assertTrue(user.receivedMessage(expected));
+
+		server.onClose(user.getSession());
+	}
+	
+	@Test
+	/** Test using the /team command to change another player's team. */
+	public void testChangeOtherTeam() {
+		// Create two mock sessions and connect them to the server.
+		MockConnection user = new MockConnection(server, "Test");
+		MockConnection user2 = new MockConnection(server, "Test2");
+		
+		String message = "{\"message\":\"/team Test2 blue\"}";
+		server.onMessage(message, user.getSession());
+
+		String expected = "Test2 was placed on the blue team.";
+		Assert.assertTrue(user.receivedMessage(expected));
+
+		server.onClose(user.getSession());
+		server.onClose(user2.getSession());
+	}
+	
+	@Test
+	/** Test using the /team command to change another player to an invalid team. */
+	public void testChangeOtherToInvalidTeam() {
+		// Create two mock sessions and connect them to the server.
+		MockConnection user = new MockConnection(server, "Test");
+		MockConnection user2 = new MockConnection(server, "Test2");
+		
+		String message = "{\"message\":\"/team Test2 invalid\"}";
+		server.onMessage(message, user.getSession());
+
+		String expected = "There is no 'invalid' team.";
+		Assert.assertTrue(user.receivedMessage(expected));
+
+		server.onClose(user.getSession());
+		server.onClose(user2.getSession());
+	}
+	
+	@Test
+	/** Test using the /team command to change the team of a player that doesn't exist. */
+	public void testChangeTeamOfInvalidPlayer() {
+		// Create two mock sessions and connect them to the server.
+		MockConnection user = new MockConnection(server, "Test");
+		
+		String message = "{\"message\":\"/team no-one blue\"}";
+		server.onMessage(message, user.getSession());
+
+		String expected = "Player 'no-one' not found.";
+		Assert.assertTrue(user.receivedMessage(expected));
+
+		server.onClose(user.getSession());
 	}
 }
