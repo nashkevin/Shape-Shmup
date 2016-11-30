@@ -469,11 +469,7 @@ public enum Command {
 			protected void perform(String[] args, Session session, WebServer server) {
 				if (args.length == 1) {
 					Agent.Team team = server.getPlayerAgentBySession(session).getTeam();
-					if (team == null || team == Agent.Team.NONE) {
-						server.unicast("You are not on a team.", session);
-					} else {
-						server.unicast("You are on the " + team.toString() + " team.", session);
-					}
+					server.unicast("You are on the " + team.toString() + " team.", session);
 				}
 				else if (args.length == 2) {
 					try {
@@ -488,12 +484,8 @@ public enum Command {
 						// Parse the first argument as a player (to check the player's team).
 						PlayerAgent target = server.getPlayerAgentByShortName(args[1].toLowerCase());
 						if (target != null) {
-							if (target.getTeam() == null || target.getTeam() == Agent.Team.NONE) {
-								server.unicast(target.getName() + " is not on a team.", session);
-							} else {
-								server.unicast(target.getName() + " is on the " +
-									target.getTeam().toString() + " team.", session);
-							}
+							server.unicast(target.getName() + " is on the " +
+								target.getTeam().toString() + " team.", session);
 						} else {
 							server.unicast("Found no teams or players named '" + args[1] + "'.", session);
 						}

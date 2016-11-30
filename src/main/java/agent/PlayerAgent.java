@@ -25,7 +25,7 @@ public class PlayerAgent extends Agent {
 	public PlayerAgent(
 		Environment environment, Point2D.Double position, String name
 	) {
-		this(environment, position, name, Agent.Team.NONE);
+		this(environment, position, name, Agent.Team.RED);
 	}
 
 	public PlayerAgent(

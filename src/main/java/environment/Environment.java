@@ -335,17 +335,12 @@ public class Environment {
 			}
 		}
 
-		// unaffiliated PlayerAgents can't damage other PlayerAgents
-		if (p.getOwner().getTeam() != Agent.Team.NONE) {
-			for (Agent a : getActivePlayerAgents()) {
-				if (// target is not on a PvP team and shooter is
-						!(p.getOwner().getTeam() != Agent.Team.ENEMY && a.getTeam() == Agent.Team.NONE) && 
-						// target and shooter are on different teams
-						(a.getTeam() != p.getOwner().getTeam()) && 
-						// the shot actually hits
-						(a.getPosition().distance(p.getPosition()) < projectileSize * a.getSize())){
+		for (Agent a : getActivePlayerAgents()) {
+			if (// target and shooter are on different teams
+				(a.getTeam() != p.getOwner().getTeam()) && 
+				// the shot actually hits
+				(a.getPosition().distance(p.getPosition()) < projectileSize * a.getSize())) {
 					collisions.add(a);
-				}
 			}
 		}
 

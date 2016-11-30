@@ -12,7 +12,7 @@ public abstract class Agent {
 
 	public static enum Team {
 		ENEMY("0xFDE7CE"), // all NPCAgents
-		NONE("0xD4E9D3"), // unaffiliated PlayerAgents
+		// NONE("0xD4E9D3"), // unaffiliated PlayerAgents
 		RED("0xFFD3D3"), // Red PlayerAgents
 		BLUE("0xCED5FF"); // Blue PlayerAgents
 		
