@@ -164,4 +164,36 @@ public class CommandsTest {
 
 		server.onClose(user.getSession());
 	}
+	
+	@Test
+	/** Test using the /team command to check the player's team. */
+	public void testTeam() {
+		// Create a mock session and connect it to the server.
+		MockConnection user = new MockConnection(server, "Test");
+		
+		String message = " {\"message\":\"/team\"}";
+		server.onMessage(message, user.getSession());
+
+		// Have the expected string be vague because we don't want to make
+		// an assumption about what team the player is spawned to.
+		String expected = "You are on the";
+		Assert.assertTrue(user.receivedMessage(expected));
+
+		server.onClose(user.getSession());
+	}
+	
+	@Test
+	/** Test using the /team command to change the player's team. */
+	public void testTeamChange() {
+		// Create a mock session and connect it to the server.
+		MockConnection user = new MockConnection(server, "Test");
+		
+		String message = " {\"message\":\"/team red\"}";
+		server.onMessage(message, user.getSession());
+
+		String expected = "You were placed on the red team.";
+		Assert.assertTrue(user.receivedMessage(expected));
+
+		server.onClose(user.getSession());
+	}
 }
