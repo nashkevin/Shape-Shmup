@@ -135,15 +135,31 @@ public class CommandsTest {
 	@Test
 	/** Test using the /stats command to check another player's stats. */
 	public void testOtherStats() {
-		// Create a mock session and connect it to the server.
+		// Create two mock sessions and connect them to the server.
 		MockConnection user = new MockConnection(server, "Test");
-		new MockConnection(server, "Test2");
+		MockConnection user2 = new MockConnection(server, "Test2");
 		
-		String message = " {\"message\":\"/stats test2\"}";
+		String message = " {\"message\":\"/stats Test2\"}";
 		server.onMessage(message, user.getSession());
 
 		// Verify that the info about the player and level appears.
 		String expected = "<strong>Test2</strong>, Lv. 0";
+		Assert.assertTrue(user.receivedMessage(expected));
+
+		server.onClose(user.getSession());
+		server.onClose(user2.getSession());
+	}
+	
+	@Test
+	/** Test using the /stats command to check another player's stats. */
+	public void testStatsInvalidPlayer() {
+		// Create a mock session and connect it to the server.
+		MockConnection user = new MockConnection(server, "Test");
+		
+		String message = " {\"message\":\"/stats test2\"}";
+		server.onMessage(message, user.getSession());
+
+		String expected = "Player 'test2' not found.";
 		Assert.assertTrue(user.receivedMessage(expected));
 
 		server.onClose(user.getSession());
