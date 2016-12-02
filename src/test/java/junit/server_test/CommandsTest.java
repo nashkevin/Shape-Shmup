@@ -1,7 +1,7 @@
 package test.java.junit.server_test;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import main.java.web.Command;
@@ -9,10 +9,10 @@ import main.java.web.WebServer;
 
 /** Test commands that a player can perform through the chat window. */
 public class CommandsTest {
-	private static WebServer server;
+	private WebServer server;
 
-	@BeforeClass
-	public static void beforeClass() {
+	@Before
+	public void beforeTest() {
 		server = new WebServer(false);
 	}
 	
@@ -251,7 +251,7 @@ public class CommandsTest {
 	@Test
 	/** Test using the /team command to change the team of a player that doesn't exist. */
 	public void testChangeTeamOfInvalidPlayer() {
-		// Create two mock sessions and connect them to the server.
+		// Create one mock sessions and connect it to the server.
 		MockConnection user = new MockConnection(server, "Test");
 		
 		String message = "{\"message\":\"/team no-one blue\"}";
