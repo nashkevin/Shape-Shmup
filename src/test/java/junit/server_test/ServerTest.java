@@ -3,6 +3,8 @@ package test.java.junit.server_test;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import main.java.web.ClientInput;
 import main.java.web.WebServer;
 
 public class ServerTest {
@@ -87,5 +89,23 @@ public class ServerTest {
 		Assert.assertTrue(user1.receivedMessage(receivedMessage));
 
 		server.onClose(user1.getSession());
+	}
+	
+	@Test
+	public void testClientInputMoving() {
+		ClientInput ci = new ClientInput();
+		ci.setDown(true);
+		Assert.assertTrue(ci.isMoving());
+		ci.setDown(false);
+		ci.setUp(true);
+		Assert.assertTrue(ci.isMoving());
+		ci.setUp(false);
+		ci.setLeft(true);
+		Assert.assertTrue(ci.isMoving());
+		ci.setRight(true);
+		Assert.assertTrue(ci.isMoving());
+		ci.setRight(false);
+		ci.setLeft(false);
+		Assert.assertFalse(ci.isMoving());
 	}
 }
