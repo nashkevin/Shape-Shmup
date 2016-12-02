@@ -300,4 +300,77 @@ public class CommandsTest {
 		server.onClose(user1.getSession());
 		server.onClose(user2.getSession());
 	}
+	
+	@Test
+	public void testBringSelf() {
+		MockConnection user1 = new MockConnection(server, "Test");
+		MockConnection user2 = new MockConnection(server, "Test2");
+		
+		// Set the first player's position so we know where they are
+		String goTo = "{\"message\":\"/goto 0 0\"}";
+		server.onMessage(goTo, user1.getSession());
+		
+		// Bring the second player to the first
+		String bring = "{\"message\":\"/bring Test2\"}";
+		server.onMessage(bring, user1.getSession());
+		
+		// Check where the second player is
+		String where = "{\"message\":\"/where Test2\"}";
+		server.onMessage(where, user1.getSession());
+
+		// Ensure that the second player is now co-located with the first
+		String expected = "(0.00, 0.00)";
+		Assert.assertTrue(user1.receivedMessage(expected));
+
+		server.onClose(user1.getSession());
+		server.onClose(user2.getSession());
+	}
+	
+	@Test
+	public void testBringToPlayer() {
+		MockConnection user1 = new MockConnection(server, "Test");
+		MockConnection user2 = new MockConnection(server, "Test2");
+		MockConnection user3 = new MockConnection(server, "Test3");
+		
+		// Set the third player's position so we know where they are
+		String goTo = "{\"message\":\"/goto 0 0\"}";
+		server.onMessage(goTo, user3.getSession());
+		
+		// Have the first player bring the second to the third
+		String bring = "{\"message\":\"/bring Test2 Test3\"}";
+		server.onMessage(bring, user1.getSession());
+		
+		// Check where the second player is
+		String where = "{\"message\":\"/where Test2\"}";
+		server.onMessage(where, user1.getSession());
+
+		// Ensure that the third player is where we expect
+		String expected = "(0.00, 0.00)";
+		Assert.assertTrue(user1.receivedMessage(expected));
+
+		server.onClose(user1.getSession());
+		server.onClose(user2.getSession());
+		server.onClose(user3.getSession());
+	}
+	
+	@Test
+	public void testBringToPoint() {
+		MockConnection user1 = new MockConnection(server, "Test");
+		MockConnection user2 = new MockConnection(server, "Test2");
+		
+		// Bring the second player to the point
+		String bring = "{\"message\":\"/bring Test2 0 0\"}";
+		server.onMessage(bring, user1.getSession());
+		
+		// Check where the second player is
+		String where = "{\"message\":\"/where Test2\"}";
+		server.onMessage(where, user1.getSession());
+
+		// Ensure that the third player is where we expect
+		String expected = "(0.00, 0.00)";
+		Assert.assertTrue(user1.receivedMessage(expected));
+
+		server.onClose(user1.getSession());
+		server.onClose(user2.getSession());
+	}
 }

@@ -80,15 +80,18 @@ public enum Command {
 				PlayerAgent caller = server.getPlayerAgentBySession(session);
 
 				if (args.length == 2) {
+					// Bring target to you
 					PlayerAgent targetPlayer = getPlayerAgent(server, args[1]);
 					targetPlayer.setPosition(caller.getPosition());
 				}
 				else if (args.length == 3) {
+					// Bring first target to second target
 					PlayerAgent playerFrom = getPlayerAgent(server, args[1]);
 					PlayerAgent playerTo = getPlayerAgent(server, args[2]);
 					playerFrom.setPosition(playerTo.getPosition());
 				}
 				else if (args.length == 4) {
+					// Bring target to specified location
 					PlayerAgent targetPlayer = getPlayerAgent(server, args[1]);
 					
 					try {
