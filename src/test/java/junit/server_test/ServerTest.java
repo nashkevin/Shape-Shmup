@@ -62,13 +62,30 @@ public class ServerTest {
 		server.onMessage(kickMessage, user1.getSession());
 		
 		// Now try to PM user 2 to confirm that they are no longer present.
-		String playersMessage = "{\"message\":\"/pm Test2 hi\"}";
-		server.onMessage(playersMessage, user1.getSession());
+		String pmMessage = "{\"message\":\"/pm Test2 hi\"}";
+		server.onMessage(pmMessage, user1.getSession());
 		
 		// Confirm the above by the chat output.
 		String receivedMessage = "Player 'Test2' was not found.";
 		Assert.assertTrue(user1.receivedMessage(receivedMessage));
 				
+		server.onClose(user1.getSession());
+	}
+	
+	@Test
+	public void testDuplicateName() {
+		// Try connecting two users to the server with the same username.
+		MockConnection user1 = new MockConnection(server, "Test");
+		new MockConnection(server, "Test");
+		
+		// Have the first user check what players have connected.
+		String playersMessage = "{\"message\":\"/players\"}";
+		server.onMessage(playersMessage, user1.getSession());
+		
+		// Confirm there is still only one player.
+		String receivedMessage = "1 player: Test";
+		Assert.assertTrue(user1.receivedMessage(receivedMessage));
+
 		server.onClose(user1.getSession());
 	}
 }
