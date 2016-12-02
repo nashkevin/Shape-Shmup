@@ -262,4 +262,42 @@ public class CommandsTest {
 
 		server.onClose(user.getSession());
 	}
+	
+	@Test
+	/** Test using the /where command. */
+	public void testWhere() {
+		MockConnection user = new MockConnection(server, "Test");
+		
+		// Set the player's position so we know where they are
+		String goTo = "{\"message\":\"/goto 0 0\"}";
+		server.onMessage(goTo, user.getSession());
+		
+		String where = "{\"message\":\"/where\"}";
+		server.onMessage(where, user.getSession());
+
+		String expected = "(0.00, 0.00)";
+		Assert.assertTrue(user.receivedMessage(expected));
+
+		server.onClose(user.getSession());
+	}
+	
+	@Test
+	/** Test using the /where command to find another player's location. */
+	public void testWhereOther() {
+		MockConnection user1 = new MockConnection(server, "Test");
+		MockConnection user2 = new MockConnection(server, "Test2");
+		
+		// Set the player's position so we know where they are
+		String goTo = "{\"message\":\"/goto 0 0\"}";
+		server.onMessage(goTo, user2.getSession());
+		
+		String where = "{\"message\":\"/where Test2\"}";
+		server.onMessage(where, user1.getSession());
+
+		String expected = "(0.00, 0.00)";
+		Assert.assertTrue(user1.receivedMessage(expected));
+
+		server.onClose(user1.getSession());
+		server.onClose(user2.getSession());
+	}
 }
