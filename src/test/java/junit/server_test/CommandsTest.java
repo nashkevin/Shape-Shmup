@@ -49,6 +49,21 @@ public class CommandsTest {
 	}
 	
 	@Test
+	/** Tests running "/where" on a non-existent player. */
+	public void testInvalidName() {
+		// Create a mock session and connect it to the server.
+		MockConnection user = new MockConnection(server, "Test");
+		
+		String message = "{\"message\":\"/where Invalid\"}";
+		server.onMessage(message, user.getSession());
+
+		String expectedSubstring = "Player 'Invalid' was not found.";
+		Assert.assertTrue(user.receivedMessage(expectedSubstring));
+		
+		server.onClose(user.getSession());
+	}
+	
+	@Test
 	/** Tests running "/commands". */
 	public void testCommands() {
 		// Create a mock session and connect it to the server.
