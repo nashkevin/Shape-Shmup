@@ -373,7 +373,7 @@ public class Environment {
 		for (Projectile p : getActiveProjectiles()) {
 			p.update();
 		}
-		int spawnCounter = 0;
+		int spawnCounter = 1;
 		while (getActiveNPCAgents().size() <
 			(NPC_PLAYER_RATIO * getActivePlayerAgents().size())) {
 			if (spawnCounter % SCOUT_PULSAR_RATIO == 0) {
