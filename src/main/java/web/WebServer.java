@@ -1,12 +1,12 @@
 package main.java.web;
 
 import java.awt.geom.Point2D;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServlet;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -20,7 +20,8 @@ import main.java.environment.Environment;
 
 
 @ServerEndpoint("/socket")
-public class WebServer {
+public class WebServer extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 	/** The sessions of all players, mapped to each player's chosen name. */
 	private static final Map<Session, String> sessionToName =
 		Collections.synchronizedMap(new HashMap<>());
