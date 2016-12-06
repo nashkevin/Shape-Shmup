@@ -105,6 +105,8 @@ public class GameSerializer {
 			element.add("name", new JsonPrimitive(src.getName()));
 			element.add("health", new JsonPrimitive(src.getHealth()));
 			element.add("maxHealth", new JsonPrimitive(src.getMaxHealth()));
+			element.add("points", new JsonPrimitive(src.getPoints()));
+			element.add("pointsLeft", new JsonPrimitive(src.getPointsUntilLevelUp()));
 			Point2D.Double point = src.getPosition();
 			element.add("x", new JsonPrimitive(point.getX()));
 			element.add("y", new JsonPrimitive(point.getY()));

@@ -15,7 +15,7 @@ public class PlayerAgent extends Agent {
 	/** PlayerAgent's speed will not exceed its haste times this multiple */
 	private int MAX_SPEED_MULTIPLE = 10;
 
-	private String name = "An Unnamed Hero";
+	private String name = "No-name Triangle";
 	private int level = 0;
 	private int points = 0;
 	private int pointsUntilLevelUp;

@@ -30,15 +30,22 @@ var canvas = document.getElementById("gameCanvas");
 var playerX = getGameWidth() / 2;
 var playerY = getGameHeight() / 2;
 
+/** Player progress cache */
+var points = 0;
+var pointsLeft = 101;
+var level = 0;
+
 /** Timestamp initialized when a ping request is given */
 var pingStartTime;
 
 /** Renderer setup */
 var renderer = PIXI.autoDetectRenderer(getGameWidth(), getGameHeight(), {view: canvas});
-renderer.backgroundColor = 0x272822;
+renderer.backgroundColor = "0x272822";
 renderer.autoResize = true;
-const healthBackgroundColor = 0xBB5E5B;
-const healthForegroundColor = 0x85B36B;
+const healthBackgroundColor = "0xBB5E5B";
+const healthForegroundColor = "0x85B36B";
+const pointsForegroundColor = "0xFFEE70";
+const pointsBackgroundColor = getBorderColor(pointsForegroundColor);
 
 /** Stage and background setup */
 var stage = new PIXI.Container();
@@ -702,6 +709,36 @@ function createPlayer(playerObject) {
 
 	playerContainer.addChild(healthForeground);
 
+	if (playerObject.id === playerAgentID) {
+		// move health bar to make room for points bar
+		healthForeground.position.y -= 5;
+		healthBackground.position.y -= 5;
+
+		// Create the points bar background
+		var pointsBackground = new PIXI.Graphics();
+		pointsBackground.lineStyle(2, pointsBackgroundColor, 1);
+		pointsBackground.moveTo(0, 0);
+		pointsBackground.lineTo(50, 0);
+		pointsBackground.pivot.set(0, 0);
+		pointsBackground.position = playerSprite.position;
+		pointsBackground.position.x -= 25;
+		pointsBackground.position.y -= 40;
+
+		playerContainer.addChild(pointsBackground);
+
+		// Create the points bar foreground
+		var pointsForeground = new PIXI.Graphics();
+		pointsForeground.lineStyle(2, pointsForegroundColor, 1);
+		pointsForeground.moveTo(0, 0);
+		pointsForeground.lineTo(50, 0);
+		pointsForeground.pivot.set(0, 0);
+		pointsForeground.position = playerSprite.position;
+		pointsForeground.position.x -= 25;
+		pointsForeground.position.y -= 40;
+
+		playerContainer.addChild(pointsForeground);
+	}
+
 	playerContainer.position.set(0, 0);
 	stage.addChild(playerContainer);
 
@@ -734,6 +771,12 @@ function updatePlayer(playerObject) {
 	var healthForeground = playerContainer.getChildAt(3);
 	var healthPercent = playerObject.health / playerObject.maxHealth;
 	healthForeground.scale.set(healthPercent, 1);
+	if (playerObject.id === playerAgentID) {
+		var pointsForeground = playerContainer.getChildAt(5);
+		var pointsPercent = playerObject.points /
+			(playerObject.points + playerObject.pointsLeft);
+		pointsForeground.scale.set(pointsPercent, 1);
+	}
 
 	playerSprite.texture = getPlayerTexture(playerObject.color);
 
