@@ -1,4 +1,4 @@
-# EECS 393 Project
+# Shape Shmup
 EECS 393 (Fall 2016) -- Software Engineering, Case Western Reserve University
 
 ## Contributors
@@ -16,9 +16,12 @@ Shape Shmup game is a 2D multiplayer game in which you navigate as a simple geom
 * Use arrow keys or WASD to move
 * Aim with the cursor and click to shoot
 * Send chat messages
+* Execute commands from the chatbox
 
-### Concept
-When we finish the graphics, the game might look something like this. ![concept_art](http://i.imgur.com/CpOaOha.jpg)
+### Graphics
+Before we coded any of the graphics, we decided to style our game like this. ![concept_art](http://i.imgur.com/CpOaOha.jpg)
+
+This is how it currently looks. ![screenshot](http://i.imgur.com/QUft7cC.png)
 
 ## Instructions
 First, be sure to have the latest versions of Java and Maven installed. Then, clone or download this repository. Finally, `make run` or `mvn jetty:run`. This will start the game server. In your browser, navigate to `127.0.0.1:8080`. Clients who are connected to the same local network as you can also connect to your local IP address at port 8080 to access your server.
