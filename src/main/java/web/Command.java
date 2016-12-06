@@ -167,7 +167,7 @@ public enum Command {
 					target = getPlayerAgent(server, args[1]);
 					try {
 						pointValue = Integer.parseInt(args[2]);
-						target = server.getPlayerAgentBySession(sourceSession);
+						target = getPlayerAgent(server, args[1]);
 						target.awardPoints(pointValue);
 					}
 					catch (NumberFormatException ex) {

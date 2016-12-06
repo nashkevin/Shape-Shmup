@@ -388,4 +388,94 @@ public class CommandsTest {
 		server.onClose(user1.getSession());
 		server.onClose(user2.getSession());
 	}
+	
+	/** Tests /givexp without any arguments. */
+	@Test
+	public void testGiveExpSelf() {
+		MockConnection user = new MockConnection(server, "Test");
+		
+		// Check that the user starts at level zero
+		server.onMessage("{\"message\":\"/status\"}", user.getSession());
+		Assert.assertTrue(user.receivedMessage("Lv. 0"));
+		
+		user.clearOutput();
+		
+		// Call /givexp
+		server.onMessage("{\"message\":\"/givexp\"}", user.getSession());
+		
+		// Verify that the user rose to level 1.
+		server.onMessage("{\"message\":\"/status\"}", user.getSession());
+		Assert.assertTrue(user.receivedMessage("Lv. 1"));
+
+		server.onClose(user.getSession());
+	}
+	
+	/** Tests /givexp where the argument is the amount of experience. */
+	@Test
+	public void testGiveExpAmount() {
+		MockConnection user = new MockConnection(server, "Test");
+		
+		// Check that the user starts with zero experience.
+		server.onMessage("{\"message\":\"/status\"}", user.getSession());
+		Assert.assertTrue(user.receivedMessage("(0/101 exp)"));
+		
+		user.clearOutput();
+		
+		// Call /givexp 10
+		server.onMessage("{\"message\":\"/givexp 10\"}", user.getSession());
+		
+		// Verify that the user rose to level 1.
+		server.onMessage("{\"message\":\"/status\"}", user.getSession());
+		Assert.assertTrue(user.receivedMessage("(10/101 exp)"));
+
+		server.onClose(user.getSession());
+	}
+	
+	/** Tests /givexp where the argument is another player. */
+	@Test
+	public void testGiveExpToOther() {
+		MockConnection user1 = new MockConnection(server, "Test1");
+		MockConnection user2 = new MockConnection(server, "Test2");
+		
+		// Check that the user 2 starts with zero experience.
+		server.onMessage("{\"message\":\"/status\"}", user2.getSession());
+		Assert.assertTrue(user2.receivedMessage("Lv. 0"));
+		
+		user2.clearOutput();
+		
+		// Call /givexp Test2 from Test1.
+		server.onMessage("{\"message\":\"/givexp Test2\"}", user1.getSession());
+		
+		// Verify that Test2 rose to level 1.
+		server.onMessage("{\"message\":\"/status\"}", user2.getSession());
+		Assert.assertTrue(user2.receivedMessage("Lv. 1"));
+
+		server.onClose(user1.getSession());
+		server.onClose(user2.getSession());
+	}
+	
+	/** Tests /givexp with two arguments: giving an amount of experience to another player. */
+	@Test
+	public void testGiveExpAmountToOther() {
+		MockConnection user1 = new MockConnection(server, "Test1");
+		MockConnection user2 = new MockConnection(server, "Test2");
+		
+		// Check that the user 2 starts with zero experience.
+		server.onMessage("{\"message\":\"/status\"}", user2.getSession());
+		Assert.assertTrue(user2.receivedMessage("(0/101 exp)"));
+		
+		user2.clearOutput();
+		
+		// Call /givexp Test2 from Test1.
+		server.onMessage("{\"message\":\"/givexp Test2 10\"}", user1.getSession());
+		
+		user2.clearOutput();
+		
+		// Verify that Test2 rose to level 1.
+		server.onMessage("{\"message\":\"/status\"}", user2.getSession());
+		Assert.assertTrue(user2.receivedMessage("(10/101 exp)"));
+
+		server.onClose(user1.getSession());
+		server.onClose(user2.getSession());
+	}
 }

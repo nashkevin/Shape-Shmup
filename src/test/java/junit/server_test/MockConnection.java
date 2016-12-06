@@ -53,6 +53,12 @@ public class MockConnection {
 		return false;
 	}
 	
+	public void clearOutput() {
+		synchronized(output) {
+			output.clear();
+		}
+	}
+	
 	private Session getMockSession(List<String> output) {
 		Session session = Mockito.mock(Session.class);
 		String uuid = UUID.randomUUID().toString();
