@@ -30,11 +30,6 @@ var canvas = document.getElementById("gameCanvas");
 var playerX = getGameWidth() / 2;
 var playerY = getGameHeight() / 2;
 
-/** Player progress cache */
-var points = 0;
-var pointsLeft = 101;
-var level = 0;
-
 /** Timestamp initialized when a ping request is given */
 var pingStartTime;
 
