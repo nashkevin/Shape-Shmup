@@ -35,7 +35,7 @@ public class PlayerAgent extends Agent {
 		super(
 			environment,
 			position,
-			new ProjectileFactory(environment, null, 1, 7,
+			new ProjectileFactory(environment, null, 10, 7,
 				Math.toRadians(5.0), 1000, 1.0),
 			team,
 			1,
@@ -90,21 +90,21 @@ public class PlayerAgent extends Agent {
 
 	private void upgrade(int level) {
 		// Upgrade damage. Min 1, Max 50
-		getGun().setDamage((int) Math.round(0.49 * level + 1));
+		getGun().setDamage((int) Math.round(10 + level * 0.4));
 
-		// Upgrade bullet speed. Min 7, Max 25
-		getGun().setSpeed(0.18 * level + 7);
+		// Upgrade bullet speed. Min 7, Max 15
+		getGun().setSpeed(7 + level * 0.08);
 
-		// Upgrade firing delay. Max 1000, Min 100
-		getGun().setFiringDelay(1000 - 9 * level);
+		// Upgrade firing delay. Max 1000, Min 50
+		getGun().setFiringDelay((int) (1000 - level * 9.5));
 
 		// Upgrade health. Min 100, Max 1000
 		double healthRatio = (double) getHealth() / getMaxHealth();
-		setMaxHealth(9 * level + 100);
+		setMaxHealth(100 + level * 9);
 		setHealth((int) Math.round(healthRatio * getMaxHealth()));
 
-		// Upgrade haste. Min 0.3, Max 1
-		setHaste(0.007 * level + 0.3);
+		// Upgrade haste. Min 0.3, Max 0.8
+		setHaste(0.005 * level + 0.3);
 	}
 
 	/** Returns the number of points needed to reach the given level */

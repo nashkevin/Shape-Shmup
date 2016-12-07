@@ -16,10 +16,10 @@ public class Pulsar extends NPCAgent {
 		super(
 			environment,
 			position,
-			new ProjectileFactory(environment, null, level, 3,
-				0, 1, 1 + level * 0.01),
+			new ProjectileFactory(environment, null, (int) (20 + 0.18 * level),
+                3, 0, 1, 1 + level * 0.01),
 			1 + level * 0.01,
-			100 * level,
+			100 + 19 * level,
 			0.075,
 			750
 		);

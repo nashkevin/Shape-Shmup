@@ -209,7 +209,8 @@ public class Environment {
 
 	/** Spawns a Scout-type NPCAgent of a random level at a specified coordinate */
 	public Scout spawnScout(Point2D.Double point) {
-		return spawnScout(point, generateLevel());
+		int level = generateLevel() * (int) Math.round(1 - checkRadius(point) / RADIUS) + 1;
+		return spawnScout(point, level);
 	}
 
 	/** Spawns a Scout-Type NPCAgent of a specified level at a specified coordinate */

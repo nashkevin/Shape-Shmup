@@ -14,11 +14,11 @@ public class Scout extends NPCAgent {
 		super(
 			environment,
 			position,
-			new ProjectileFactory(environment, null, 1 + level / 3, 5,
-				Math.toRadians(10), 1000, 0.5),
+			new ProjectileFactory(environment, null, 10 + (int) Math.round(level * 0.2),
+				5 + level * 0.08, Math.toRadians(10), 1000 - level * 5, 0.5),
 			0.5 + level * 0.005,
-			(int)(1 + level * 0.7),
-			0.007 * level + 0.3,
+			(int)(30 + level * 0.7),
+			0.3 + level * 0.007,
 			1000
 		);
 
