@@ -264,7 +264,8 @@ public enum Command {
 				if (sourceSession.equals(targetSession)) {
 					server.unicast("You can't kick yourself. Use /exit instead.", sourceSession);
 				} else {
-					System.out.println(targetName + " was kicked from the game by " + sourceName + ".");
+					System.out.println("[SERVER] " + targetName +
+                        " was kicked from the game by " + sourceName + ".");
 					try {
 						server.unicast("You were kicked by " + sourceName + ".", targetSession);
 						targetSession.close();

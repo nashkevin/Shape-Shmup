@@ -103,6 +103,8 @@ public class PlayerAgent extends Agent {
 				this.points -= levelToPoints(level);
 				level++;
 			}
+			System.out.println("[PLAYER] Player \"" + getName() +
+				"\" levelled up to Level " + level);
 			upgrade(level);
 			getEnvironment().updateEnvironmentLevel();
 			pointsUntilLevelUp = levelToPoints(level + 1) - this.points;

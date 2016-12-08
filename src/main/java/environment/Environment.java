@@ -195,9 +195,11 @@ public class Environment {
 		PlayerAgent player = new PlayerAgent(this, point, "Player" +
 			String.format("%04d", random.nextInt(10000)), getSmallestTeam());
 		activePlayerAgents.add(player);
-		addPlayerToTeam(player);		
+		addPlayerToTeam(player);
 		if (verbose) {
-			System.out.println("Spoofed player (" + player.getName() + ") was spawned.");
+			System.out.println("[ENVIRO] Spawned Player: \"" +
+				player.getName() + "\" at (" + (int)point.getX() + ", " +
+				(int)point.getY() + ")");
 		}
 		return player;
 	}
