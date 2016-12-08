@@ -586,8 +586,8 @@ function updateStage(json) {
 }
 
 function calculateTint(x, y) {
-	dec = Math.round(255 * Math.sqrt(x * x + y * y) / (RADIUS - 30));
-	dec = Math.max(dec, 50);
+	dec = Math.round(255 * Math.sqrt(x * x + y * y) / (RADIUS - 30)) + 125;
+	dec = Math.min(dec, 255);
 	hex = padString(dec.toString(16), "0", 2);
 	return "0x" + hex + hex + hex;
 }
