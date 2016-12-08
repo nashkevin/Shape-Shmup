@@ -8,6 +8,8 @@ import java.awt.geom.Point2D;
 
 import java.util.Queue;
 import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class PlayerAgent extends Agent {
@@ -15,10 +17,32 @@ public class PlayerAgent extends Agent {
 	/** PlayerAgent's speed will not exceed its haste times this multiple */
 	private int MAX_SPEED_MULTIPLE = 10;
 
+	/** PlayerAgents begin regenerating health after this delay, in ms */
+	private int HEALTH_REGEN_DELAY = 5000;
+
 	private String name = "No-name Triangle";
 	private int level = 0;
 	private int points = 0;
 	private int pointsUntilLevelUp;
+
+	private Timer timer = new Timer("PlayerAgent Timer");
+
+	private TimerTask beginHealingTask = new TimerTask() {
+		@Override
+		public void run() {
+			beginHealing();
+		}
+	};
+	private TimerTask healTask = new TimerTask() {
+		@Override
+		public void run() {
+			if (getHealth() < getMaxHealth()) {
+				applyHealing((int) Math.round(getMaxHealth() * 0.01));
+			} else {
+				healTask.cancel();
+			}
+		}
+	};
 
 	Queue<ClientInput> eventInbox;
 
@@ -120,6 +144,7 @@ public class PlayerAgent extends Agent {
 
 	@Override
 	public final void despawn() {
+		timer.cancel(); // timer threads no longer needed when Player dies
 		getEnvironment().despawnPlayerAgent(this);
 	}
 	
@@ -180,7 +205,49 @@ public class PlayerAgent extends Agent {
 		} else {
 			move();
 		}
-		
+	}
+
+	/** reduces health by an amount */
+	@Override
+	public void applyDamage(int amount) {
+		beginHealingTask.cancel();
+		healTask.cancel();
+		beginHealingTask = new TimerTask() {
+			@Override
+			public void run() {
+				beginHealing();
+			}
+		};
+		timer.schedule(beginHealingTask, HEALTH_REGEN_DELAY);
+		setHealth(getHealth() - amount);
+	}
+
+	/** increases health by an amount,
+	 *  uses applyDamage for negative healing so that health regeneration
+	 *  can be tested using the /heal command */
+	@Override
+	public void applyHealing(int amount) {
+		if (amount < 0) {
+			applyDamage(-amount);
+		} else {
+			setHealth(getHealth() + amount);
+		}
+	}
+
+	/** starts the health regeneration process,
+	 *  which can be interrupted by taking damage */
+	private void beginHealing() {
+		healTask = new TimerTask() {
+			@Override
+			public void run() {
+				if (getHealth() < getMaxHealth()) {
+					applyHealing((int) Math.round(getMaxHealth() * 0.01));
+				} else {
+					healTask.cancel();
+				}
+			}
+		};
+		timer.scheduleAtFixedRate(healTask, 0, 100);
 	}
 
 	private void move(double inputAngle) {

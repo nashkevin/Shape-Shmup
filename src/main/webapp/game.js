@@ -569,6 +569,9 @@ function updateStage(json) {
 	var bgOffsetY = thisPlayer.y - playerY;
 	playerX = thisPlayer.x;
 	playerY = thisPlayer.y;
+
+	bgTile._tint = calculateTint(thisPlayer.x, thisPlayer.y);
+
 	bgTile.tilePosition.x -= bgOffsetX;
 	bgTile.tilePosition.y += bgOffsetY;
 
@@ -580,6 +583,13 @@ function updateStage(json) {
 	updateBarrier();
 
 	renderer.render(stage);
+}
+
+function calculateTint(x, y) {
+	dec = Math.round(255 * Math.sqrt(x * x + y * y) / (RADIUS - 30)) + 125;
+	dec = Math.min(dec, 255);
+	hex = padString(dec.toString(16), "0", 2);
+	return "0x" + hex + hex + hex;
 }
 
 /** Redraw the game boundary on screen. */

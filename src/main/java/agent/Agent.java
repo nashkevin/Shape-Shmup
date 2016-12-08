@@ -186,12 +186,12 @@ public abstract class Agent {
 	public abstract void awardPoints(int pointsAwarded);
 
 	/** reduces health by an amount */
-	public final void applyDamage(int amount) {
+	public void applyDamage(int amount) {
 		setHealth(getHealth() - amount);
 	}
 
 	/** increases health by an amount */
-	public final void applyHealing(int amount) {
+	public void applyHealing(int amount) {
 		setHealth(getHealth() + amount);
 	}
 
