@@ -37,7 +37,7 @@ public class PlayerAgent extends Agent {
 		@Override
 		public void run() {
 			if (getHealth() < getMaxHealth()) {
-				applyHealing(1);
+				applyHealing((int) Math.round(getMaxHealth() * 0.01));
 			} else {
 				healTask.cancel();
 			}
@@ -241,13 +241,13 @@ public class PlayerAgent extends Agent {
 			@Override
 			public void run() {
 				if (getHealth() < getMaxHealth()) {
-					applyHealing(1);
+					applyHealing((int) Math.round(getMaxHealth() * 0.01));
 				} else {
 					healTask.cancel();
 				}
 			}
 		};
-		timer.schedule(healTask, 0, 100);
+		timer.scheduleAtFixedRate(healTask, 0, 100);
 	}
 
 	private void move(double inputAngle) {
