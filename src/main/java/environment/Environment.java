@@ -148,7 +148,8 @@ public class Environment {
 		recentlyDespawnedNPCAgents.add(agent);
 		// agent = null;
 		if (verbose) {
-			System.out.println(agent.getID() + " npc was despawned.");
+			System.out.println("[ENVIRO] Despawned NPC: " +
+				agent.getClass().getSimpleName());
 		}
 	}
 
@@ -160,7 +161,8 @@ public class Environment {
 			removePlayerFromTeam(agent);
 			decimate();
 			if (verbose) {
-				System.out.println("\"" + agent.getName() + "\" was despawned.");
+				System.out.println("[ENVIRO] Despawned Player: \"" +
+					agent.getName() + "\"");
 			}
 		}
 
@@ -174,13 +176,16 @@ public class Environment {
 
 	/** Spawns a playable character entity. */
 	public PlayerAgent spawnPlayer(String name) {
-		PlayerAgent player = new PlayerAgent(this, randomPlayerSpawn(),
-			name, getSmallestTeam());
+		Point2D.Double point = randomPlayerSpawn();
+		PlayerAgent player = new PlayerAgent(this, point, name,
+			getSmallestTeam());
 		activePlayerAgents.add(player);
 		addPlayerToTeam(player);		
 		updateEnvironmentLevel();
 		if (verbose) {
-			System.out.println("Player (" + player.getName() + ") was spawned.");
+			System.out.println("[ENVIRO] Spawned Player: \"" +
+				player.getName() + "\" at (" + (int)point.getX() + ", " +
+				(int)point.getY() + ")");
 		}
 		return player;
 	}
@@ -199,18 +204,12 @@ public class Environment {
 
 	/** Spawns a Scout-type NPCAgent of a random level at a random location */
 	public Scout spawnScout() {
-		return spawnScout(generateLevel());
-	}
-
-	/** Spawns a Scout-type NPCAgent of a specified level at a random location */
-	public Scout spawnScout(int level) {
-		return spawnScout(randomNPCSpawn(), level);
+		return spawnScout(randomNPCSpawn());
 	}
 
 	/** Spawns a Scout-type NPCAgent of a random level at a specified coordinate */
 	public Scout spawnScout(Point2D.Double point) {
-		int level = generateLevel() * (int) Math.round(1 - checkRadius(point) / RADIUS) + 1;
-		return spawnScout(point, level);
+		return spawnScout(point, generateLevel(point));
 	}
 
 	/** Spawns a Scout-Type NPCAgent of a specified level at a specified coordinate */
@@ -218,25 +217,21 @@ public class Environment {
 		Scout agent = new Scout(this, point, level);
 		activeNPCAgents.add(agent);
 		if (verbose) {
-			System.out.println("Level " + level + " Scout (" +
-				agent.getID() + ") was spawned.");
+			System.out.println("[ENVIRO] Spawned NPC: Level " + level +
+				" Scout at (" + (int)point.getX() + ", " + (int)point.getY() +
+				")");
 		}
 		return agent;
 	}
 
 	/** Spawns a Pulsar-type NPCAgent of a random level at a random location */
 	public Pulsar spawnPulsar() {
-		return spawnPulsar(generateLevel());
-	}
-
-	/** Spawns a Pulsar-type NPCAgent of a specified level at a random location */
-	public Pulsar spawnPulsar(int level) {
-		return spawnPulsar(randomNPCSpawn(), level);
+		return spawnPulsar(randomNPCSpawn());
 	}
 
 	/** Spawns a Pulsar-type NPCAgent of a random level at a specified location */
 	public Pulsar spawnPulsar(Point2D.Double point) {
-		return spawnPulsar(point, generateLevel());
+		return spawnPulsar(point, generateLevel(point));
 	}
 
 	/** Spawns a Pulsar-type NPCAgent of a specified level at a specified location */
@@ -244,8 +239,9 @@ public class Environment {
 		Pulsar agent = new Pulsar(this, point, level);
 		activeNPCAgents.add(agent);
 		if (verbose) {
-			System.out.println("Level " + level + " Pulsar (" +
-				agent.getID() + ") was spawned.");
+			System.out.println("[ENVIRO] Spawned NPC: Level " + level +
+				" Pulsar at (" + (int)point.getX() + ", " +
+				(int)point.getY() + ")");
 		}
 		return agent;
 	}
@@ -262,6 +258,14 @@ public class Environment {
 			level = 100;
 		}
 		return level;
+	}
+
+	/** Calculates a level for new NPCAgents based on the environmentLevel
+	 *  and distance from the center */
+	public int generateLevel(Point2D.Double point) {
+		double distanceScale = 1 - checkRadius(point) / RADIUS;
+		int generatedLevel = (int) Math.round(generateLevel() * distanceScale);
+		return Math.max(generatedLevel, 1);
 	}
 
 	/** Changes environmentLevel to reflect the average player level */

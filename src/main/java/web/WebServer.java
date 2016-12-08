@@ -64,7 +64,8 @@ public class WebServer extends HttpServlet {
 	@OnOpen
 	public void onOpen(Session session) {
 		if (verbose) {
-			System.out.println(session.getId() + " has opened a connection.");
+			System.out.println("[SERVER] " + session.getId() +
+                " has opened a connection.");
 		}
 		session.getAsyncRemote().sendText("Connection established.");
 		synchronized(sessionToName) {
@@ -197,7 +198,8 @@ public class WebServer extends HttpServlet {
 	@OnClose
 	public void onClose(Session session) {
 		if (verbose) {
-			System.out.println("Session " + session.getId() + " has ended.");
+			System.out.println("[SERVER] Session " + session.getId() +
+                " has ended.");
 		}
 		broadcast(getNameBySession(session) + " left the game.");
 		PlayerAgent agent = sessionToPlayerAgent.remove(session);
