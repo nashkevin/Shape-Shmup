@@ -39,6 +39,16 @@ public class CommandsTest {
 		
 		user.close();
 	}
+
+	@Test
+	/** Tests /help on an invalid command. */
+	public void testHelpInvalidCommand() {
+		MockConnection user = new MockConnection("Test");
+		user.sendMessage("{\"message\":\"/help NOTACOMMAND\"}");
+		String expectedResult = "No documentation found for that command.";
+		Assert.assertTrue(user.receivedMessage(expectedResult));
+		user.close();
+	}
 	
 	@Test
 	/** Tests running "/where" on a non-existent player. */
