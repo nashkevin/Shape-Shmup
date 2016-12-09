@@ -502,4 +502,29 @@ public class CommandsTest {
 		user1.close();
 		user2.close();
 	}
+	
+	@Test
+	public void testSay() {
+		MockConnection user1 = new MockConnection("Test1");
+		MockConnection user2 = new MockConnection("Test2");
+		
+		// User 1 says something
+		user1.sendMessage("{\"message\":\"/say something\"}");
+
+		// Both users received it
+		String saidMessage = "something";
+		Assert.assertTrue(user1.receivedMessage(saidMessage));
+		Assert.assertTrue(user2.receivedMessage(saidMessage));
+
+		user1.close();
+		user2.close();
+	}
+	
+	@Test
+	public void testPing() {
+		MockConnection user = new MockConnection("Test");
+		user.sendMessage("{\"message\":\"/ping\"}");
+		Assert.assertTrue(user.receivedMessage("PONG"));
+		user.close();
+	}
 }
