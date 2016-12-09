@@ -76,7 +76,12 @@ public class MockConnection {
 		InetSocketAddress mockAddress = new InetSocketAddress(0);
 		Mockito.when(session.getRemoteAddress()).thenReturn(mockAddress);
 		
-		Mockito.when(session.isOpen()).thenReturn(connected);
+		Mockito.doAnswer(new Answer<Boolean>() {
+			@Override
+			public Boolean answer(InvocationOnMock invocation) throws Throwable {
+				return connected;
+			}
+		}).when(session).isOpen();
 		
 		Mockito.when(session.getRemote()).thenAnswer(new Answer<RemoteEndpoint>() {
 			public RemoteEndpoint answer(InvocationOnMock invocation) throws Throwable {
