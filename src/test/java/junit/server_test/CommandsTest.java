@@ -576,4 +576,26 @@ public class CommandsTest {
 		user1.close();
 		user2.close();
 	}
+	
+	@Test
+	public void testKickSelf() {
+		MockConnection user = new MockConnection("Test");
+		user.sendMessage("{\"message\":\"/kick Test\"}");
+		Assert.assertTrue(user.receivedMessage("You can't kick yourself."));
+		user.close();
+	}
+	
+	@Test
+	public void testKick() {
+		MockConnection user1 = new MockConnection("Test1");
+		MockConnection user2 = new MockConnection("Test2");
+		
+		// The first user kicks the second.
+		user1.sendMessage("{\"message\":\"/kick Test2\"}");
+		
+		Assert.assertFalse(user2.getSession().isOpen());
+
+		user1.close();
+		user2.close();
+	}
 }
