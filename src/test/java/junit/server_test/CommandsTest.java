@@ -527,4 +527,23 @@ public class CommandsTest {
 		Assert.assertTrue(user.receivedMessage("PONG"));
 		user.close();
 	}
+	
+	@Test
+	public void testPlayers() {
+		MockConnection user1 = new MockConnection("Test1");
+		
+		// Only one player present
+		user1.sendMessage("{\"message\":\"/players\"}");
+		Assert.assertTrue(user1.receivedMessage("1 player: Test1"));
+		
+		MockConnection user2 = new MockConnection("Test2");
+		
+		// Two players present
+		user1.sendMessage("{\"message\":\"/players\"}");
+		Assert.assertTrue(user1.receivedMessage("2 players: Test1, Test2")
+				|| user1.receivedMessage("2 players: Test2, Test1"));
+
+		user1.close();
+		user2.close();
+	}
 }
