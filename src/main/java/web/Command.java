@@ -366,7 +366,7 @@ public enum Command {
 					sb.append("<b><i>");
 					for (int i = 1; i < args.length; i++)
 						sb.append(args[i] + " ");
-					sb.append("</b></i>");
+					sb.append("</i></b>");
 					server.broadcast(sb.toString());
 				}
 			}
