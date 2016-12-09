@@ -379,6 +379,26 @@ public class CommandsTest {
 		user2.close();
 	}
 	
+	@Test
+	public void testGoToPlayer() {
+		MockConnection user1 = new MockConnection("Test1");
+		MockConnection user2 = new MockConnection("Test2");
+		
+		// The second player goes to a certain point.
+		user2.sendMessage("{\"message\":\"/goto 0 0\"}");
+		
+		// The first player goes to the first player.
+		user1.sendMessage("{\"message\":\"/goto Test2\"}");
+
+		// Verify that the first player is where it should be.
+		user1.sendMessage("{\"message\":\"/where\"}");
+		String expected = "(0.00, 0.00)";
+		Assert.assertTrue(user1.receivedMessage(expected));
+
+		user1.close();
+		user2.close();
+	}
+	
 	/** Tests /givexp without any arguments. */
 	@Test
 	public void testGiveExpSelf() {
