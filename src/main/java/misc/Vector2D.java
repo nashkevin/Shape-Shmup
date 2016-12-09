@@ -39,4 +39,14 @@ public final class Vector2D {
 		//TODO, return a vector of the same angle as input but of unit length
 		return null;
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Vector2D && ((Vector2D) other).getAngle() == this.angle && ((Vector2D) other).getMagnitude() == this.magnitude) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }
