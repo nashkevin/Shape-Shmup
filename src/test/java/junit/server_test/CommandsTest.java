@@ -1,11 +1,9 @@
 package test.java.junit.server_test;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import main.java.web.Command;
-import main.java.web.GameSocket;
 
 /** Test commands that a player can perform through the chat window. */
 public class CommandsTest {
@@ -456,6 +454,50 @@ public class CommandsTest {
 		// Verify that Test2 rose to level 1.
 		user2.sendMessage("{\"message\":\"/status\"}");
 		Assert.assertTrue(user2.receivedMessage("(10/101 exp)"));
+
+		user1.close();
+		user2.close();
+	}
+	
+	@Test
+	public void testHealSelf() {
+		MockConnection user = new MockConnection("Test");
+		// Apply 10 damage to self.
+		user.sendMessage("{\"message\":\"/heal -10\"}");
+		
+		user.sendMessage("{\"message\":\"/status\"}");
+		Assert.assertTrue(user.receivedMessage("Health: 90/100"));
+		
+		user.clearOutput();
+		
+		// Heal self without any arguments.
+		user.sendMessage("{\"message\":\"/heal\"}");
+		
+		// Verify that the user is back to full health.
+		user.sendMessage("{\"message\":\"/status\"}");
+		Assert.assertTrue(user.receivedMessage("Health: 100/100"));
+		
+		user.close();
+	}
+	
+	@Test
+	public void testHealOther() {
+		MockConnection user1 = new MockConnection("Test1");
+		MockConnection user2 = new MockConnection("Test2");
+		// Apply 10 damage to the second user.
+		user1.sendMessage("{\"message\":\"/heal Test2 -10\"}");
+		
+		user2.sendMessage("{\"message\":\"/status\"}");
+		Assert.assertTrue(user2.receivedMessage("Health: 90/100"));
+		
+		user2.clearOutput();
+		
+		// Heal the second user to max health.
+		user1.sendMessage("{\"message\":\"/heal Test2\"}");
+		
+		// Verify that the user is back to full health.
+		user2.sendMessage("{\"message\":\"/status\"}");
+		Assert.assertTrue(user2.receivedMessage("Health: 100/100"));
 
 		user1.close();
 		user2.close();
