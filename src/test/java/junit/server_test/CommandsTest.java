@@ -1,11 +1,9 @@
 package test.java.junit.server_test;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import main.java.web.Command;
-import main.java.web.GameSocket;
 
 /** Test commands that a player can perform through the chat window. */
 public class CommandsTest {
@@ -39,6 +37,16 @@ public class CommandsTest {
 		
 		Assert.assertTrue(user.receivedMessage("Aliases"));
 		
+		user.close();
+	}
+
+	@Test
+	/** Tests /help on an invalid command. */
+	public void testHelpInvalidCommand() {
+		MockConnection user = new MockConnection("Test");
+		user.sendMessage("{\"message\":\"/help NOTACOMMAND\"}");
+		String expectedResult = "No documentation found for that command.";
+		Assert.assertTrue(user.receivedMessage(expectedResult));
 		user.close();
 	}
 	
@@ -371,6 +379,26 @@ public class CommandsTest {
 		user2.close();
 	}
 	
+	@Test
+	public void testGoToPlayer() {
+		MockConnection user1 = new MockConnection("Test1");
+		MockConnection user2 = new MockConnection("Test2");
+		
+		// The second player goes to a certain point.
+		user2.sendMessage("{\"message\":\"/goto 0 0\"}");
+		
+		// The first player goes to the first player.
+		user1.sendMessage("{\"message\":\"/goto Test2\"}");
+
+		// Verify that the first player is where it should be.
+		user1.sendMessage("{\"message\":\"/where\"}");
+		String expected = "(0.00, 0.00)";
+		Assert.assertTrue(user1.receivedMessage(expected));
+
+		user1.close();
+		user2.close();
+	}
+	
 	/** Tests /givexp without any arguments. */
 	@Test
 	public void testGiveExpSelf() {
@@ -456,6 +484,94 @@ public class CommandsTest {
 		// Verify that Test2 rose to level 1.
 		user2.sendMessage("{\"message\":\"/status\"}");
 		Assert.assertTrue(user2.receivedMessage("(10/101 exp)"));
+
+		user1.close();
+		user2.close();
+	}
+	
+	@Test
+	public void testHealSelf() {
+		MockConnection user = new MockConnection("Test");
+		// Apply 10 damage to self.
+		user.sendMessage("{\"message\":\"/heal -10\"}");
+		
+		user.sendMessage("{\"message\":\"/status\"}");
+		Assert.assertTrue(user.receivedMessage("Health: 90/100"));
+		
+		user.clearOutput();
+		
+		// Heal self without any arguments.
+		user.sendMessage("{\"message\":\"/heal\"}");
+		
+		// Verify that the user is back to full health.
+		user.sendMessage("{\"message\":\"/status\"}");
+		Assert.assertTrue(user.receivedMessage("Health: 100/100"));
+		
+		user.close();
+	}
+	
+	@Test
+	public void testHealOther() {
+		MockConnection user1 = new MockConnection("Test1");
+		MockConnection user2 = new MockConnection("Test2");
+		// Apply 10 damage to the second user.
+		user1.sendMessage("{\"message\":\"/heal Test2 -10\"}");
+		
+		user2.sendMessage("{\"message\":\"/status\"}");
+		Assert.assertTrue(user2.receivedMessage("Health: 90/100"));
+		
+		user2.clearOutput();
+		
+		// Heal the second user to max health.
+		user1.sendMessage("{\"message\":\"/heal Test2\"}");
+		
+		// Verify that the user is back to full health.
+		user2.sendMessage("{\"message\":\"/status\"}");
+		Assert.assertTrue(user2.receivedMessage("Health: 100/100"));
+
+		user1.close();
+		user2.close();
+	}
+	
+	@Test
+	public void testSay() {
+		MockConnection user1 = new MockConnection("Test1");
+		MockConnection user2 = new MockConnection("Test2");
+		
+		// User 1 says something
+		user1.sendMessage("{\"message\":\"/say something\"}");
+
+		// Both users received it
+		String saidMessage = "something";
+		Assert.assertTrue(user1.receivedMessage(saidMessage));
+		Assert.assertTrue(user2.receivedMessage(saidMessage));
+
+		user1.close();
+		user2.close();
+	}
+	
+	@Test
+	public void testPing() {
+		MockConnection user = new MockConnection("Test");
+		user.sendMessage("{\"message\":\"/ping\"}");
+		Assert.assertTrue(user.receivedMessage("PONG"));
+		user.close();
+	}
+	
+	@Test
+	public void testPlayers() {
+		MockConnection user1 = new MockConnection("Test1");
+		
+		// Only one player present
+		user1.sendMessage("{\"message\":\"/players\"}");
+		Assert.assertTrue(user1.receivedMessage("1 player: Test1"));
+		
+		MockConnection user2 = new MockConnection("Test2");
+		
+		// Two players present
+		user1.sendMessage("{\"message\":\"/players\"}");
+		Assert.assertTrue(user1.receivedMessage("2 players: Test1, Test2")
+				|| user1.receivedMessage("2 players: Test2, Test1"));
 
 		user1.close();
 		user2.close();
