@@ -7,11 +7,11 @@
    version="3.1">
 
   <servlet>
-    <servlet-name>WebServer</servlet-name>
-    <servlet-class>main.java.web.WebServer</servlet-class>
+    <servlet-name>WebServlet</servlet-name>
+    <servlet-class>main.java.web.WebServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>WebServer</servlet-name>
+    <servlet-name>WebServlet</servlet-name>
     <url-pattern>/socket/*</url-pattern>
   </servlet-mapping>
 

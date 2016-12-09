@@ -26,7 +26,7 @@ public class GameSerializer {
 	
 	private static final int FRAME_RATE = 40;
 
-	private WebServer server;
+	private GameSocket server;
 	private Environment environment;
 	private boolean gameplayOccurring = true;
 
@@ -34,7 +34,7 @@ public class GameSerializer {
 
 	private Timer timer = new Timer("GameThread Timer");
 
-	public GameSerializer(WebServer server, Environment environment) {
+	public GameSerializer(GameSocket server, Environment environment) {
 		this.server = server;
 		this.environment = environment;
 
