@@ -598,4 +598,12 @@ public class CommandsTest {
 		user1.close();
 		user2.close();
 	}
+	
+	@Test
+	public void testKillNoone() {
+		MockConnection user = new MockConnection("Test");
+		user.sendMessage("{\"message\":\"/kill NOTAUSER\"}");
+		Assert.assertTrue(user.receivedMessage("Player 'NOTAUSER' not found."));
+		user.close();
+	}
 }
