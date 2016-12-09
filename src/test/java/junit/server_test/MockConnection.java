@@ -18,6 +18,7 @@ public class MockConnection {
 	private GameSocket socket = new GameSocket(false);
 	private List<String> output = new LinkedList<>();
 	private Session session;
+	private boolean connected = true;
 	
 	public MockConnection(String name) {
 		
@@ -61,6 +62,7 @@ public class MockConnection {
 	
 	public void close(int reason, String message) {
 		socket.onWebSocketClose(reason, message);
+		connected = false;
 	}
 	
 	public void clearOutput() {
@@ -74,7 +76,7 @@ public class MockConnection {
 		InetSocketAddress mockAddress = new InetSocketAddress(0);
 		Mockito.when(session.getRemoteAddress()).thenReturn(mockAddress);
 		
-		Mockito.when(session.isOpen()).thenReturn(true);
+		Mockito.when(session.isOpen()).thenReturn(connected);
 		
 		Mockito.when(session.getRemote()).thenAnswer(new Answer<RemoteEndpoint>() {
 			public RemoteEndpoint answer(InvocationOnMock invocation) throws Throwable {
@@ -86,6 +88,7 @@ public class MockConnection {
 			@Override
 			public Void answer(InvocationOnMock invocation) throws Throwable {
 				getSocket().onWebSocketClose(0, null);
+				connected = false;
 				return null;
 			}
 		}).when(session).close();
