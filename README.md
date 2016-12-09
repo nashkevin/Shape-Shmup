@@ -7,6 +7,10 @@ Shape Shmup game is a 2D multiplayer game in which you navigate as a simple geom
 
 This README file provides an overview of our project. See the [Wiki](https://github.com/nashkevin/EECS-393-Project/wiki) for full documentation and other information.
 
+### Bugs and Feedback
+
+For bugs, questions and discussions please use the [Github Issues](https://github.com/nashkevin/EECS-393-Project/issues).
+
 ## Visuals
 Before we coded any of the graphics, we decided to style our game like this. ![concept_art](http://i.imgur.com/VYDHLe5.png)
 
