@@ -30,6 +30,8 @@ First, be sure to have the latest versions of Java and Maven installed. Then, cl
 
 You can also run the unit tests with the command `mvn test`.
 
+To package the source code into a .war file, use `mvn package` (aliased to `make build`). You can run the .war file using the jetty-runner jar, which is automatically downloaded whenever you run `mvn package`. You can run jetty-runner with the command `java -jar target/dependency/jetty-runner.jar target/*.war` (aliased to `make runjar`).
+
 ## Credits
 Here is a comprehensive list of the pre-existing APIs, libraries, and other technologies that make our game possible.
 
