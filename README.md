@@ -1,24 +1,13 @@
 # Shape Shmup
-EECS 393 (Fall 2016) -- Software Engineering, Case Western Reserve University
+Final Project for EECS 393 (Fall 2016) -- Software Engineering, Case Western Reserve University
 
-## Contributors
-* [Zachary Janice](https://github.com/zanice) ([znj](mailto:znj@case.edu?Subject=Cool%20EECS%20393%20project))
-* [Joel Kalos](https://github.com/jidek) ([jdk138](mailto:jdk138@case.edu?Subject=Cool%20EECS%20393%20project))
-* [Drew Mitchell](https://github.com/nerdydrew) ([atm62](mailto:atm62@case.edu?Subject=Cool%20EECS%20393%20project))
-* [Kevin Nash](https://github.com/nashkevin) ([kjn33](mailto:kjn33@case.edu?Subject=Cool%20EECS%20393%20project))
-* [Pete Thompson](https://github.com/bigpetenasty) ([pjt37](mailto:pjt37@case.edu?Subject=Cool%20EECS%20393%20project))
-* [Kevin Wang](https://github.com/kevinwang95) ([kxw233](mailto:kxw233@case.edu?Subject=Cool%20EECS%20393%20project))
+Shape Shmup game is a 2D multiplayer game in which you navigate as a simple geometric character and shoot down simple geometric enemies because, we admit it, none of us are artists.
 
-## Description
-Shape Shmup game is a 2D multiplayer game in which you navigate as a simple geometric character and shoot down simple geometric enemies because, let's face it, none of us are artists.
+## Full Documentation
 
-### Features
-* Use arrow keys or WASD to move
-* Aim with the cursor and click to shoot
-* Send chat messages
-* Execute commands from the chatbox
+This README file provides an overview of our project. See the [Wiki](https://github.com/nashkevin/EECS-393-Project/wiki) for full documentation and other information.
 
-### Graphics
+## Visuals
 Before we coded any of the graphics, we decided to style our game like this. ![concept_art](http://i.imgur.com/VYDHLe5.png)
 
 This is how it currently looks.
@@ -31,6 +20,14 @@ First, be sure to have the latest versions of Java and Maven installed. Then, cl
 You can also run the unit tests with the command `mvn test`.
 
 To package the source code into a .war file, use `mvn package` (aliased to `make build`). You can run the .war file using jetty-runner with the command `java -jar target/dependency/jetty-runner.jar target/*.war` (aliased to `make runjar`).
+
+## Contributors
+* [Zachary Janice](https://github.com/zanice) ([znj](mailto:znj@case.edu?Subject=Cool%20EECS%20393%20project))
+* [Joel Kalos](https://github.com/jidek) ([jdk138](mailto:jdk138@case.edu?Subject=Cool%20EECS%20393%20project))
+* [Drew Mitchell](https://github.com/nerdydrew) ([atm62](mailto:atm62@case.edu?Subject=Cool%20EECS%20393%20project))
+* [Kevin Nash](https://github.com/nashkevin) ([kjn33](mailto:kjn33@case.edu?Subject=Cool%20EECS%20393%20project))
+* [Pete Thompson](https://github.com/bigpetenasty) ([pjt37](mailto:pjt37@case.edu?Subject=Cool%20EECS%20393%20project))
+* [Kevin Wang](https://github.com/kevinwang95) ([kxw233](mailto:kxw233@case.edu?Subject=Cool%20EECS%20393%20project))
 
 ## Credits
 Here is a comprehensive list of the pre-existing APIs, libraries, and other technologies that make our game possible.
