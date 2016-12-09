@@ -2,7 +2,10 @@ run:
 	mvn jetty:run
 
 build:
-	mvn jetty:run-war
+	mvn package
+
+runjar:
+	java -jar target/dependency/jetty-runner.jar target/*.war
 
 coverage:
 	open target/site/jacoco-ut/index.html

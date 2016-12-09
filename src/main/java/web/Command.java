@@ -5,14 +5,12 @@ import main.java.agent.PlayerAgent;
 
 import java.awt.geom.Point2D;
 
-import java.io.IOException;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.websocket.CloseReason;
-import javax.websocket.Session;
+import org.eclipse.jetty.websocket.api.Session;
+
 
 
 /** Manages commands that a player can perform by typing in the chat window. */
@@ -24,7 +22,7 @@ public enum Command {
 			"Syntax: /help [command]"
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) {
+			protected void perform(String[] args, Session session, GameSocket server) {
 				if (args.length == 1) {
 					// Display generic help info.
 					server.unicast("/commands for a list of commands" +
@@ -47,7 +45,7 @@ public enum Command {
 			"Lists all available commands.<br>Syntax: /commands"
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) {
+			protected void perform(String[] args, Session session, GameSocket server) {
 				if (args.length > 1) {
 					throw new IllegalArgumentException();
 				}
@@ -76,7 +74,7 @@ public enum Command {
 				"<br>Syntax: /bring username [username|x y]")
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) throws PlayerNotFoundException {
+			protected void perform(String[] args, Session session, GameSocket server) throws PlayerNotFoundException {
 				PlayerAgent caller = server.getPlayerAgentBySession(session);
 
 				if (args.length == 2) {
@@ -111,7 +109,7 @@ public enum Command {
 			"Clears your chat window.<br>Syntax: /clear"
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) {
+			protected void perform(String[] args, Session session, GameSocket server) {
 				if (args.length > 1) {
 					throw new IllegalArgumentException();
 				}
@@ -122,18 +120,11 @@ public enum Command {
 			"Disconnects you from the server.<br>Syntax: /exit"
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) {
+			protected void perform(String[] args, Session session, GameSocket server) {
 				if (args.length > 1) {
 					throw new IllegalArgumentException();
 				}
-				String user = server.getNameBySession(session);
-				String reasonPhrase = "Player '" + user + "' closed session via command.";
-				CloseReason.CloseCode code = CloseReason.CloseCodes.NORMAL_CLOSURE;
-				try {
-					session.close(new CloseReason(code, reasonPhrase));
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
+				session.close();
 			}
 		},
 	GIVEXP ("givexp",
@@ -141,7 +132,7 @@ public enum Command {
 			"Gives a player experience points.<br>Syntax: /givexp [username] [amount]"
 		) {
 			@Override
-			protected void perform(String[] args, Session sourceSession, WebServer server) throws PlayerNotFoundException {
+			protected void perform(String[] args, Session sourceSession, GameSocket server) throws PlayerNotFoundException {
 				PlayerAgent target;
 				int pointValue;
 				// /givexp -> gives self enough experience points for next level
@@ -184,7 +175,7 @@ public enum Command {
 			"Sends you to a player or to coordinates.<br>Syntax: /goto [player|x y]"
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) throws PlayerNotFoundException {
+			protected void perform(String[] args, Session session, GameSocket server) throws PlayerNotFoundException {
 				PlayerAgent caller = server.getPlayerAgentBySession(session);
 
 				if (args.length == 3) {
@@ -211,7 +202,7 @@ public enum Command {
 			"Heals a player to full health or by a given amount.<br>Syntax: /heal [username] [amount]"
 		) {
 			@Override
-			protected void perform(String[] args, Session sourceSession, WebServer server) throws PlayerNotFoundException {
+			protected void perform(String[] args, Session sourceSession, GameSocket server) throws PlayerNotFoundException {
 				PlayerAgent target;
 				int healValue;
 				// /heal -> heals self to max health
@@ -253,7 +244,7 @@ public enum Command {
 			"Disconnects another user from the server.<br>Syntax: /kick username"
 		) {
 			@Override
-			protected void perform(String[] args, Session sourceSession, WebServer server) throws PlayerNotFoundException {
+			protected void perform(String[] args, Session sourceSession, GameSocket server) throws PlayerNotFoundException {
 				if (args.length != 2) {
 					throw new IllegalArgumentException();
 				}
@@ -266,12 +257,8 @@ public enum Command {
 				} else {
 					System.out.println("[SERVER] " + targetName +
                         " was kicked from the game by " + sourceName + ".");
-					try {
-						server.unicast("You were kicked by " + sourceName + ".", targetSession);
-						targetSession.close();
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}
+					server.unicast("You were kicked by " + sourceName + ".", targetSession);
+					targetSession.close();
 				}
 			}
 		},
@@ -280,7 +267,7 @@ public enum Command {
 			"Kills a player.<br>Syntax: /kill username"
 		) {
 			@Override
-			protected void perform(String[] args, Session sourceSession, WebServer server) {
+			protected void perform(String[] args, Session sourceSession, GameSocket server) {
 				if (args.length != 2) {
 					throw new IllegalArgumentException();
 				}
@@ -304,7 +291,7 @@ public enum Command {
 			"Lists the usernames of everyone playing.<br>Syntax: /players"
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) {
+			protected void perform(String[] args, Session session, GameSocket server) {
 				if (args.length > 1) {
 					throw new IllegalArgumentException();
 				}
@@ -325,7 +312,7 @@ public enum Command {
 			"Requests a timed response from the server.<br>Syntax: /ping"
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) {
+			protected void perform(String[] args, Session session, GameSocket server) {
 				if (args.length > 1) {
 					throw new IllegalArgumentException();
 				}
@@ -337,7 +324,7 @@ public enum Command {
 			"Sends a private message to a player.<br>Syntax: /pm username message"
 		) {
 			@Override
-			protected void perform(String[] args, Session sourceSession, WebServer server) throws PlayerNotFoundException {
+			protected void perform(String[] args, Session sourceSession, GameSocket server) throws PlayerNotFoundException {
 				if (args.length <= 2) {
 					throw new IllegalArgumentException();
 				}
@@ -371,7 +358,7 @@ public enum Command {
 				"Useful for server announcements.<br>Syntax: /say message")
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) {
+			protected void perform(String[] args, Session session, GameSocket server) {
 				if (args.length < 2) {
 					throw new IllegalArgumentException();
 				} else {
@@ -379,7 +366,7 @@ public enum Command {
 					sb.append("<b><i>");
 					for (int i = 1; i < args.length; i++)
 						sb.append(args[i] + " ");
-					sb.append("</b></i>");
+					sb.append("</i></b>");
 					server.broadcast(sb.toString());
 				}
 			}
@@ -390,7 +377,7 @@ public enum Command {
 				"<br>Syntax: /spawn (Player|Pulsar|Scout) [x y]")
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) {
+			protected void perform(String[] args, Session session, GameSocket server) {
 				PlayerAgent caller = server.getPlayerAgentBySession(session);
 				int x = (int) caller.getPosition().getX();
 				int y = (int) caller.getPosition().getY();
@@ -420,7 +407,7 @@ public enum Command {
 				"<br>Syntax: /stats [username]")
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) throws PlayerNotFoundException {
+			protected void perform(String[] args, Session session, GameSocket server) throws PlayerNotFoundException {
 				PlayerAgent player;
 				StringBuilder sb = new StringBuilder();
 				if (args.length == 1) {
@@ -470,7 +457,7 @@ public enum Command {
 				"<br>Syntax: /team [username] [red|blue]")
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) {
+			protected void perform(String[] args, Session session, GameSocket server) {
 				if (args.length == 1) {
 					Agent.Team team = server.getPlayerAgentBySession(session).getTeam();
 					server.unicast("You are on the " + team.toString() + " team.", session);
@@ -523,7 +510,7 @@ public enum Command {
 				"<br>Syntax: /where [username]")
 		) {
 			@Override
-			protected void perform(String[] args, Session session, WebServer server) throws PlayerNotFoundException {
+			protected void perform(String[] args, Session session, GameSocket server) throws PlayerNotFoundException {
 				Point2D.Double position = new Point2D.Double();
 				if (args.length == 1) {
 					position = server.getPlayerAgentBySession(session).getPosition();
@@ -585,7 +572,7 @@ public enum Command {
 	}
 
 	/** Performs the command. Each command must implement this function. */
-	protected abstract void perform(String[] args, Session session, WebServer server) throws PlayerNotFoundException;
+	protected abstract void perform(String[] args, Session session, GameSocket server) throws PlayerNotFoundException;
 
 
 
@@ -604,7 +591,7 @@ public enum Command {
 		}
 	}
 
-	public static void handleInput(String input, Session session, WebServer server) {
+	public static void handleInput(String input, Session session, GameSocket server) {
 		// split commands into arguments
 		String[] args = input.substring(1).trim().split("\\s++");
 
@@ -618,7 +605,7 @@ public enum Command {
 		parseCommand(args, session, server);
 	}
 
-	private static void parseCommand(String[] args, Session session, WebServer server) {
+	private static void parseCommand(String[] args, Session session, GameSocket server) {
 		Command command = commands.get(args[0].toLowerCase());
 		if (command != null) {
 			try {
@@ -636,7 +623,7 @@ public enum Command {
 	}
 	
 	/** Gets the PlayerAgent corresponding to the name, or throws PlayerNotFoundException. */
-	private static PlayerAgent getPlayerAgent(WebServer server, String name) throws PlayerNotFoundException {
+	private static PlayerAgent getPlayerAgent(GameSocket server, String name) throws PlayerNotFoundException {
 		PlayerAgent agent = server.getPlayerAgentByShortName(name);
 		
 		if (agent == null) {
@@ -647,7 +634,7 @@ public enum Command {
 	}
 	
 	/** Gets the Session corresponding to the name, or throws PlayerNotFoundException. */
-	private static Session getSession(WebServer server, String name) throws PlayerNotFoundException {
+	private static Session getSession(GameSocket server, String name) throws PlayerNotFoundException {
 		Session session = server.getSessionByShortName(name);
 		
 		if (session == null) {

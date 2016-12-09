@@ -1,33 +1,32 @@
 package test.java.junit.server_test;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
-import javax.websocket.RemoteEndpoint;
-import javax.websocket.Session;
-
+import org.eclipse.jetty.websocket.api.RemoteEndpoint;
+import org.eclipse.jetty.websocket.api.Session;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import main.java.web.WebServer;
+import main.java.web.GameSocket;
 
 /** Represents a mock client that connects to the web server. */
 public class MockConnection {
-	private WebServer server;
+	private GameSocket socket = new GameSocket(false);
 	private List<String> output = new LinkedList<>();
 	private Session session;
+	private boolean connected = true;
 	
-	public MockConnection(WebServer server, String name) {
-		session = getMockSession(output);
+	public MockConnection(String name) {
 		
-		server.onOpen(session);
-		this.server = server;
+		session = getMockSession(output);
+		socket.onWebSocketConnect(session);
 		
 		String nameJSON = " {\"name\":\"" + name + "\"}";
-		server.onMessage(nameJSON, session);
+		socket.onWebSocketText(nameJSON);
 	}
 	
 	public List<String> getOutput() {
@@ -38,8 +37,8 @@ public class MockConnection {
 		return session;
 	}
 	
-	protected WebServer getServer() {
-		return server;
+	protected GameSocket getSocket() {
+		return socket;
 	}
 	
 	public boolean receivedMessage(String string) {
@@ -53,6 +52,19 @@ public class MockConnection {
 		return false;
 	}
 	
+	public void close() {
+		close(0, null);
+	}
+	
+	public void sendMessage(String message) {
+		socket.onWebSocketText(message);
+	}
+	
+	public void close(int reason, String message) {
+		socket.onWebSocketClose(reason, message);
+		connected = false;
+	}
+	
 	public void clearOutput() {
 		synchronized(output) {
 			output.clear();
@@ -61,52 +73,36 @@ public class MockConnection {
 	
 	private Session getMockSession(List<String> output) {
 		Session session = Mockito.mock(Session.class);
-		String uuid = UUID.randomUUID().toString();
-		Mockito.when(session.getId()).thenReturn(uuid);
+		InetSocketAddress mockAddress = new InetSocketAddress(0);
+		Mockito.when(session.getRemoteAddress()).thenReturn(mockAddress);
 		
-		Mockito.when(session.isOpen()).thenReturn(true);
+		Mockito.doAnswer(new Answer<Boolean>() {
+			@Override
+			public Boolean answer(InvocationOnMock invocation) throws Throwable {
+				return connected;
+			}
+		}).when(session).isOpen();
 		
-		Mockito.when(session.getBasicRemote()).thenAnswer(new Answer<RemoteEndpoint.Basic>() {
-			public RemoteEndpoint.Basic answer(InvocationOnMock invocation) throws Throwable {
-				return getMockBasicEndpoint(output);
+		Mockito.when(session.getRemote()).thenAnswer(new Answer<RemoteEndpoint>() {
+			public RemoteEndpoint answer(InvocationOnMock invocation) throws Throwable {
+				return getMockEndpoint(output);
 			}
 		});
 		
-		Mockito.when(session.getAsyncRemote()).thenAnswer(new Answer<RemoteEndpoint.Async>() {
-			public RemoteEndpoint.Async answer(InvocationOnMock invocation) throws Throwable {
-				return getMockAsyncEndpoint(output);
+		Mockito.doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				getSocket().onWebSocketClose(0, null);
+				connected = false;
+				return null;
 			}
-		});
-		
-		try {
-			Mockito.doAnswer(new Answer<Void>() {
-				@Override
-				public Void answer(InvocationOnMock invocation) throws Throwable {
-					getServer().onClose(session);
-					return null;
-				}
-			}).when(session).close(Mockito.any());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		try {
-			Mockito.doAnswer(new Answer<Void>() {
-				@Override
-				public Void answer(InvocationOnMock invocation) throws Throwable {
-					getServer().onClose(session);
-					return null;
-				}
-			}).when(session).close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		}).when(session).close();
 
 		return session;
 	}
 
-	private static RemoteEndpoint.Basic getMockBasicEndpoint(List<String> output) throws IOException {
-		RemoteEndpoint.Basic endpoint = Mockito.mock(RemoteEndpoint.Basic.class);
+	private static RemoteEndpoint getMockEndpoint(List<String> output) throws IOException {
+		RemoteEndpoint endpoint = Mockito.mock(RemoteEndpoint.class);
 		
 		Mockito.doAnswer(new Answer<Void>() {
 			@Override
@@ -120,14 +116,7 @@ public class MockConnection {
 				}
 				return null;
 			}
-		}).when(endpoint).sendText(Mockito.anyString());
-		
-		return endpoint;
-	}
-
-	// RemoteEndpoint doesn't specify sendText(), so I need separate methods for basic and async...
-	private static RemoteEndpoint.Async getMockAsyncEndpoint(List<String> output) throws IOException {
-		RemoteEndpoint.Async endpoint = Mockito.mock(RemoteEndpoint.Async.class);
+		}).when(endpoint).sendString(Mockito.anyString());
 		
 		Mockito.doAnswer(new Answer<Void>() {
 			@Override
@@ -141,7 +130,7 @@ public class MockConnection {
 				}
 				return null;
 			}
-		}).when(endpoint).sendText(Mockito.anyString());
+		}).when(endpoint).sendStringByFuture(Mockito.anyString());
 		
 		return endpoint;
 	}

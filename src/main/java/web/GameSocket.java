@@ -6,12 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServlet;
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.server.ServerEndpoint;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.WebSocketAdapter;
+import org.eclipse.jetty.websocket.api.WebSocketException;
 
 import com.google.gson.Gson;
 
@@ -19,9 +16,7 @@ import main.java.agent.PlayerAgent;
 import main.java.environment.Environment;
 
 
-@ServerEndpoint("/socket")
-public class WebServer extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+public class GameSocket extends WebSocketAdapter {
 	/** The sessions of all players, mapped to each player's chosen name. */
 	private static final Map<Session, String> sessionToName =
 		Collections.synchronizedMap(new HashMap<>());
@@ -38,19 +33,21 @@ public class WebServer extends HttpServlet {
 	private static final Map<String, PlayerAgent> shortNameToSpoofedAgent =
 		Collections.synchronizedMap(new HashMap<>());
 	private static Environment environment;
+	
+	private Session session;
 
 	private boolean verbose = true;
 
-	public WebServer() {
+	public GameSocket() {
 		this(true);
 	}
 
-	public WebServer(boolean verbose) {
+	public GameSocket(boolean verbose) {
 		this.verbose = verbose;
 		startGame();
 	}
 
-	/** The WebServer is instantiated once for each client, but we should
+	/** The GameSocket is instantiated once for each client, but we should
 	  * only instantiate one GameThread. */
 	private synchronized void startGame() {
 		if (environment == null) {
@@ -61,21 +58,23 @@ public class WebServer extends HttpServlet {
 	}
 
 	/** When a new client makes a connection to the server. */
-	@OnOpen
-	public void onOpen(Session session) {
+	@Override
+	public void onWebSocketConnect(Session session) {
 		if (verbose) {
-			System.out.println("[SERVER] " + session.getId() +
+			System.out.println("[SERVER] " + session.getRemoteAddress().toString() +
                 " has opened a connection.");
 		}
-		session.getAsyncRemote().sendText("Connection established.");
+		session.getRemote().sendStringByFuture("Connection established.");
 		synchronized(sessionToName) {
 			sessionToName.put(session, null);
 		}
+		
+		this.session = session;
 	}
 
 	/** When a client sends a message to the server. */
-	@OnMessage
-	public void onMessage(String message, Session session) {
+	@Override
+	public void onWebSocketText(String message) {
 		Gson g = new Gson();
 		ClientInput input = g.fromJson(message, ClientInput.class);
 
@@ -136,8 +135,13 @@ public class WebServer extends HttpServlet {
 		}
 		synchronized(sessionToName) {
 			for (Session s : sessionToName.keySet()) {
-				if (s.isOpen()) {
-					s.getAsyncRemote().sendText(message);
+				try {
+					if (s.isOpen()) {
+						s.getRemote().sendStringByFuture(message);
+					}
+				} catch (WebSocketException e) {
+					System.out.println("The error " + e.getLocalizedMessage() + " occurred. This " 
+							+ "can happen if the player dies before a broadcast arrives.");
 				}
 			}
 		}
@@ -149,7 +153,14 @@ public class WebServer extends HttpServlet {
 
 	/** Send text to a single client */
 	void unicast(String message, Session session) {
-		session.getAsyncRemote().sendText(message);
+		try {
+			if (session.isOpen()) {
+				session.getRemote().sendStringByFuture(message);
+			}
+		} catch (WebSocketException e) {
+			System.out.println("The error " + e.getLocalizedMessage() + " occurred. This " 
+					+ "can happen if the player dies before a unicast arrives.");
+		}
 	}
 
 	Session getSessionByName(String username) {
@@ -195,10 +206,10 @@ public class WebServer extends HttpServlet {
 	}
 
 	/** When a client closes their connection. */
-	@OnClose
-	public void onClose(Session session) {
+	@Override
+	public void onWebSocketClose(int statusCode, String reason) {
 		if (verbose) {
-			System.out.println("[SERVER] Session " + session.getId() +
+			System.out.println("[SERVER] Session " + session.getRemoteAddress().toString() +
                 " has ended.");
 		}
 		broadcast(getNameBySession(session) + " left the game.");
