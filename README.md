@@ -54,7 +54,6 @@ Here is a comprehensive list of the pre-existing APIs, libraries, and other tech
  * Code coverage for Java projects
  * Our code coverage metrics are done through JaCoCo
 
-http://www.eclemma.org/jacoco/trunk/doc/license.html
 * **PixiJS**, Goodboy Digital Ltd., [license](https://github.com/pixijs/pixi.js/blob/master/LICENSE)
  * 2D WebGL renderer
  * graphics are drawn on an HTML5 canvas in the player's browser using PixiJS
