@@ -85,6 +85,13 @@ public class ServerTest {
 	}
 	
 	@Test
+	public void testVerbose() {
+		MockConnection user = new MockConnection("Test", true);
+		user.sendMessage("{\"message\":\"HI\"}");
+		user.close();
+	}
+	
+	@Test
 	public void testClientInputMoving() {
 		ClientInput ci = new ClientInput();
 		ci.setDown(true);

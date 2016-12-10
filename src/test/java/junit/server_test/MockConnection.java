@@ -15,12 +15,17 @@ import main.java.web.GameSocket;
 
 /** Represents a mock client that connects to the web server. */
 public class MockConnection {
-	private GameSocket socket = new GameSocket(false);
+	private GameSocket socket;
 	private List<String> output = new LinkedList<>();
 	private Session session;
 	private boolean connected = true;
 	
 	public MockConnection(String name) {
+		this(name, false);
+	}
+	
+	public MockConnection(String name, boolean verbose) {
+		socket = new GameSocket(verbose);
 		
 		session = getMockSession(output);
 		socket.onWebSocketConnect(session);
