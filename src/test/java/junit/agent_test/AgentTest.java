@@ -23,6 +23,15 @@ public class AgentTest {
 		// Moving the point should not have moved the agent
 		Assert.assertNotEquals(point, agent.getPosition());
 	}
+	
+	public void testSetPosition() {
+		Environment environment = new Environment(false);
+		Agent agent = new PlayerAgent(environment, new Point2D.Double(0, 0), "Agent");
+		Point2D.Double point = agent.getPosition();
+		agent.setPosition(0, environment.getRadius() + 10); //set outside of radius
+		Assert.assertEquals(new Point2D.Double(0, environment.getRadius()), agent.getPosition());
+		
+	}
 
 	/** Tests that setHealth() does not set health above maxHealth */
 	@Test
