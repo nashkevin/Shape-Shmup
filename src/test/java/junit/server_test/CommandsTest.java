@@ -606,4 +606,47 @@ public class CommandsTest {
 		Assert.assertTrue(user.receivedMessage("Player 'NOTAUSER' not found."));
 		user.close();
 	}
+	
+	@Test
+	public void testSpawnPlayer() {
+		MockConnection user = new MockConnection("Test");
+		int players = user.getSocket().getEnvironment().getActivePlayerAgents().size();
+		Assert.assertEquals(1, players);
+		
+		user.sendMessage("{\"message\":\"/spawn player 0 0\"}");
+		players = user.getSocket().getEnvironment().getActivePlayerAgents().size();
+		Assert.assertEquals(2, players);
+		
+		user.close();
+	}
+	
+	@Test
+	public void testSpawnScout() {
+		MockConnection user = new MockConnection("Test");
+		
+		// Get the starting enemy count.
+		int startingNPCs = user.getSocket().getEnvironment().getActiveNPCAgents().size();
+		
+		// Spawn a scout
+		user.sendMessage("{\"message\":\"/spawn scout\"}");
+		int npcs = user.getSocket().getEnvironment().getActiveNPCAgents().size();
+		Assert.assertTrue(startingNPCs+1 <= npcs);
+		
+		user.close();
+	}
+	
+	@Test
+	public void testSpawnPulsar() {
+		MockConnection user = new MockConnection("Test");
+		
+		// Get the starting enemy count.
+		int startingNPCs = user.getSocket().getEnvironment().getActiveNPCAgents().size();
+		
+		// Spawn a pulsar
+		user.sendMessage("{\"message\":\"/spawn pulsar\"}");
+		int npcs = user.getSocket().getEnvironment().getActiveNPCAgents().size();
+		Assert.assertTrue(startingNPCs+1 <= npcs);
+		
+		user.close();
+	}
 }

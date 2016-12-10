@@ -195,7 +195,7 @@ public class GameSocket extends WebSocketAdapter {
 		return nameToSession.keySet();
 	}
 
-	Environment getEnvironment() {
+	public Environment getEnvironment() {
 		return environment;
 	}
 
