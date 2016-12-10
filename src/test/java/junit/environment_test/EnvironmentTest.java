@@ -1,11 +1,14 @@
 package test.java.junit.environment_test;
 
+import main.java.agent.Agent;
 import main.java.agent.PlayerAgent;
 import main.java.agent.Pulsar;
 import main.java.agent.Scout;
 import main.java.environment.Environment;
 import main.java.misc.Vector2D;
 import main.java.projectile.Projectile;
+
+import java.util.ArrayList;
 
 import java.awt.geom.Point2D;
 
@@ -93,6 +96,45 @@ public class EnvironmentTest {
 
 		Assert.assertNotEquals(initialCount, spawnedCount);
 		Assert.assertEquals(initialCount, despawnedCount);
+	}
+
+	/** Tests that checkCollision correctly returns all collisions detected */
+	@Test
+	public void testCheckCollision() {
+		Environment environment = new Environment(false);
+		/** Note that the teams of the players being spawned is determined by the 
+			* order of spawning. By spawning the firing player first we assure that 
+			* this player will be on the same team as player 2, while player 1 will
+			* be on the opposing team.
+			*/
+		PlayerAgent firingPlayer = environment.spawnPlayer(new Point2D.Double(100, 100));
+		PlayerAgent player1 = environment.spawnPlayer(new Point2D.Double(0, 0));
+		PlayerAgent player2 = environment.spawnPlayer(new Point2D.Double(0, 0));
+		Scout firingNPC = environment.spawnScout(new Point2D.Double(100, 100));
+		Scout npc1 = environment.spawnScout(new Point2D.Double(0, 0));
+		Scout npc2 = environment.spawnScout(new Point2D.Double(0, 0));
+
+		Assert.assertNotEquals(player1.getTeam(), player2.getTeam());
+
+		Projectile playerProjectile = new Projectile(environment, firingPlayer,
+			new Point2D.Double(0, 0), new Vector2D(0.0, 0.0), 1, 1);
+
+		ArrayList<Agent> collisions = environment.checkCollision(playerProjectile);
+
+		Assert.assertTrue(collisions.contains(player1));
+		Assert.assertFalse(collisions.contains(player2));
+		Assert.assertTrue(collisions.contains(npc1));
+		Assert.assertTrue(collisions.contains(npc2));
+
+		Projectile npcProjectile = new Projectile(environment, firingNPC,
+			new Point2D.Double(0, 0), new Vector2D(0.0, 0.0), 1, 1);
+
+		collisions = environment.checkCollision(npcProjectile);
+
+		Assert.assertTrue(collisions.contains(player1));
+		Assert.assertTrue(collisions.contains(player2));
+		Assert.assertFalse(collisions.contains(npc1));
+		Assert.assertFalse(collisions.contains(npc2));
 	}
 
 	/** Tests that checkRadius correctly returns distance from origin */
