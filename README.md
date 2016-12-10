@@ -23,6 +23,8 @@ First, be sure to have the latest versions of Java and Maven installed. Then, cl
 
 You can also run the unit tests with the command `mvn test`.
 
+AFter running the unit tests with `mvn test`, you can run the command `make coverage` in order to open a local website showing code coverage results. We used JaCoCo for our code coverage.
+
 To package the source code into a .war file, use `mvn package` (aliased to `make build`). You can run the .war file using jetty-runner with the command `java -jar target/dependency/jetty-runner.jar target/*.war` (aliased to `make runjar`).
 
 ## Contributors
