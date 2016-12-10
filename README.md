@@ -23,6 +23,8 @@ First, be sure to have the latest versions of Java and Maven installed. Then, cl
 
 You can also run the unit tests with the command `mvn test`.
 
+After running the unit tests with `mvn test`, you can run the command `make coverage` in order to open a local website showing code coverage results. We used JaCoCo for our code coverage.
+
 To package the source code into a .war file, use `mvn package` (aliased to `make build`). You can run the .war file using jetty-runner with the command `java -jar target/dependency/jetty-runner.jar target/*.war` (aliased to `make runjar`).
 
 ## Contributors
@@ -47,6 +49,10 @@ Here is a comprehensive list of the pre-existing APIs, libraries, and other tech
 * **Maven 3**, The Apache Software Foundation, [license](http://maven.apache.org/ref/3.0/license.html)
  * build manager for Java projects
  * our source is built and tested automatically using Maven
+
+* **JaCoCo**,  Mountainminds GmbH & Co. KG and Contributors, [license](http://www.eclemma.org/jacoco/trunk/doc/license.html)
+ * Code coverage for Java projects
+ * Our code coverage metrics are done through JaCoCo
 
 * **PixiJS**, Goodboy Digital Ltd., [license](https://github.com/pixijs/pixi.js/blob/master/LICENSE)
  * 2D WebGL renderer
