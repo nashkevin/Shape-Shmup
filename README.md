@@ -50,6 +50,11 @@ Here is a comprehensive list of the pre-existing APIs, libraries, and other tech
  * build manager for Java projects
  * our source is built and tested automatically using Maven
 
+* **JaCoCo**,  Mountainminds GmbH & Co. KG and Contributors, [license](http://www.eclemma.org/jacoco/trunk/doc/license.html)
+ * Code coverage for Java projects
+ * Our code coverage metrics are done through JaCoCo
+
+http://www.eclemma.org/jacoco/trunk/doc/license.html
 * **PixiJS**, Goodboy Digital Ltd., [license](https://github.com/pixijs/pixi.js/blob/master/LICENSE)
  * 2D WebGL renderer
  * graphics are drawn on an HTML5 canvas in the player's browser using PixiJS
