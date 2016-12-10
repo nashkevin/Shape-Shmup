@@ -18,6 +18,23 @@ public class PlayerAgentTest {
 	
 	private static final double MARGIN = 0.001;
 
+	@Test 
+	public void testUpdate() {
+		Environment env = new Environment(false);
+		PlayerAgent testPlayer = new PlayerAgent(env,new Point2D.Double(0, 0) , "Player");
+		ClientInput upEvent = new ClientInput();
+		upEvent.setUp(true);
+		ClientInput leftEvent = new ClientInput();
+		leftEvent.setLeft(true);
+		ClientInput rightEvent = new ClientInput();
+		rightEvent.setRight(true);
+		ClientInput downEvent = new ClientInput();
+		downEvent.setDown(true);
+		
+		//Test 0
+		testPlayer.update();
+		Assert.assertEquals(new Point2D.Double(0, 0) , testPlayer.getPosition());
+	}
 	@Test
 	public void testMove() {
 		
