@@ -61,7 +61,6 @@ public class PlayerAgentTest {
 	
 	@Test
 	public void testMove() {
-		//TODO
 		
 		//Test 0: Initial magnitude of 0
 		Environment env = new Environment(false);
